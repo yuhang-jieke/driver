@@ -1,0 +1,30 @@
+syntax = "proto3";
+package driver;
+option go_package = "taketaxi/common/kitexGen/driver";
+
+service DriverService {
+  rpc Create(CreateDriverReq) returns (CreateDriverResp);
+  rpc Get(GetDriverReq) returns (GetDriverResp);
+  rpc List(ListDriverReq) returns (ListDriverResp);
+  rpc Update(UpdateDriverReq) returns (UpdateDriverResp);
+  rpc Delete(DeleteDriverReq) returns (DeleteDriverResp);
+}
+
+message CreateDriverReq { string name = 1; }
+message CreateDriverResp { int64 id = 1; }
+message GetDriverReq { int64 id = 1; }
+message GetDriverResp { int64 id = 1; string name = 2; int32 status = 3; }
+message ListDriverReq {}
+message DriverItem { int64 id = 1; string name = 2; int32 status = 3; }
+message ListDriverResp { repeated DriverItem items = 1; }
+message UpdateDriverReq { int64 id = 1; string name = 2; }
+message UpdateDriverResp { bool success = 1; }
+message DeleteDriverReq { int64 id = 1; }
+message DeleteDriverResp { bool success = 1; }
+
+
+//protoc driver.proto `
+//>> --go_out=../kitexGen `
+//>> --go_opt=paths=source_relative `
+//>> --go-grpc_out=../kitexGen `
+//>> --go-grpc_opt=paths=source_relative

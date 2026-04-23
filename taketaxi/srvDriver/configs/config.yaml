@@ -1,0 +1,10 @@
+server:
+  host: 0.0.0.0
+  port: 8001
+
+database:
+  host: 115.190.57.118
+  port: 3306
+  user: root
+  password: 4ay1nkal3u8ed77y
+  database: huaxiaozhu
