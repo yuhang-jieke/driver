@@ -1,8 +1,8 @@
 package main
 
 import (
-	"driver/taketaxi/bffDriver/internal/rpcClient"
 	"driver/taketaxi/bffDriver/internal/router"
+	"driver/taketaxi/bffDriver/internal/rpcClient"
 	"driver/taketaxi/pkg/config"
 	"flag"
 	"fmt"
@@ -12,7 +12,7 @@ import (
 var confPath string
 
 func init() {
-	flag.StringVar(&confPath, "config", "configs/config.yaml", "config file")
+	flag.StringVar(&confPath, "config", "C:\\Users\\35305\\Desktop\\driver\\driver\\taketaxi\\bffDriver\\configs\\config.yaml", "config file")
 }
 
 func main() {
