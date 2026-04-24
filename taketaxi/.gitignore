@@ -46,3 +46,6 @@ logs/
 
 # Config overrides (keep template, ignore local)
 configs/local*.yaml
+
+# OpenCode MCP Settings (contains API keys)
+.opencode/settings.json

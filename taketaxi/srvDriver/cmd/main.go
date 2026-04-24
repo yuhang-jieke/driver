@@ -5,6 +5,7 @@ import (
 	"driver/taketaxi/pkg/config"
 	"driver/taketaxi/pkg/database"
 	"driver/taketaxi/srvDriver/internal/handler"
+	"driver/taketaxi/srvDriver/internal/model"
 	"driver/taketaxi/srvDriver/internal/repository"
 	"flag"
 	"fmt"
@@ -25,6 +26,18 @@ func main() {
 	flag.Parse()
 	cfg, _ := config.Load(confPath)
 	db, _ := database.NewDB(&cfg.Database)
+	db.AutoMigrate(
+		&model.DriverS{},
+		&model.DriverRealname{},
+		&model.DriverLicense{},
+		&model.DriverVehicle{},
+		&model.DriverFace{},
+		&model.DriverStatusLog{},
+		&model.DriverOnlineLog{},
+		&model.DriverRejectLog{},
+		&model.TripService{},
+		&model.TripTrack{},
+	)
 	repo := repository.NewDriverRepo(db)
 	addr := fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port)
 	lis, _ := net.Listen("tcp", addr)
