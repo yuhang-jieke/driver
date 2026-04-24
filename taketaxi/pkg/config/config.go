@@ -6,8 +6,9 @@ import (
 )
 
 type Config struct {
-	Server ServerConfig `yaml:"server"`
+	Server   ServerConfig   `yaml:"server"`
 	Database DatabaseConfig `yaml:"database"`
+	Redis    RedisConfig    `yaml:"redis"`
 	Registry RegistryConfig `yaml:"registry"`
 }
 
@@ -24,6 +25,13 @@ type DatabaseConfig struct {
 	User string `yaml:"user"`
 	Password string `yaml:"password"`
 	Database string `yaml:"database"`
+}
+
+type RedisConfig struct {
+	Host     string `yaml:"Host"`
+	Port     int    `yaml:"Port"`
+	Password string `yaml:"Password"`
+	Database int    `yaml:"Database"`
 }
 
 type RegistryConfig struct {
