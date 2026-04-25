@@ -1,10 +1,13 @@
 package handler
 
 import (
+	"driver/taketaxi/pkg/logger"
 	"driver/taketaxi/pkg/upload"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 // UploadHandler 上传处理器
@@ -43,9 +46,12 @@ type UploadData struct {
 // @Failure 500 {object} UploadResponse
 // @Router /api/v1/upload [post]
 func (h *UploadHandler) Upload(c *gin.Context) {
+	start := time.Now()
+
 	// 1. 获取文件
 	file, header, err := c.Request.FormFile("file")
 	if err != nil {
+		logger.Warn("获取上传文件失败", zap.Error(err))
 		c.JSON(http.StatusBadRequest, UploadResponse{
 			Code: 400,
 			Msg:  "请选择要上传的文件",
@@ -57,6 +63,7 @@ func (h *UploadHandler) Upload(c *gin.Context) {
 	// 2. 获取业务类型
 	bizType := c.PostForm("biz_type")
 	if bizType == "" {
+		logger.Warn("缺少业务类型参数")
 		c.JSON(http.StatusBadRequest, UploadResponse{
 			Code: 400,
 			Msg:  "缺少业务类型参数",
@@ -73,6 +80,7 @@ func (h *UploadHandler) Upload(c *gin.Context) {
 		string(upload.BizTypeFace):    true,
 	}
 	if !validBizTypes[bizType] {
+		logger.Warn("无效的业务类型", zap.String("biz_type", bizType))
 		c.JSON(http.StatusBadRequest, UploadResponse{
 			Code: 400,
 			Msg:  "无效的业务类型，支持: avatar/idcard/license/vehicle/face",
@@ -91,6 +99,13 @@ func (h *UploadHandler) Upload(c *gin.Context) {
 	// 5. 执行上传
 	result, err := h.storage.Upload(c.Request.Context(), req)
 	if err != nil {
+		logger.Error("上传失败",
+			zap.String("biz_type", bizType),
+			zap.String("filename", header.Filename),
+			zap.Int64("size", header.Size),
+			zap.Error(err),
+			zap.Duration("duration", time.Since(start)),
+		)
 		c.JSON(http.StatusInternalServerError, UploadResponse{
 			Code: 500,
 			Msg:  err.Error(),
@@ -99,6 +114,13 @@ func (h *UploadHandler) Upload(c *gin.Context) {
 	}
 
 	// 6. 返回结果
+	logger.Info("上传成功",
+		zap.String("biz_type", bizType),
+		zap.String("filename", header.Filename),
+		zap.Int64("size", header.Size),
+		zap.String("path", result.Path),
+		zap.Duration("duration", time.Since(start)),
+	)
 	c.JSON(http.StatusOK, UploadResponse{
 		Code: 0,
 		Msg:  "上传成功",
@@ -122,6 +144,7 @@ func (h *UploadHandler) Upload(c *gin.Context) {
 func (h *UploadHandler) Delete(c *gin.Context) {
 	path := c.Query("path")
 	if path == "" {
+		logger.Warn("删除文件缺少路径参数")
 		c.JSON(http.StatusBadRequest, UploadResponse{
 			Code: 400,
 			Msg:  "缺少文件路径参数",
@@ -130,6 +153,7 @@ func (h *UploadHandler) Delete(c *gin.Context) {
 	}
 
 	if err := h.storage.Delete(c.Request.Context(), path); err != nil {
+		logger.Error("删除文件失败", zap.String("path", path), zap.Error(err))
 		c.JSON(http.StatusInternalServerError, UploadResponse{
 			Code: 500,
 			Msg:  err.Error(),
@@ -137,6 +161,7 @@ func (h *UploadHandler) Delete(c *gin.Context) {
 		return
 	}
 
+	logger.Info("删除文件成功", zap.String("path", path))
 	c.JSON(http.StatusOK, UploadResponse{
 		Code: 0,
 		Msg:  "删除成功",
