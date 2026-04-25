@@ -2,6 +2,7 @@ package upload
 
 import (
 	"context"
+	"driver/taketaxi/pkg/config"
 	"fmt"
 )
 
@@ -12,7 +13,7 @@ type OSSStorage struct {
 }
 
 // NewOSSStorage 创建OSS存储实例
-func NewOSSStorage(cfg *OSSConf) (*OSSStorage, error) {
+func NewOSSStorage(cfg *config.OSSConf) (*OSSStorage, error) {
 	if cfg == nil {
 		return nil, fmt.Errorf("oss配置不能为空")
 	}

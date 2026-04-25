@@ -1,9 +1,12 @@
 package upload
 
-import "fmt"
+import (
+	"driver/taketaxi/pkg/config"
+	"fmt"
+)
 
 // NewStorage 根据配置创建存储实例
-func NewStorage(cfg *UploadConfig) (Storage, error) {
+func NewStorage(cfg *config.UploadConfig) (Storage, error) {
 	if cfg == nil {
 		return nil, fmt.Errorf("上传配置不能为空")
 	}

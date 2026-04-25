@@ -3,6 +3,7 @@ package upload
 import (
 	"bytes"
 	"context"
+	"driver/taketaxi/pkg/config"
 	"fmt"
 	"io"
 	"path/filepath"
@@ -21,7 +22,7 @@ type MinIOStorage struct {
 }
 
 // NewMinIOStorage 创建MinIO存储实例
-func NewMinIOStorage(cfg *MinIOConf) (*MinIOStorage, error) {
+func NewMinIOStorage(cfg *config.MinIOConf) (*MinIOStorage, error) {
 	if cfg == nil {
 		return nil, fmt.Errorf("minio配置不能为空")
 	}

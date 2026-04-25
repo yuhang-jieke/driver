@@ -2,6 +2,7 @@ package upload
 
 import (
 	"context"
+	"driver/taketaxi/pkg/config"
 	"fmt"
 )
 
@@ -12,7 +13,7 @@ type COSStorage struct {
 }
 
 // NewCOSStorage 创建COS存储实例
-func NewCOSStorage(cfg *COSConf) (*COSStorage, error) {
+func NewCOSStorage(cfg *config.COSConf) (*COSStorage, error) {
 	if cfg == nil {
 		return nil, fmt.Errorf("cos配置不能为空")
 	}
