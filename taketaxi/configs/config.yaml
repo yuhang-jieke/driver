@@ -1,0 +1,41 @@
+server:
+  host: "0.0.0.0"
+  port: 8080
+  grpc_host: "127.0.0.1"
+  grpc_port: 50051
+
+database:
+  host: "127.0.0.1"
+  port: "3306"
+  user: "root"
+  password: "password"
+  database: "driver"
+
+redis:
+  Host: "127.0.0.1"
+  Port: 6379
+  Password: ""
+  Database: 0
+
+registry:
+  type: "etcd"
+  address: "127.0.0.1:2379"
+
+upload:
+  storage_type: minio
+  minio:
+    endpoint: "127.0.0.1:9000"
+    access_key: "minioadmin"
+    secret_key: "minioadmin"
+    bucket_name: "driver-images"
+    use_ssl: false
+    region: ""
+  oss:
+    endpoint: ""
+    access_key_id: ""
+    access_key_secret: ""
+    bucket_name: ""
+  cos:
+    bucket_url: ""
+    secret_id: ""
+    secret_key: ""
