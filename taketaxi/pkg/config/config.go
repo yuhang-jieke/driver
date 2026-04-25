@@ -12,6 +12,7 @@ type Config struct {
 	Redis    RedisConfig    `yaml:"redis"`
 	Registry RegistryConfig `yaml:"registry"`
 	Upload   UploadConfig   `yaml:"upload"`
+	Log      LogConfig      `yaml:"log"`
 }
 
 type ServerConfig struct {
@@ -72,6 +73,16 @@ type COSConf struct {
 	BucketURL string `yaml:"bucket_url" json:"bucket_url"`
 	SecretID  string `yaml:"secret_id" json:"secret_id"`
 	SecretKey string `yaml:"secret_key" json:"secret_key"`
+}
+
+// LogConfig 日志配置
+type LogConfig struct {
+	Level      string `yaml:"level"`       // 日志级别: debug/info/warn/error
+	Filename   string `yaml:"filename"`    // 日志文件路径
+	MaxSize    int    `yaml:"max_size"`    // 单个日志文件最大大小(MB)
+	MaxBackups int    `yaml:"max_backups"` // 保留的旧日志文件数量
+	MaxAge     int    `yaml:"max_age"`     // 保留旧日志文件的最大天数
+	Compress   bool   `yaml:"compress"`    // 是否压缩旧日志文件
 }
 
 func Load(path string) (*Config, error) {
