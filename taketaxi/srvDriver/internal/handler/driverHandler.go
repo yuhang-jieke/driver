@@ -3,8 +3,12 @@ package handler
 import (
 	"context"
 	driver "driver/taketaxi/common/kitexGen"
+	"driver/taketaxi/pkg/logger"
 	"driver/taketaxi/srvDriver/internal/repository"
 	"driver/taketaxi/srvDriver/internal/service"
+	"time"
+
+	"go.uber.org/zap"
 )
 
 type DriverHandler struct {
@@ -17,17 +21,56 @@ func NewDriverHandler(repo *repository.DriverRepo) *DriverHandler {
 }
 
 func (h *DriverHandler) Create(ctx context.Context, req *driver.CreateDriverReq) (*driver.CreateDriverResp, error) {
-	return h.svc.Create(ctx, req)
+	start := time.Now()
+	resp, err := h.svc.Create(ctx, req)
+	if err != nil {
+		logger.Error("gRPC Create failed", zap.String("method", "Create"), zap.String("name", req.Name), zap.Error(err))
+		return nil, err
+	}
+	logger.Info("gRPC Create success", zap.String("method", "Create"), zap.Int64("id", resp.Id), zap.Duration("duration", time.Since(start)))
+	return resp, nil
 }
+
 func (h *DriverHandler) Get(ctx context.Context, req *driver.GetDriverReq) (*driver.GetDriverResp, error) {
-	return h.svc.Get(ctx, req)
+	start := time.Now()
+	resp, err := h.svc.Get(ctx, req)
+	if err != nil {
+		logger.Error("gRPC Get failed", zap.String("method", "Get"), zap.Int64("id", req.Id), zap.Error(err))
+		return nil, err
+	}
+	logger.Info("gRPC Get success", zap.String("method", "Get"), zap.Int64("id", req.Id), zap.Duration("duration", time.Since(start)))
+	return resp, nil
 }
+
 func (h *DriverHandler) List(ctx context.Context, req *driver.ListDriverReq) (*driver.ListDriverResp, error) {
-	return h.svc.List(ctx, req)
+	start := time.Now()
+	resp, err := h.svc.List(ctx, req)
+	if err != nil {
+		logger.Error("gRPC List failed", zap.String("method", "List"), zap.Error(err))
+		return nil, err
+	}
+	logger.Info("gRPC List success", zap.String("method", "List"), zap.Int("count", len(resp.Items)), zap.Duration("duration", time.Since(start)))
+	return resp, nil
 }
+
 func (h *DriverHandler) Update(ctx context.Context, req *driver.UpdateDriverReq) (*driver.UpdateDriverResp, error) {
-	return h.svc.Update(ctx, req)
+	start := time.Now()
+	resp, err := h.svc.Update(ctx, req)
+	if err != nil {
+		logger.Error("gRPC Update failed", zap.String("method", "Update"), zap.Int64("id", req.Id), zap.Error(err))
+		return nil, err
+	}
+	logger.Info("gRPC Update success", zap.String("method", "Update"), zap.Int64("id", req.Id), zap.Duration("duration", time.Since(start)))
+	return resp, nil
 }
+
 func (h *DriverHandler) Delete(ctx context.Context, req *driver.DeleteDriverReq) (*driver.DeleteDriverResp, error) {
-	return h.svc.Delete(ctx, req)
+	start := time.Now()
+	resp, err := h.svc.Delete(ctx, req)
+	if err != nil {
+		logger.Error("gRPC Delete failed", zap.String("method", "Delete"), zap.Int64("id", req.Id), zap.Error(err))
+		return nil, err
+	}
+	logger.Info("gRPC Delete success", zap.String("method", "Delete"), zap.Int64("id", req.Id), zap.Duration("duration", time.Since(start)))
+	return resp, nil
 }
