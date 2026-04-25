@@ -17,25 +17,10 @@ redis:
   Password: ""
   Database: 0
 
-registry:
-  type: "etcd"
-  address: "127.0.0.1:2379"
-
-upload:
-  storage_type: minio
-  minio:
-    endpoint: "127.0.0.1:9000"
-    access_key: "minioadmin"
-    secret_key: "minioadmin"
-    bucket_name: "driver-images"
-    use_ssl: false
-    region: ""
-  oss:
-    endpoint: ""
-    access_key_id: ""
-    access_key_secret: ""
-    bucket_name: ""
-  cos:
-    bucket_url: ""
-    secret_id: ""
-    secret_key: ""
+log:
+  level: info
+  filename: logs/srv-driver.log
+  max_size: 100
+  max_backups: 3
+  max_age: 7
+  compress: true
