@@ -46,6 +46,11 @@ type DriverProfileResult struct {
 	ServiceScore float64
 	OrderCount   int
 	VerifyStatus int8
+	Phone        string
+	Plate        string
+	Car          string
+	Online       bool
+	Status       string
 }
 
 // OrderStatsResult 接单统计结果
@@ -59,17 +64,58 @@ type OrderStatsResult struct {
 func (r *DriverRepo) GetDriverProfile(ctx context.Context, driverID int64) (*DriverProfileResult, error) {
 	var driver model.DriverS
 	if err := r.db.WithContext(ctx).
-		Select("nickname, avatar, service_score, order_count, verify_status").
+		Select("nickname, avatar, service_score, order_count, verify_status, mobile, status, last_online_at").
 		Where("driver_id = ?", driverID).
 		First(&driver).Error; err != nil {
 		return nil, err
 	}
+
+	// 查询车辆信息
+	var vehicle model.DriverVehicle
+	r.db.WithContext(ctx).
+		Select("plate_no, vehicle_model, vehicle_color").
+		Where("driver_id = ? AND status = 2", driverID).
+		First(&vehicle)
+
+	// 判断是否在线（5分钟内有活动视为在线）
+	online := false
+	if driver.LastOnlineAt != "" {
+		if t, err := time.Parse("2006-01-02 15:04:05", driver.LastOnlineAt); err == nil {
+			online = time.Since(t) < 5*time.Minute
+		}
+	}
+
+	// 状态映射
+	var status string
+	switch driver.Status {
+	case 1:
+		status = "idle"
+	case 2:
+		status = "busy"
+	default:
+		status = "offline"
+	}
+
+	// 组装车辆描述
+	carDesc := ""
+	if vehicle.VehicleModel != "" {
+		carDesc = vehicle.VehicleModel
+		if vehicle.VehicleColor != "" {
+			carDesc += " · " + vehicle.VehicleColor
+		}
+	}
+
 	return &DriverProfileResult{
 		Nickname:     driver.Nickname,
 		Avatar:       driver.Avatar,
 		ServiceScore: driver.ServiceScore,
 		OrderCount:   driver.OrderCount,
 		VerifyStatus: driver.VerifyStatus,
+		Phone:        driver.Mobile,
+		Plate:        vehicle.PlateNo,
+		Car:          carDesc,
+		Online:       online,
+		Status:       status,
 	}, nil
 }
 

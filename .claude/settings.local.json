@@ -7,7 +7,9 @@
       "Bash(go build *)",
       "Bash(go get *)",
       "Bash(go mod *)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(protoc driver.proto --go_out=../kitexGen --go_opt=paths=source_relative --go-grpc_out=../kitexGen --go-grpc_opt=paths=source_relative)",
+      "Bash(git commit *)"
     ]
   }
 }

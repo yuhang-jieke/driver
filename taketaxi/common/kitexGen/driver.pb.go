@@ -664,6 +664,11 @@ type PersonalInfo struct {
 	Avatar        string                 `protobuf:"bytes,2,opt,name=avatar,proto3" json:"avatar,omitempty"`
 	ServiceScore  float64                `protobuf:"fixed64,3,opt,name=service_score,json=serviceScore,proto3" json:"service_score,omitempty"`
 	OrderCount    int32                  `protobuf:"varint,4,opt,name=order_count,json=orderCount,proto3" json:"order_count,omitempty"`
+	Phone         string                 `protobuf:"bytes,5,opt,name=phone,proto3" json:"phone,omitempty"`
+	Plate         string                 `protobuf:"bytes,6,opt,name=plate,proto3" json:"plate,omitempty"`
+	Car           string                 `protobuf:"bytes,7,opt,name=car,proto3" json:"car,omitempty"`
+	Online        bool                   `protobuf:"varint,8,opt,name=online,proto3" json:"online,omitempty"`
+	Status        string                 `protobuf:"bytes,9,opt,name=status,proto3" json:"status,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -724,6 +729,41 @@ func (x *PersonalInfo) GetOrderCount() int32 {
 		return x.OrderCount
 	}
 	return 0
+}
+
+func (x *PersonalInfo) GetPhone() string {
+	if x != nil {
+		return x.Phone
+	}
+	return ""
+}
+
+func (x *PersonalInfo) GetPlate() string {
+	if x != nil {
+		return x.Plate
+	}
+	return ""
+}
+
+func (x *PersonalInfo) GetCar() string {
+	if x != nil {
+		return x.Car
+	}
+	return ""
+}
+
+func (x *PersonalInfo) GetOnline() bool {
+	if x != nil {
+		return x.Online
+	}
+	return false
+}
+
+func (x *PersonalInfo) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
 }
 
 type OrderStats struct {
@@ -826,13 +866,18 @@ const file_driver_proto_rawDesc = "" +
 	"\rpersonal_info\x18\x01 \x01(\v2\x14.driver.PersonalInfoR\fpersonalInfo\x123\n" +
 	"\vorder_stats\x18\x02 \x01(\v2\x12.driver.OrderStatsR\n" +
 	"orderStats\x12#\n" +
-	"\rverify_status\x18\x03 \x01(\x05R\fverifyStatus\"\x88\x01\n" +
+	"\rverify_status\x18\x03 \x01(\x05R\fverifyStatus\"\xf6\x01\n" +
 	"\fPersonalInfo\x12\x1a\n" +
 	"\bnickname\x18\x01 \x01(\tR\bnickname\x12\x16\n" +
 	"\x06avatar\x18\x02 \x01(\tR\x06avatar\x12#\n" +
 	"\rservice_score\x18\x03 \x01(\x01R\fserviceScore\x12\x1f\n" +
 	"\vorder_count\x18\x04 \x01(\x05R\n" +
-	"orderCount\"n\n" +
+	"orderCount\x12\x14\n" +
+	"\x05phone\x18\x05 \x01(\tR\x05phone\x12\x14\n" +
+	"\x05plate\x18\x06 \x01(\tR\x05plate\x12\x10\n" +
+	"\x03car\x18\a \x01(\tR\x03car\x12\x16\n" +
+	"\x06online\x18\b \x01(\bR\x06online\x12\x16\n" +
+	"\x06status\x18\t \x01(\tR\x06status\"n\n" +
 	"\n" +
 	"OrderStats\x12\x1f\n" +
 	"\vorder_count\x18\x01 \x01(\x05R\n" +

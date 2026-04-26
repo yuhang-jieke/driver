@@ -41,6 +41,11 @@ message PersonalInfo {
   string avatar = 2;
   double service_score = 3;
   int32 order_count = 4;
+  string phone = 5;
+  string plate = 6;
+  string car = 7;
+  bool online = 8;
+  string status = 9;
 }
 
 message OrderStats {

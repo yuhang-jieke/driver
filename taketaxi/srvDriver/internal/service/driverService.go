@@ -107,6 +107,11 @@ func (s *DriverService) GetProfile(ctx context.Context, req *driver.GetDriverPro
 			Avatar:       profile.Avatar,
 			ServiceScore: profile.ServiceScore,
 			OrderCount:   int32(profile.OrderCount),
+			Phone:        profile.Phone,
+			Plate:        profile.Plate,
+			Car:          profile.Car,
+			Online:       profile.Online,
+			Status:       profile.Status,
 		},
 		OrderStats: &driver.OrderStats{
 			OrderCount:     int32(stats.OrderCount),
