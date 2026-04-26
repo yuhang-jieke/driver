@@ -118,3 +118,47 @@ func (h *DriverHandler) Delete(c *gin.Context) {
 	logger.Info("删除司机成功", zap.Int64("id", id))
 	c.JSON(http.StatusOK, resp)
 }
+
+// Profile 查询司机个人信息与接单统计
+func (h *DriverHandler) Profile(c *gin.Context) {
+	// 从登录态获取司机ID（此处暂时从查询参数获取，后续接入认证中间件）
+	driverIDStr := c.Query("driver_id")
+	if driverIDStr == "" {
+		logger.Warn("Profile 缺少 driver_id 参数")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "driver_id is required"})
+		return
+	}
+	driverID, err := strconv.ParseInt(driverIDStr, 10, 64)
+	if err != nil {
+		logger.Warn("Profile 参数错误", zap.String("driver_id", driverIDStr), zap.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid driver_id"})
+		return
+	}
+
+	date := c.Query("date")
+	daysStr := c.Query("days")
+	var days int32 = 1
+	if daysStr != "" {
+		d, err := strconv.ParseInt(daysStr, 10, 32)
+		if err != nil {
+			logger.Warn("Profile 参数错误", zap.String("days", daysStr), zap.Error(err))
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid days"})
+			return
+		}
+		days = int32(d)
+	}
+
+	resp, err := h.client.GetProfile(c.Request.Context(), &pb.GetDriverProfileReq{
+		DriverId: driverID,
+		Date:     date,
+		Days:     days,
+	})
+	if err != nil {
+		logger.Error("Profile 查询失败", zap.Int64("driver_id", driverID), zap.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	logger.Info("Profile 查询成功", zap.Int64("driver_id", driverID))
+	c.JSON(http.StatusOK, resp)
+}
