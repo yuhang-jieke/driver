@@ -2,6 +2,9 @@ package service
 
 import (
 	"context"
+	"errors"
+	"time"
+
 	driver "driver/taketaxi/common/kitexGen"
 	"driver/taketaxi/srvDriver/internal/model"
 	"driver/taketaxi/srvDriver/internal/repository"
@@ -47,4 +50,69 @@ func (s *DriverService) Update(ctx context.Context, req *driver.UpdateDriverReq)
 }
 func (s *DriverService) Delete(ctx context.Context, req *driver.DeleteDriverReq) (*driver.DeleteDriverResp, error) {
 	return &driver.DeleteDriverResp{Success: true}, s.repo.Delete(ctx, uint(req.Id))
+}
+
+// GetProfile 查询司机个人信息与接单统计
+func (s *DriverService) GetProfile(ctx context.Context, req *driver.GetDriverProfileReq) (*driver.GetDriverProfileResp, error) {
+	// 参数校验
+	if req.DriverId <= 0 {
+		return nil, errors.New("invalid driver_id")
+	}
+
+	// 解析日期参数，默认当天
+	var queryDate time.Time
+	if req.Date == "" {
+		queryDate = time.Now()
+	} else {
+		parsed, err := time.Parse("2006-01-02", req.Date)
+		if err != nil {
+			return nil, errors.New("invalid date format")
+		}
+		queryDate = parsed
+	}
+
+	// 校验日期不能为未来
+	if queryDate.After(time.Now()) {
+		return nil, errors.New("date cannot be in the future")
+	}
+
+	// 校验天数参数
+	days := req.Days
+	if days <= 0 {
+		days = 1
+	}
+	if days > 30 {
+		return nil, errors.New("days cannot exceed 30")
+	}
+
+	// 查询个人信息
+	profile, err := s.repo.GetDriverProfile(ctx, req.DriverId)
+	if err != nil {
+		return nil, err
+	}
+
+	// 计算日期范围
+	endDate := time.Date(queryDate.Year(), queryDate.Month(), queryDate.Day(), 0, 0, 0, 0, time.Local)
+	startDate := endDate.AddDate(0, 0, -int(days)+1)
+
+	// 查询接单统计
+	stats, err := s.repo.GetOrderStats(ctx, req.DriverId, startDate, endDate)
+	if err != nil {
+		return nil, err
+	}
+
+	return &driver.GetDriverProfileResp{
+		PersonalInfo: &driver.PersonalInfo{
+			Nickname:     profile.Nickname,
+			Avatar:       profile.Avatar,
+			ServiceScore: profile.ServiceScore,
+			OrderCount:   int32(profile.OrderCount),
+		},
+		OrderStats: &driver.OrderStats{
+			OrderCount:     int32(stats.OrderCount),
+			Income:         stats.TotalIncome,
+			OnlineDuration: int32(stats.OnlineDuration),
+		},
+		VerifyStatus: int32(profile.VerifyStatus),
+	}, nil
 }
