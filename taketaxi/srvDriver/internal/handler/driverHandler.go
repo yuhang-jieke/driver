@@ -74,3 +74,14 @@ func (h *DriverHandler) Delete(ctx context.Context, req *driver.DeleteDriverReq)
 	logger.Info("gRPC Delete success", zap.String("method", "Delete"), zap.Int64("id", req.Id), zap.Duration("duration", time.Since(start)))
 	return resp, nil
 }
+
+func (h *DriverHandler) GetProfile(ctx context.Context, req *driver.GetDriverProfileReq) (*driver.GetDriverProfileResp, error) {
+	start := time.Now()
+	resp, err := h.svc.GetProfile(ctx, req)
+	if err != nil {
+		logger.Error("gRPC GetProfile failed", zap.String("method", "GetProfile"), zap.Int64("driver_id", req.DriverId), zap.Error(err))
+		return nil, err
+	}
+	logger.Info("gRPC GetProfile success", zap.String("method", "GetProfile"), zap.Int64("driver_id", req.DriverId), zap.Duration("duration", time.Since(start)))
+	return resp, nil
+}
