@@ -43,3 +43,7 @@ func (c *DriverClient) Update(ctx context.Context, req *driver.UpdateDriverReq) 
 func (c *DriverClient) Delete(ctx context.Context, req *driver.DeleteDriverReq) (*driver.DeleteDriverResp, error) {
 	return c.client.Delete(ctx, req)
 }
+
+func (c *DriverClient) GetProfile(ctx context.Context, req *driver.GetDriverProfileReq) (*driver.GetDriverProfileResp, error) {
+	return c.client.GetProfile(ctx, req)
+}
