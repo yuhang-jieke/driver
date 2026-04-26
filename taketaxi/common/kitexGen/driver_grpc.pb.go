@@ -19,11 +19,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	DriverService_Create_FullMethodName = "/driver.DriverService/Create"
-	DriverService_Get_FullMethodName    = "/driver.DriverService/Get"
-	DriverService_List_FullMethodName   = "/driver.DriverService/List"
-	DriverService_Update_FullMethodName = "/driver.DriverService/Update"
-	DriverService_Delete_FullMethodName = "/driver.DriverService/Delete"
+	DriverService_Create_FullMethodName     = "/driver.DriverService/Create"
+	DriverService_Get_FullMethodName        = "/driver.DriverService/Get"
+	DriverService_List_FullMethodName       = "/driver.DriverService/List"
+	DriverService_Update_FullMethodName     = "/driver.DriverService/Update"
+	DriverService_Delete_FullMethodName     = "/driver.DriverService/Delete"
+	DriverService_GetProfile_FullMethodName = "/driver.DriverService/GetProfile"
 )
 
 // DriverServiceClient is the client API for DriverService service.
@@ -35,6 +36,7 @@ type DriverServiceClient interface {
 	List(ctx context.Context, in *ListDriverReq, opts ...grpc.CallOption) (*ListDriverResp, error)
 	Update(ctx context.Context, in *UpdateDriverReq, opts ...grpc.CallOption) (*UpdateDriverResp, error)
 	Delete(ctx context.Context, in *DeleteDriverReq, opts ...grpc.CallOption) (*DeleteDriverResp, error)
+	GetProfile(ctx context.Context, in *GetDriverProfileReq, opts ...grpc.CallOption) (*GetDriverProfileResp, error)
 }
 
 type driverServiceClient struct {
@@ -95,6 +97,16 @@ func (c *driverServiceClient) Delete(ctx context.Context, in *DeleteDriverReq, o
 	return out, nil
 }
 
+func (c *driverServiceClient) GetProfile(ctx context.Context, in *GetDriverProfileReq, opts ...grpc.CallOption) (*GetDriverProfileResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetDriverProfileResp)
+	err := c.cc.Invoke(ctx, DriverService_GetProfile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DriverServiceServer is the server API for DriverService service.
 // All implementations must embed UnimplementedDriverServiceServer
 // for forward compatibility.
@@ -104,6 +116,7 @@ type DriverServiceServer interface {
 	List(context.Context, *ListDriverReq) (*ListDriverResp, error)
 	Update(context.Context, *UpdateDriverReq) (*UpdateDriverResp, error)
 	Delete(context.Context, *DeleteDriverReq) (*DeleteDriverResp, error)
+	GetProfile(context.Context, *GetDriverProfileReq) (*GetDriverProfileResp, error)
 	mustEmbedUnimplementedDriverServiceServer()
 }
 
@@ -128,6 +141,9 @@ func (UnimplementedDriverServiceServer) Update(context.Context, *UpdateDriverReq
 }
 func (UnimplementedDriverServiceServer) Delete(context.Context, *DeleteDriverReq) (*DeleteDriverResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedDriverServiceServer) GetProfile(context.Context, *GetDriverProfileReq) (*GetDriverProfileResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetProfile not implemented")
 }
 func (UnimplementedDriverServiceServer) mustEmbedUnimplementedDriverServiceServer() {}
 func (UnimplementedDriverServiceServer) testEmbeddedByValue()                       {}
@@ -240,6 +256,24 @@ func _DriverService_Delete_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DriverService_GetProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDriverProfileReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).GetProfile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_GetProfile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).GetProfile(ctx, req.(*GetDriverProfileReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DriverService_ServiceDesc is the grpc.ServiceDesc for DriverService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -266,6 +300,10 @@ var DriverService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _DriverService_Delete_Handler,
+		},
+		{
+			MethodName: "GetProfile",
+			Handler:    _DriverService_GetProfile_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

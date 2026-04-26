@@ -8,6 +8,7 @@ service DriverService {
   rpc List(ListDriverReq) returns (ListDriverResp);
   rpc Update(UpdateDriverReq) returns (UpdateDriverResp);
   rpc Delete(DeleteDriverReq) returns (DeleteDriverResp);
+  rpc GetProfile(GetDriverProfileReq) returns (GetDriverProfileResp);
 }
 
 message CreateDriverReq { string name = 1; }
@@ -21,6 +22,32 @@ message UpdateDriverReq { int64 id = 1; string name = 2; }
 message UpdateDriverResp { bool success = 1; }
 message DeleteDriverReq { int64 id = 1; }
 message DeleteDriverResp { bool success = 1; }
+
+// GetDriverProfile 新增：查询司机个人信息与接单统计
+message GetDriverProfileReq {
+  int64 driver_id = 1;
+  string date = 2;
+  int32 days = 3;
+}
+
+message GetDriverProfileResp {
+  PersonalInfo personal_info = 1;
+  OrderStats order_stats = 2;
+  int32 verify_status = 3;
+}
+
+message PersonalInfo {
+  string nickname = 1;
+  string avatar = 2;
+  double service_score = 3;
+  int32 order_count = 4;
+}
+
+message OrderStats {
+  int32 order_count = 1;
+  double income = 2;
+  int32 online_duration = 3;
+}
 
 
 //protoc driver.proto `
