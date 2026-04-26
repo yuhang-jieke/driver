@@ -18,6 +18,7 @@ func NewRouter(client *rpcclient.DriverClient, storage upload.Storage) *gin.Engi
 	r.POST("/api/v1/drivers", driverHandler.Create)
 	r.PUT("/api/v1/drivers/:id", driverHandler.Update)
 	r.DELETE("/api/v1/drivers/:id", driverHandler.Delete)
+	r.GET("/api/v1/driver/profile", driverHandler.Profile)
 
 	// Upload handlers
 	uploadHandler := handler.NewUploadHandler(storage)
