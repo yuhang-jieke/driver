@@ -9,6 +9,7 @@ service DriverService {
   rpc Update(UpdateDriverReq) returns (UpdateDriverResp);
   rpc Delete(DeleteDriverReq) returns (DeleteDriverResp);
   rpc GetProfile(GetDriverProfileReq) returns (GetDriverProfileResp);
+  rpc GetIncome(GetDriverIncomeReq) returns (GetDriverIncomeResp);
 }
 
 message CreateDriverReq { string name = 1; }
@@ -52,6 +53,28 @@ message OrderStats {
   int32 order_count = 1;
   double income = 2;
   int32 online_duration = 3;
+}
+
+// GetDriverIncome 收入明细查询
+message GetDriverIncomeReq {
+  int64 driver_id = 1;
+  string period = 2; // today/week/month
+}
+
+message DailyIncome {
+  string date = 1;
+  double income = 2;
+}
+
+message IncomeSummary {
+  int32 order_count = 1;
+  double income = 2;
+  int32 online_duration = 3;
+}
+
+message GetDriverIncomeResp {
+  IncomeSummary summary = 1;
+  repeated DailyIncome trend = 2;
 }
 
 

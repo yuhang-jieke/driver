@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"driver/taketaxi/pkg/database"
 	"driver/taketaxi/srvDriver/internal/model"
 	"time"
 
@@ -12,9 +11,6 @@ import (
 type DriverRepo struct{ db *gorm.DB }
 
 func NewDriverRepo(db *gorm.DB) *DriverRepo {
-	if db == nil {
-		db, _ = database.NewDB(nil)
-	}
 	return &DriverRepo{db: db}
 }
 
@@ -131,4 +127,25 @@ func (r *DriverRepo) GetOrderStats(ctx context.Context, driverID int64, startDat
 		return nil, err
 	}
 	return &result, nil
+}
+
+// DailyIncomeResult 每日收入结果
+type DailyIncomeResult struct {
+	Date   string
+	Income float64
+}
+
+// GetDailyIncome 获取每日收入数据
+func (r *DriverRepo) GetDailyIncome(ctx context.Context, driverID int64, startDate, endDate time.Time) ([]DailyIncomeResult, error) {
+	var results []DailyIncomeResult
+	err := r.db.WithContext(ctx).
+		Model(&model.DriverStatisticsSummary{}).
+		Select("DATE(stat_date) as date, COALESCE(total_income, 0) as income").
+		Where("driver_id = ? AND stat_date BETWEEN ? AND ?", driverID, startDate, endDate).
+		Order("stat_date ASC").
+		Scan(&results).Error
+	if err != nil {
+		return nil, err
+	}
+	return results, nil
 }

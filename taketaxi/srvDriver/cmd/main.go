@@ -2,6 +2,7 @@ package main
 
 import (
 	"driver/taketaxi/pkg/config"
+	"driver/taketaxi/pkg/database"
 	"driver/taketaxi/pkg/logger"
 	"driver/taketaxi/pkg/redis"
 	"flag"
@@ -11,6 +12,7 @@ import (
 	driver "driver/taketaxi/common/kitexGen"
 	"driver/taketaxi/srvDriver/internal/handler"
 	"driver/taketaxi/srvDriver/internal/repository"
+
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -47,6 +49,13 @@ func main() {
 	_ = rdb
 	logger.Info("redis client initialized")
 
+	// 初始化数据库
+	db, err := database.NewDB(&cfg.Database)
+	if err != nil {
+		logger.Fatal("数据库初始化失败", zap.Error(err))
+	}
+	logger.Info("database initialized")
+
 	addr := fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port)
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
@@ -54,7 +63,7 @@ func main() {
 	}
 
 	s := grpc.NewServer()
-	driver.RegisterDriverServiceServer(s, handler.NewDriverHandler(repository.NewDriverRepo(nil)))
+	driver.RegisterDriverServiceServer(s, handler.NewDriverHandler(repository.NewDriverRepo(db)))
 	reflection.Register(s)
 
 	logger.Info("gRPC server starting", zap.String("address", addr))

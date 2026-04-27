@@ -85,3 +85,14 @@ func (h *DriverHandler) GetProfile(ctx context.Context, req *driver.GetDriverPro
 	logger.Info("gRPC GetProfile success", zap.String("method", "GetProfile"), zap.Int64("driver_id", req.DriverId), zap.Duration("duration", time.Since(start)))
 	return resp, nil
 }
+
+func (h *DriverHandler) GetIncome(ctx context.Context, req *driver.GetDriverIncomeReq) (*driver.GetDriverIncomeResp, error) {
+	start := time.Now()
+	resp, err := h.svc.GetIncome(ctx, req)
+	if err != nil {
+		logger.Error("gRPC GetIncome failed", zap.String("method", "GetIncome"), zap.Int64("driver_id", req.DriverId), zap.Error(err))
+		return nil, err
+	}
+	logger.Info("gRPC GetIncome success", zap.String("method", "GetIncome"), zap.Int64("driver_id", req.DriverId), zap.Duration("duration", time.Since(start)))
+	return resp, nil
+}

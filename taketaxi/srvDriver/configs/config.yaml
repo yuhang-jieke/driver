@@ -3,13 +3,12 @@ server:
   port: 8001
 
 database:
-  host: 115.190.57.118
+  host: 115.190.64.69
   port: 3306
   user: root
-  password: 4ay1nkal3u8ed77y
-  database: shayu
+  password: 123456
+  database: yk
 redis:
-  Host: 115.190.57.118
+  Host: 115.190.64.69
   Port: 6379
-  Password: 4ay1nkal3u8ed77y
   Database: 0

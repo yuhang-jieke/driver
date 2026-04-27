@@ -1,81 +1,40 @@
 ---
-name: Profile API Integration
-description: 前端对接后端 Profile API，替换 mock 数据
+name: Backend-Frontend Profile API Integration
+description: 对接后端 Profile API 到前端 React 应用
 type: project
 ---
 
+# Backend-Frontend Profile API 集成设计
+
 ## 背景
 
-前端目前使用 mock store 存储司机数据。需要对接后端 `GET /api/v1/driver/profile` 接口，获取真实数据。
+前端 React 应用目前使用 mock 数据，需要对接后端已有的 `/api/v1/driver/profile` 接口获取司机真实数据。
 
-## 目标
+## 范围
 
-- 创建 API 服务模块，封装 HTTP 请求
-- 通过环境变量配置 API baseURL
-- 改造 Store，从 API 获取司机信息
-- 处理加载和错误状态
+- 仅对接 Profile 接口
+- 订单、抢单等功能保持 mock 数据
+- 使用硬编码 driver_id = 1777200100810 进行测试
 
-## 技术方案
+## 后端接口
 
-### 1. 环境变量配置
+### GET /api/v1/driver/profile
 
-创建 `.env.development`:
-```
-VITE_API_BASE_URL=http://localhost:8080
-```
+**请求参数**：
+| 参数 | 类型 | 必填 | 说明 |
+|-----|------|-----|------|
+| driver_id | int64 | 是 | 司机ID |
+| date | string | 否 | 查询日期，格式 YYYY-MM-DD |
+| days | int32 | 否 | 查询天数，默认1 |
 
-### 2. API 服务模块
-
-创建 `src/app/api/profile.ts`:
-- 定义 `ProfileResponse` 类型（与后端 proto 一致）
-- 定义 `PersonalInfo` 类型
-- 定义 `OrderStats` 类型
-- 实现 `fetchProfile(driverId: number)` 函数
-
-### 3. Store 改造
-
-修改 `src/app/store.tsx`:
-- 删除 `initialDrivers` mock 数据
-- 添加 `loading` 和 `error` 状态
-- 添加 `fetchProfile()` 异步方法
-- 字段映射逻辑
-
-### 4. 组件调整
-
-修改 `src/app/components/DriverApp.tsx`:
-- 在 `useEffect` 中调用 `fetchProfile()`
-- 添加加载中 UI
-- 添加错误处理 UI
-
-## 字段映射
-
-| 后端字段 (proto) | 前端字段 (Driver) |
-|-----------------|------------------|
-| `personal_info.nickname` | `name` |
-| `personal_info.phone` | `phone` |
-| `personal_info.plate` | `plate` |
-| `personal_info.car` | `car` |
-| `personal_info.service_score` | `rating` |
-| `personal_info.online` | `online` |
-| `personal_info.status` | `status` |
-| `order_stats.order_count` | `totalOrders` |
-| `order_stats.income` | `todayEarnings` |
-
-## 接口详情
-
-**请求:**
-```
-GET /api/v1/driver/profile?driver_id=1&date=&days=1
-```
-
-**响应:**
+**响应结构**：
 ```json
 {
   "personal_info": {
-    "nickname": "王师傅",
-    "avatar": "",
-    "service_score": 4.92,
-    "order_count": 2341,
+    "nickname": "string",
+    "avatar": "string",
+    "service_score": 80.0,
+    "order_count": 100,
     "phone": "138****2341",
     "plate": "苏N·8F23K",
     "car": "轩逸 · 银色",
@@ -85,19 +44,82 @@ GET /api/v1/driver/profile?driver_id=1&date=&days=1
   "order_stats": {
     "order_count": 8,
     "income": 328.5,
-    "online_duration": 360
+    "online_duration": 22320
   },
-  "verify_status": 1
+  "verify_status": 2
 }
 ```
 
-## 暂时保留的功能
+## 数据映射
 
-- 订单相关的 mock 数据（pending orders、history 等）—— 后端暂无对应接口
-- `orders` 和 `complaints` 相关的 store 逻辑
+| 后端字段 | 前端字段 | 转换规则 |
+|---------|---------|---------|
+| `personal_info.nickname` | `name` | 直接映射 |
+| `personal_info.phone` | `phone` | 直接映射 |
+| `personal_info.plate` | `plate` | 直接映射 |
+| `personal_info.car` | `car` | 直接映射 |
+| `personal_info.service_score` | `rating` | service_score / 20 (转成 0-5 分) |
+| `personal_info.online` | `online` | 直接映射 |
+| `personal_info.order_count` | `totalOrders` | 直接映射 |
+| `order_stats.income` | `todayEarnings` | 直接映射 |
+| `personal_info.status` | `status` | 直接映射 (idle/busy/offline) |
 
-## 风险与约束
+## 文件改动
 
-- driver_id 暂时写死为 `1`，后续接入认证时替换
-- 错误处理使用简单的 toast 提示
-- 暂不实现 token 认证
+### 新增文件
+
+**`driverfrontend/src/app/api/profile.ts`**
+
+职责：
+- 定义后端 Profile 响应类型
+- 封装 fetchDriverProfile 函数
+- 实现数据转换函数
+
+### 修改文件
+
+**`driverfrontend/src/app/store.tsx`**
+
+改动：
+1. 导入 profile API
+2. 添加 loading state
+3. 在 StoreProvider 中用 useEffect 调用 API
+4. API 成功时更新 drivers[0] 数据
+5. API 失败时保持 mock 数据，打印错误日志
+
+## API 调用流程
+
+```
+App 启动
+    ↓
+StoreProvider 初始化
+    ↓
+useEffect 调用 fetchDriverProfile(1777200100810)
+    ↓
+GET http://localhost:8080/api/v1/driver/profile?driver_id=1777200100810
+    ↓
+成功 → transformProfileData() → 更新 drivers state
+失败 → console.error → 保持 mock 数据
+    ↓
+UI 渲染
+```
+
+## 错误处理
+
+- 网络错误：保持 mock 数据，打印错误
+- 后端错误响应：保持 mock 数据，打印错误
+- 数据解析错误：保持 mock 数据，打印错误
+
+## 测试验证
+
+1. 启动后端服务 (端口 8080)
+2. 启动前端开发服务器
+3. 打开浏览器访问前端
+4. 检查 Network 面板确认 API 调用
+5. 验证首页司机信息是否来自后端
+
+## 后续扩展
+
+当需要对接更多接口时：
+- 扩展 `api/` 目录结构
+- 添加 axios 实例统一配置
+- 实现登录认证获取 driver_id

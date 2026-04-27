@@ -121,3 +121,60 @@ func (s *DriverService) GetProfile(ctx context.Context, req *driver.GetDriverPro
 		VerifyStatus: int32(profile.VerifyStatus),
 	}, nil
 }
+
+// GetIncome 查询收入明细
+func (s *DriverService) GetIncome(ctx context.Context, req *driver.GetDriverIncomeReq) (*driver.GetDriverIncomeResp, error) {
+	if req.DriverId <= 0 {
+		return nil, errors.New("invalid driver_id")
+	}
+
+	// 根据 period 计算天数
+	var days int
+	switch req.Period {
+	case "today":
+		days = 1
+	case "week":
+		days = 7
+	case "month":
+		days = 30
+	default:
+		days = 1
+	}
+
+	// 计算日期范围
+	now := time.Now()
+	endDate := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.Local)
+	startDate := endDate.AddDate(0, 0, -days+1)
+
+	// 查询汇总统计
+	stats, err := s.repo.GetOrderStats(ctx, req.DriverId, startDate, endDate)
+	if err != nil {
+		return nil, err
+	}
+
+	// 查询每日数据（最多返回7天）
+	trendEndDate := endDate
+	trendStartDate := endDate.AddDate(0, 0, -6)
+	dailyData, err := s.repo.GetDailyIncome(ctx, req.DriverId, trendStartDate, trendEndDate)
+	if err != nil {
+		return nil, err
+	}
+
+	// 组装趋势数据
+	var trend []*driver.DailyIncome
+	for _, d := range dailyData {
+		trend = append(trend, &driver.DailyIncome{
+			Date:   d.Date,
+			Income: d.Income,
+		})
+	}
+
+	return &driver.GetDriverIncomeResp{
+		Summary: &driver.IncomeSummary{
+			OrderCount:     int32(stats.OrderCount),
+			Income:         stats.TotalIncome,
+			OnlineDuration: int32(stats.OnlineDuration),
+		},
+		Trend: trend,
+	}, nil
+}

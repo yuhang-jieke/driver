@@ -162,3 +162,37 @@ func (h *DriverHandler) Profile(c *gin.Context) {
 	logger.Info("Profile 查询成功", zap.Int64("driver_id", driverID))
 	c.JSON(http.StatusOK, resp)
 }
+
+// Income 查询司机收入明细
+func (h *DriverHandler) Income(c *gin.Context) {
+	driverIDStr := c.Query("driver_id")
+	if driverIDStr == "" {
+		logger.Warn("Income 缺少 driver_id 参数")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "driver_id is required"})
+		return
+	}
+	driverID, err := strconv.ParseInt(driverIDStr, 10, 64)
+	if err != nil {
+		logger.Warn("Income 参数错误", zap.String("driver_id", driverIDStr), zap.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid driver_id"})
+		return
+	}
+
+	period := c.Query("period")
+	if period == "" {
+		period = "today"
+	}
+
+	resp, err := h.client.GetIncome(c.Request.Context(), &pb.GetDriverIncomeReq{
+		DriverId: driverID,
+		Period:   period,
+	})
+	if err != nil {
+		logger.Error("Income 查询失败", zap.Int64("driver_id", driverID), zap.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	logger.Info("Income 查询成功", zap.Int64("driver_id", driverID), zap.String("period", period))
+	c.JSON(http.StatusOK, resp)
+}

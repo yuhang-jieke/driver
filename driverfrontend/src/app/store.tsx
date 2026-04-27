@@ -1,5 +1,7 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
-import { fetchProfile as fetchProfileApi } from "./api/profile";
+import { fetchDriverProfile, transformProfileData } from "./api/profile";
+
+const TEST_DRIVER_ID = 200000001;
 
 export type OrderStatus =
   | "pending"
@@ -68,17 +70,21 @@ interface Store {
   drivers: Driver[];
   complaints: Complaint[];
   currentDriverId: string;
-  loading: boolean;
-  error: string | null;
   createOrder: (o: Omit<Order, "id" | "createdAt" | "status">) => string;
   acceptOrder: (orderId: string, driverId: string) => void;
   updateOrderStatus: (orderId: string, status: OrderStatus) => void;
   cancelOrder: (orderId: string) => void;
   setDriverOnline: (driverId: string, online: boolean) => void;
-  fetchProfile: () => Promise<void>;
 }
 
 const StoreCtx = createContext<Store | null>(null);
+
+const initialDrivers: Driver[] = [
+  { id: "D001", name: "王师傅", phone: "138****2341", plate: "苏N·8F23K", car: "轩逸 · 银色", rating: 4.92, online: true, totalOrders: 2341, todayEarnings: 328, status: "idle" },
+  { id: "D002", name: "李师傅", phone: "139****6612", plate: "苏N·1K88P", car: "朗逸 · 白色", rating: 4.88, online: true, totalOrders: 1892, todayEarnings: 265, status: "idle" },
+  { id: "D003", name: "张师傅", phone: "136****9900", plate: "苏N·2M55Q", car: "捷达 · 黑色", rating: 4.76, online: false, totalOrders: 985, todayEarnings: 0, status: "offline" },
+  { id: "D004", name: "赵师傅", phone: "135****4411", plate: "苏N·6R23L", car: "卡罗拉 · 白色", rating: 4.95, online: true, totalOrders: 3102, todayEarnings: 412, status: "idle" },
+];
 
 const initialOrders: Order[] = [
   { id: "20260423001", passengerName: "我", passengerPhone: "198****2059", from: "宿迁职业技术学院8号楼南侧", to: "宿迁万达广场", distanceKm: 6.2, estMinutes: 18, price: 11.2, originalPrice: 17.2, couponDiscount: 6, carType: "小猪特价", status: "completed", createdAt: Date.now() - 3600000 * 3, driverId: "D001", driverName: "王师傅", driverPlate: "苏N·8F23K", driverCar: "轩逸 · 银色", driverRating: 4.92, paymentMethod: "微信支付", rating: 5, ratingComment: "师傅很准时", ratingTags: ["准时准点", "车内整洁"], coinsEarned: 22 },
@@ -95,40 +101,25 @@ const initialComplaints: Complaint[] = [
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [orders, setOrders] = useState<Order[]>(initialOrders);
-  const [drivers, setDrivers] = useState<Driver[]>([]);
+  const [drivers, setDrivers] = useState<Driver[]>(initialDrivers);
   const [complaints, setComplaints] = useState<Complaint[]>(initialComplaints);
-  const [currentDriverId, setCurrentDriverId] = useState("1");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [currentDriverId] = useState("D001");
+  const [profileLoaded, setProfileLoaded] = useState(false);
 
-  const fetchProfile: Store["fetchProfile"] = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await fetchProfileApi(1);
-      const { personal_info, order_stats } = response;
-      const driver: Driver = {
-        id: currentDriverId,
-        name: personal_info.nickname,
-        phone: personal_info.phone,
-        plate: personal_info.plate,
-        car: personal_info.car,
-        rating: personal_info.service_score,
-        online: personal_info.online,
-        totalOrders: order_stats.order_count,
-        todayEarnings: order_stats.income,
-        status: personal_info.status as "idle" | "busy" | "offline",
-      };
-      setDrivers([driver]);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to fetch profile");
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // 初始化时从后端加载司机 Profile
   useEffect(() => {
-    fetchProfile();
+    async function loadProfile() {
+      const data = await fetchDriverProfile(TEST_DRIVER_ID);
+      if (data) {
+        const driverData = transformProfileData(data, "D001");
+        setDrivers((prev) =>
+          prev.map((d) => (d.id === "D001" ? { ...d, ...driverData } : d))
+        );
+        console.log("Profile loaded from backend:", driverData);
+      }
+      setProfileLoaded(true);
+    }
+    loadProfile();
   }, []);
 
   useEffect(() => {
@@ -185,8 +176,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   return (
     <StoreCtx.Provider value={{
-      orders, drivers, complaints, currentDriverId, loading, error,
-      createOrder, acceptOrder, updateOrderStatus, cancelOrder, setDriverOnline, fetchProfile,
+      orders, drivers, complaints, currentDriverId,
+      createOrder, acceptOrder, updateOrderStatus, cancelOrder, setDriverOnline,
     }}>
       {children}
     </StoreCtx.Provider>

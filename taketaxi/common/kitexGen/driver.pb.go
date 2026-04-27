@@ -826,6 +826,223 @@ func (x *OrderStats) GetOnlineDuration() int32 {
 	return 0
 }
 
+// GetDriverIncome 收入明细查询
+type GetDriverIncomeReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	DriverId      int64                  `protobuf:"varint,1,opt,name=driver_id,json=driverId,proto3" json:"driver_id,omitempty"`
+	Period        string                 `protobuf:"bytes,2,opt,name=period,proto3" json:"period,omitempty"` // today/week/month
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetDriverIncomeReq) Reset() {
+	*x = GetDriverIncomeReq{}
+	mi := &file_driver_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetDriverIncomeReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetDriverIncomeReq) ProtoMessage() {}
+
+func (x *GetDriverIncomeReq) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetDriverIncomeReq.ProtoReflect.Descriptor instead.
+func (*GetDriverIncomeReq) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *GetDriverIncomeReq) GetDriverId() int64 {
+	if x != nil {
+		return x.DriverId
+	}
+	return 0
+}
+
+func (x *GetDriverIncomeReq) GetPeriod() string {
+	if x != nil {
+		return x.Period
+	}
+	return ""
+}
+
+type DailyIncome struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Date          string                 `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty"`
+	Income        float64                `protobuf:"fixed64,2,opt,name=income,proto3" json:"income,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DailyIncome) Reset() {
+	*x = DailyIncome{}
+	mi := &file_driver_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DailyIncome) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DailyIncome) ProtoMessage() {}
+
+func (x *DailyIncome) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DailyIncome.ProtoReflect.Descriptor instead.
+func (*DailyIncome) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *DailyIncome) GetDate() string {
+	if x != nil {
+		return x.Date
+	}
+	return ""
+}
+
+func (x *DailyIncome) GetIncome() float64 {
+	if x != nil {
+		return x.Income
+	}
+	return 0
+}
+
+type IncomeSummary struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	OrderCount     int32                  `protobuf:"varint,1,opt,name=order_count,json=orderCount,proto3" json:"order_count,omitempty"`
+	Income         float64                `protobuf:"fixed64,2,opt,name=income,proto3" json:"income,omitempty"`
+	OnlineDuration int32                  `protobuf:"varint,3,opt,name=online_duration,json=onlineDuration,proto3" json:"online_duration,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *IncomeSummary) Reset() {
+	*x = IncomeSummary{}
+	mi := &file_driver_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *IncomeSummary) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IncomeSummary) ProtoMessage() {}
+
+func (x *IncomeSummary) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IncomeSummary.ProtoReflect.Descriptor instead.
+func (*IncomeSummary) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *IncomeSummary) GetOrderCount() int32 {
+	if x != nil {
+		return x.OrderCount
+	}
+	return 0
+}
+
+func (x *IncomeSummary) GetIncome() float64 {
+	if x != nil {
+		return x.Income
+	}
+	return 0
+}
+
+func (x *IncomeSummary) GetOnlineDuration() int32 {
+	if x != nil {
+		return x.OnlineDuration
+	}
+	return 0
+}
+
+type GetDriverIncomeResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Summary       *IncomeSummary         `protobuf:"bytes,1,opt,name=summary,proto3" json:"summary,omitempty"`
+	Trend         []*DailyIncome         `protobuf:"bytes,2,rep,name=trend,proto3" json:"trend,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetDriverIncomeResp) Reset() {
+	*x = GetDriverIncomeResp{}
+	mi := &file_driver_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetDriverIncomeResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetDriverIncomeResp) ProtoMessage() {}
+
+func (x *GetDriverIncomeResp) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetDriverIncomeResp.ProtoReflect.Descriptor instead.
+func (*GetDriverIncomeResp) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *GetDriverIncomeResp) GetSummary() *IncomeSummary {
+	if x != nil {
+		return x.Summary
+	}
+	return nil
+}
+
+func (x *GetDriverIncomeResp) GetTrend() []*DailyIncome {
+	if x != nil {
+		return x.Trend
+	}
+	return nil
+}
+
 var File_driver_proto protoreflect.FileDescriptor
 
 const file_driver_proto_rawDesc = "" +
@@ -883,7 +1100,21 @@ const file_driver_proto_rawDesc = "" +
 	"\vorder_count\x18\x01 \x01(\x05R\n" +
 	"orderCount\x12\x16\n" +
 	"\x06income\x18\x02 \x01(\x01R\x06income\x12'\n" +
-	"\x0fonline_duration\x18\x03 \x01(\x05R\x0eonlineDuration2\xfa\x02\n" +
+	"\x0fonline_duration\x18\x03 \x01(\x05R\x0eonlineDuration\"I\n" +
+	"\x12GetDriverIncomeReq\x12\x1b\n" +
+	"\tdriver_id\x18\x01 \x01(\x03R\bdriverId\x12\x16\n" +
+	"\x06period\x18\x02 \x01(\tR\x06period\"9\n" +
+	"\vDailyIncome\x12\x12\n" +
+	"\x04date\x18\x01 \x01(\tR\x04date\x12\x16\n" +
+	"\x06income\x18\x02 \x01(\x01R\x06income\"q\n" +
+	"\rIncomeSummary\x12\x1f\n" +
+	"\vorder_count\x18\x01 \x01(\x05R\n" +
+	"orderCount\x12\x16\n" +
+	"\x06income\x18\x02 \x01(\x01R\x06income\x12'\n" +
+	"\x0fonline_duration\x18\x03 \x01(\x05R\x0eonlineDuration\"q\n" +
+	"\x13GetDriverIncomeResp\x12/\n" +
+	"\asummary\x18\x01 \x01(\v2\x15.driver.IncomeSummaryR\asummary\x12)\n" +
+	"\x05trend\x18\x02 \x03(\v2\x13.driver.DailyIncomeR\x05trend2\xc0\x03\n" +
 	"\rDriverService\x12;\n" +
 	"\x06Create\x12\x17.driver.CreateDriverReq\x1a\x18.driver.CreateDriverResp\x122\n" +
 	"\x03Get\x12\x14.driver.GetDriverReq\x1a\x15.driver.GetDriverResp\x125\n" +
@@ -891,7 +1122,8 @@ const file_driver_proto_rawDesc = "" +
 	"\x06Update\x12\x17.driver.UpdateDriverReq\x1a\x18.driver.UpdateDriverResp\x12;\n" +
 	"\x06Delete\x12\x17.driver.DeleteDriverReq\x1a\x18.driver.DeleteDriverResp\x12G\n" +
 	"\n" +
-	"GetProfile\x12\x1b.driver.GetDriverProfileReq\x1a\x1c.driver.GetDriverProfileRespB!Z\x1ftaketaxi/common/kitexGen/driverb\x06proto3"
+	"GetProfile\x12\x1b.driver.GetDriverProfileReq\x1a\x1c.driver.GetDriverProfileResp\x12D\n" +
+	"\tGetIncome\x12\x1a.driver.GetDriverIncomeReq\x1a\x1b.driver.GetDriverIncomeRespB!Z\x1ftaketaxi/common/kitexGen/driverb\x06proto3"
 
 var (
 	file_driver_proto_rawDescOnce sync.Once
@@ -905,7 +1137,7 @@ func file_driver_proto_rawDescGZIP() []byte {
 	return file_driver_proto_rawDescData
 }
 
-var file_driver_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
+var file_driver_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
 var file_driver_proto_goTypes = []any{
 	(*CreateDriverReq)(nil),      // 0: driver.CreateDriverReq
 	(*CreateDriverResp)(nil),     // 1: driver.CreateDriverResp
@@ -922,28 +1154,36 @@ var file_driver_proto_goTypes = []any{
 	(*GetDriverProfileResp)(nil), // 12: driver.GetDriverProfileResp
 	(*PersonalInfo)(nil),         // 13: driver.PersonalInfo
 	(*OrderStats)(nil),           // 14: driver.OrderStats
+	(*GetDriverIncomeReq)(nil),   // 15: driver.GetDriverIncomeReq
+	(*DailyIncome)(nil),          // 16: driver.DailyIncome
+	(*IncomeSummary)(nil),        // 17: driver.IncomeSummary
+	(*GetDriverIncomeResp)(nil),  // 18: driver.GetDriverIncomeResp
 }
 var file_driver_proto_depIdxs = []int32{
 	5,  // 0: driver.ListDriverResp.items:type_name -> driver.DriverItem
 	13, // 1: driver.GetDriverProfileResp.personal_info:type_name -> driver.PersonalInfo
 	14, // 2: driver.GetDriverProfileResp.order_stats:type_name -> driver.OrderStats
-	0,  // 3: driver.DriverService.Create:input_type -> driver.CreateDriverReq
-	2,  // 4: driver.DriverService.Get:input_type -> driver.GetDriverReq
-	4,  // 5: driver.DriverService.List:input_type -> driver.ListDriverReq
-	7,  // 6: driver.DriverService.Update:input_type -> driver.UpdateDriverReq
-	9,  // 7: driver.DriverService.Delete:input_type -> driver.DeleteDriverReq
-	11, // 8: driver.DriverService.GetProfile:input_type -> driver.GetDriverProfileReq
-	1,  // 9: driver.DriverService.Create:output_type -> driver.CreateDriverResp
-	3,  // 10: driver.DriverService.Get:output_type -> driver.GetDriverResp
-	6,  // 11: driver.DriverService.List:output_type -> driver.ListDriverResp
-	8,  // 12: driver.DriverService.Update:output_type -> driver.UpdateDriverResp
-	10, // 13: driver.DriverService.Delete:output_type -> driver.DeleteDriverResp
-	12, // 14: driver.DriverService.GetProfile:output_type -> driver.GetDriverProfileResp
-	9,  // [9:15] is the sub-list for method output_type
-	3,  // [3:9] is the sub-list for method input_type
-	3,  // [3:3] is the sub-list for extension type_name
-	3,  // [3:3] is the sub-list for extension extendee
-	0,  // [0:3] is the sub-list for field type_name
+	17, // 3: driver.GetDriverIncomeResp.summary:type_name -> driver.IncomeSummary
+	16, // 4: driver.GetDriverIncomeResp.trend:type_name -> driver.DailyIncome
+	0,  // 5: driver.DriverService.Create:input_type -> driver.CreateDriverReq
+	2,  // 6: driver.DriverService.Get:input_type -> driver.GetDriverReq
+	4,  // 7: driver.DriverService.List:input_type -> driver.ListDriverReq
+	7,  // 8: driver.DriverService.Update:input_type -> driver.UpdateDriverReq
+	9,  // 9: driver.DriverService.Delete:input_type -> driver.DeleteDriverReq
+	11, // 10: driver.DriverService.GetProfile:input_type -> driver.GetDriverProfileReq
+	15, // 11: driver.DriverService.GetIncome:input_type -> driver.GetDriverIncomeReq
+	1,  // 12: driver.DriverService.Create:output_type -> driver.CreateDriverResp
+	3,  // 13: driver.DriverService.Get:output_type -> driver.GetDriverResp
+	6,  // 14: driver.DriverService.List:output_type -> driver.ListDriverResp
+	8,  // 15: driver.DriverService.Update:output_type -> driver.UpdateDriverResp
+	10, // 16: driver.DriverService.Delete:output_type -> driver.DeleteDriverResp
+	12, // 17: driver.DriverService.GetProfile:output_type -> driver.GetDriverProfileResp
+	18, // 18: driver.DriverService.GetIncome:output_type -> driver.GetDriverIncomeResp
+	12, // [12:19] is the sub-list for method output_type
+	5,  // [5:12] is the sub-list for method input_type
+	5,  // [5:5] is the sub-list for extension type_name
+	5,  // [5:5] is the sub-list for extension extendee
+	0,  // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_driver_proto_init() }
@@ -957,7 +1197,7 @@ func file_driver_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_driver_proto_rawDesc), len(file_driver_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   15,
+			NumMessages:   19,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -47,3 +47,6 @@ func (c *DriverClient) Delete(ctx context.Context, req *driver.DeleteDriverReq) 
 func (c *DriverClient) GetProfile(ctx context.Context, req *driver.GetDriverProfileReq) (*driver.GetDriverProfileResp, error) {
 	return c.client.GetProfile(ctx, req)
 }
+func (c *DriverClient) GetIncome(ctx context.Context, req *driver.GetDriverIncomeReq) (*driver.GetDriverIncomeResp, error) {
+	return c.client.GetIncome(ctx, req)
+}

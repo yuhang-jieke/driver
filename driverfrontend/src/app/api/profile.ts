@@ -1,5 +1,8 @@
-// API 响应类型定义（与后端 proto 一致）
-export interface PersonalInfo {
+import type { Driver } from "../store";
+
+const API_BASE = "http://localhost:8080";
+
+interface PersonalInfo {
   nickname: string;
   avatar: string;
   service_score: number;
@@ -11,27 +14,46 @@ export interface PersonalInfo {
   status: string;
 }
 
-export interface OrderStats {
+interface OrderStats {
   order_count: number;
   income: number;
   online_duration: number;
 }
 
-export interface ProfileResponse {
+interface ProfileResponse {
   personal_info: PersonalInfo;
   order_stats: OrderStats;
   verify_status: number;
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
-
-export async function fetchProfile(driverId: number): Promise<ProfileResponse> {
-  const url = `${API_BASE_URL}/api/v1/driver/profile?driver_id=${driverId}&date=&days=1`;
-  const response = await fetch(url);
-
-  if (!response.ok) {
-    throw new Error(`API error: ${response.status}`);
+export async function fetchDriverProfile(driverId: number): Promise<ProfileResponse | null> {
+  try {
+    const res = await fetch(
+      `${API_BASE}/api/v1/driver/profile?driver_id=${driverId}`
+    );
+    if (!res.ok) {
+      console.error("Profile API error:", res.status, res.statusText);
+      return null;
+    }
+    return await res.json();
+  } catch (err) {
+    console.error("Profile API fetch failed:", err);
+    return null;
   }
+}
 
-  return response.json();
+export function transformProfileData(data: ProfileResponse, driverId: string): Partial<Driver> {
+  const { personal_info, order_stats } = data;
+  return {
+    id: driverId,
+    name: personal_info.nickname || "司机",
+    phone: personal_info.phone || "",
+    plate: personal_info.plate || "",
+    car: personal_info.car || "",
+    rating: personal_info.service_score ? personal_info.service_score / 20 : 4.5,
+    online: personal_info.online ?? false,
+    totalOrders: personal_info.order_count || 0,
+    todayEarnings: order_stats?.income || 0,
+    status: (personal_info.status as Driver["status"]) || "offline",
+  };
 }

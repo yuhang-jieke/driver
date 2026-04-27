@@ -25,6 +25,7 @@ const (
 	DriverService_Update_FullMethodName     = "/driver.DriverService/Update"
 	DriverService_Delete_FullMethodName     = "/driver.DriverService/Delete"
 	DriverService_GetProfile_FullMethodName = "/driver.DriverService/GetProfile"
+	DriverService_GetIncome_FullMethodName  = "/driver.DriverService/GetIncome"
 )
 
 // DriverServiceClient is the client API for DriverService service.
@@ -37,6 +38,7 @@ type DriverServiceClient interface {
 	Update(ctx context.Context, in *UpdateDriverReq, opts ...grpc.CallOption) (*UpdateDriverResp, error)
 	Delete(ctx context.Context, in *DeleteDriverReq, opts ...grpc.CallOption) (*DeleteDriverResp, error)
 	GetProfile(ctx context.Context, in *GetDriverProfileReq, opts ...grpc.CallOption) (*GetDriverProfileResp, error)
+	GetIncome(ctx context.Context, in *GetDriverIncomeReq, opts ...grpc.CallOption) (*GetDriverIncomeResp, error)
 }
 
 type driverServiceClient struct {
@@ -107,6 +109,16 @@ func (c *driverServiceClient) GetProfile(ctx context.Context, in *GetDriverProfi
 	return out, nil
 }
 
+func (c *driverServiceClient) GetIncome(ctx context.Context, in *GetDriverIncomeReq, opts ...grpc.CallOption) (*GetDriverIncomeResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetDriverIncomeResp)
+	err := c.cc.Invoke(ctx, DriverService_GetIncome_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DriverServiceServer is the server API for DriverService service.
 // All implementations must embed UnimplementedDriverServiceServer
 // for forward compatibility.
@@ -117,6 +129,7 @@ type DriverServiceServer interface {
 	Update(context.Context, *UpdateDriverReq) (*UpdateDriverResp, error)
 	Delete(context.Context, *DeleteDriverReq) (*DeleteDriverResp, error)
 	GetProfile(context.Context, *GetDriverProfileReq) (*GetDriverProfileResp, error)
+	GetIncome(context.Context, *GetDriverIncomeReq) (*GetDriverIncomeResp, error)
 	mustEmbedUnimplementedDriverServiceServer()
 }
 
@@ -144,6 +157,9 @@ func (UnimplementedDriverServiceServer) Delete(context.Context, *DeleteDriverReq
 }
 func (UnimplementedDriverServiceServer) GetProfile(context.Context, *GetDriverProfileReq) (*GetDriverProfileResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetProfile not implemented")
+}
+func (UnimplementedDriverServiceServer) GetIncome(context.Context, *GetDriverIncomeReq) (*GetDriverIncomeResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetIncome not implemented")
 }
 func (UnimplementedDriverServiceServer) mustEmbedUnimplementedDriverServiceServer() {}
 func (UnimplementedDriverServiceServer) testEmbeddedByValue()                       {}
@@ -274,6 +290,24 @@ func _DriverService_GetProfile_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DriverService_GetIncome_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDriverIncomeReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).GetIncome(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_GetIncome_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).GetIncome(ctx, req.(*GetDriverIncomeReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DriverService_ServiceDesc is the grpc.ServiceDesc for DriverService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -304,6 +338,10 @@ var DriverService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetProfile",
 			Handler:    _DriverService_GetProfile_Handler,
+		},
+		{
+			MethodName: "GetIncome",
+			Handler:    _DriverService_GetIncome_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
