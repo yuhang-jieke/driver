@@ -77,7 +77,7 @@ function SlideToConfirm({
    主 App
    ============================================================ */
 export function DriverApp() {
-  const { orders, drivers, currentDriverId, setDriverOnline, acceptOrder, updateOrderStatus } = useStore();
+  const { orders, drivers, currentDriverId, loading, error, setDriverOnline, acceptOrder, updateOrderStatus } = useStore();
   const [tab, setTab] = useState<Tab>("home");
   const [meStage, setMeStage] = useState<MeStage>("main");
   const [toast, setToast] = useState<string | null>(null);
@@ -126,92 +126,118 @@ export function DriverApp() {
   return (
     <PhoneFrame>
       <div className="h-full flex flex-col bg-gray-50 relative">
-        <div className="flex-1 overflow-y-auto">
-          {tab === "home" && !myActive && (
-            <DriverHome driver={driver} pendingOrders={pendingOrders}
-              onToggle={() => setDriverOnline(driver.id, !driver.online)}
-              onAccept={id => acceptOrder(id, driver.id)}
-              onBell={() => setNotifOpen(true)} onToast={showToast} />
-          )}
-          {tab === "home" && myActive && (
-            <DriverActive order={myActive}
-              onAction={s => updateOrderStatus(myActive.id, s)}
-              onComplete={handleComplete} onToast={showToast}
-              onSOS={() => setSosOpen(true)} />
-          )}
-          {tab === "orders" && (
-            <DriverOrders orders={myHistory}
-              onOrderClick={id => setSelectedHistoryId(id)} onToast={showToast} />
-          )}
-          {tab === "me" && meStage === "main" && (
-            <DriverMe driver={driver} onNav={s => setMeStage(s as MeStage)}
-              onWithdraw={() => setWithdrawalOpen(true)} onToast={showToast} />
-          )}
-          {tab === "me" && meStage === "income" && (
-            <DriverIncomeView driver={driver} onBack={() => setMeStage("main")}
-              onWithdraw={() => setWithdrawalOpen(true)} onToast={showToast} />
-          )}
-          {tab === "me" && meStage === "service" && (
-            <DriverServiceView driver={driver} onBack={() => setMeStage("main")} onToast={showToast} />
-          )}
-          {tab === "me" && meStage === "car" && (
-            <DriverCarView driver={driver} onBack={() => setMeStage("main")} onToast={showToast} />
-          )}
-          {tab === "me" && meStage === "sos" && (
-            <DriverSOSView onBack={() => setMeStage("main")} onToast={showToast} />
-          )}
-          {tab === "me" && meStage === "settings" && (
-            <DriverSettingsView driver={driver} onBack={() => setMeStage("main")}
-              onToggleOnline={() => setDriverOnline(driver.id, !driver.online)} onToast={showToast} />
-          )}
-        </div>
-
-        {/* 底部Tab */}
-        <div className="flex border-t bg-white shrink-0">
-          {[{ k: "home", icon: Home, label: "接单" }, { k: "orders", icon: ClipboardList, label: "订单" }, { k: "me", icon: User, label: "我的" }]
-            .map(({ k, icon: Icon, label }) => (
-              <button key={k} onClick={() => { setTab(k as Tab); if (k === "me") setMeStage("main"); }}
-                className={`flex-1 py-2 flex flex-col items-center gap-0.5 relative ${tab === k ? "text-emerald-500" : "text-gray-400"}`}>
-                <Icon className="w-5 h-5" />
-                <span className="text-[10px]">{label}</span>
-                {k === "orders" && tab !== "orders" && myHistory.filter(o => o.status === "completed" && Date.now() - o.createdAt < 3600000).length > 0 && (
-                  <span className="absolute top-1 right-4 w-1.5 h-1.5 bg-emerald-500 rounded-full" />
-                )}
-              </button>
-            ))}
-        </div>
-
-        {/* 新订单浮动提示（非首页时） */}
-        {tab !== "home" && driver.online && pendingOrders.length > 0 && !cancellationAlert && (
-          <FloatingNewOrderAlert order={pendingOrders[0]}
-            onAccept={() => { acceptOrder(pendingOrders[0].id, driver.id); setTab("home"); }}
-            onView={() => setTab("home")} />
-        )}
-
-        {/* 乘客取消弹窗 */}
-        {cancellationAlert && (
-          <CancellationModal name={cancellationAlert.name} onClose={() => setCancellationAlert(null)} />
-        )}
-
-        {/* SOS弹窗 */}
-        {sosOpen && <DriverSOSModal onClose={() => setSosOpen(false)} onToast={showToast} />}
-
-        {/* 提现弹窗 */}
-        {withdrawalOpen && (
-          <WithdrawalModal balance={driver.todayEarnings}
-            onClose={() => setWithdrawalOpen(false)} onToast={showToast} />
-        )}
-
-        {/* 通知面板 */}
-        {notifOpen && (
-          <NotificationsPanel orders={myHistory} onClose={() => setNotifOpen(false)} />
-        )}
-
-        {/* Toast */}
-        {toast && (
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black/75 text-white text-xs px-4 py-2 rounded-lg z-[60]">
-            {toast}
+        {loading && (
+          <div className="h-full flex items-center justify-center bg-gray-50">
+            <div className="text-center">
+              <div className="text-3xl mb-2">⏳</div>
+              <div className="text-sm text-gray-400">加载中...</div>
+            </div>
           </div>
+        )}
+        {error && (
+          <div className="h-full flex items-center justify-center bg-gray-50">
+            <div className="text-center p-6">
+              <div className="text-3xl mb-2">😔</div>
+              <div className="text-sm text-gray-600 mb-3">{error}</div>
+              <button
+                onClick={() => window.location.reload()}
+                className="px-4 py-2 bg-emerald-500 text-white text-sm rounded-full"
+              >
+                重试
+              </button>
+            </div>
+          </div>
+        )}
+        {!loading && !error && (
+          <>
+            <div className="flex-1 overflow-y-auto">
+              {tab === "home" && !myActive && (
+                <DriverHome driver={driver} pendingOrders={pendingOrders}
+                  onToggle={() => setDriverOnline(driver.id, !driver.online)}
+                  onAccept={id => acceptOrder(id, driver.id)}
+                  onBell={() => setNotifOpen(true)} onToast={showToast} />
+              )}
+              {tab === "home" && myActive && (
+                <DriverActive order={myActive}
+                  onAction={s => updateOrderStatus(myActive.id, s)}
+                  onComplete={handleComplete} onToast={showToast}
+                  onSOS={() => setSosOpen(true)} />
+              )}
+              {tab === "orders" && (
+                <DriverOrders orders={myHistory}
+                  onOrderClick={id => setSelectedHistoryId(id)} onToast={showToast} />
+              )}
+              {tab === "me" && meStage === "main" && (
+                <DriverMe driver={driver} onNav={s => setMeStage(s as MeStage)}
+                  onWithdraw={() => setWithdrawalOpen(true)} onToast={showToast} />
+              )}
+              {tab === "me" && meStage === "income" && (
+                <DriverIncomeView driver={driver} onBack={() => setMeStage("main")}
+                  onWithdraw={() => setWithdrawalOpen(true)} onToast={showToast} />
+              )}
+              {tab === "me" && meStage === "service" && (
+                <DriverServiceView driver={driver} onBack={() => setMeStage("main")} onToast={showToast} />
+              )}
+              {tab === "me" && meStage === "car" && (
+                <DriverCarView driver={driver} onBack={() => setMeStage("main")} onToast={showToast} />
+              )}
+              {tab === "me" && meStage === "sos" && (
+                <DriverSOSView onBack={() => setMeStage("main")} onToast={showToast} />
+              )}
+              {tab === "me" && meStage === "settings" && (
+                <DriverSettingsView driver={driver} onBack={() => setMeStage("main")}
+                  onToggleOnline={() => setDriverOnline(driver.id, !driver.online)} onToast={showToast} />
+              )}
+            </div>
+
+            {/* 底部Tab */}
+            <div className="flex border-t bg-white shrink-0">
+              {[{ k: "home", icon: Home, label: "接单" }, { k: "orders", icon: ClipboardList, label: "订单" }, { k: "me", icon: User, label: "我的" }]
+                .map(({ k, icon: Icon, label }) => (
+                  <button key={k} onClick={() => { setTab(k as Tab); if (k === "me") setMeStage("main"); }}
+                    className={`flex-1 py-2 flex flex-col items-center gap-0.5 relative ${tab === k ? "text-emerald-500" : "text-gray-400"}`}>
+                    <Icon className="w-5 h-5" />
+                    <span className="text-[10px]">{label}</span>
+                    {k === "orders" && tab !== "orders" && myHistory.filter(o => o.status === "completed" && Date.now() - o.createdAt < 3600000).length > 0 && (
+                      <span className="absolute top-1 right-4 w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+                    )}
+                  </button>
+                ))}
+            </div>
+
+            {/* 新订单浮动提示（非首页时） */}
+            {tab !== "home" && driver.online && pendingOrders.length > 0 && !cancellationAlert && (
+              <FloatingNewOrderAlert order={pendingOrders[0]}
+                onAccept={() => { acceptOrder(pendingOrders[0].id, driver.id); setTab("home"); }}
+                onView={() => setTab("home")} />
+            )}
+
+            {/* 乘客取消弹窗 */}
+            {cancellationAlert && (
+              <CancellationModal name={cancellationAlert.name} onClose={() => setCancellationAlert(null)} />
+            )}
+
+            {/* SOS弹窗 */}
+            {sosOpen && <DriverSOSModal onClose={() => setSosOpen(false)} onToast={showToast} />}
+
+            {/* 提现弹窗 */}
+            {withdrawalOpen && (
+              <WithdrawalModal balance={driver.todayEarnings}
+                onClose={() => setWithdrawalOpen(false)} onToast={showToast} />
+            )}
+
+            {/* 通知面板 */}
+            {notifOpen && (
+              <NotificationsPanel orders={myHistory} onClose={() => setNotifOpen(false)} />
+            )}
+
+            {/* Toast */}
+            {toast && (
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black/75 text-white text-xs px-4 py-2 rounded-lg z-[60]">
+                {toast}
+              </div>
+            )}
+          </>
         )}
       </div>
     </PhoneFrame>
