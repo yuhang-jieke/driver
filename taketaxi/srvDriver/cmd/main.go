@@ -2,7 +2,13 @@ package main
 
 import (
 	"driver/taketaxi/pkg/config"
+	"driver/taketaxi/pkg/database"
+	"driver/taketaxi/pkg/mongodb"
 	"driver/taketaxi/pkg/redis"
+	"driver/taketaxi/srvDriver/internal/handler"
+	"driver/taketaxi/srvDriver/internal/repository"
+
+	driver "driver/taketaxi/common/kitexGen"
 	"flag"
 	"fmt"
 	"log"
@@ -20,44 +26,31 @@ func init() {
 
 func main() {
 	flag.Parse()
-	cfg, _ := config.Load(confPath)
-	//db, _ := database.NewDB(&cfg.Database)
+	cfg, err := config.Load(confPath)
+	if err != nil {
+		log.Fatalf("load config: %v", err)
+	}
+
+	db, err := database.NewDB(&cfg.Database)
+	if err != nil {
+		log.Fatalf("init db: %v", err)
+	}
 	rdb := redis.NewRedisClient(&cfg.Redis)
 	_ = rdb
-	/*db.AutoMigrate(
-		&model.Passenger{},
-		&model.DriverVehicleInfo{},
-		&model.DriverFace{},
-		&model.DriverLevelConfig{},
-		&model.DriverLevelRecord{},
-		&model.DriverLocationCache{},
-		&model.OrderEvaluation{},
-		&model.TripService{},
-		&model.TripTrajectory{},
-		&model.DriverWallet{},
-		&model.DriverIncomeLog{},
-		&model.WalletTransactionLog{},
-		&model.DriverWithdrawRecord{},
-		&model.WithdrawRecord{},
-		&model.ServiceScoreLog{},
-		&model.DriverStatisticsSummary{},
-		&model.PricingRuleConfig{},
-		&model.DriverS{},
-		&model.DriverRealname{},
-		&model.DriverLicense{},
-		&model.DriverVehicle{},
-		&model.DriverStatusLog{},
-		&model.DriverOnlineLog{},
-		&model.Order{},
-		&model.DispatchLog{},
-		&model.DriverFaceAuthLog{},
-	)*/
-	//repo := repository.NewDriverRepo(db)
+
+	mongoDb, closeMongo := mongodb.NewMongoDB(cfg.Mongo.Uri, cfg.Mongo.Database)
+	if closeMongo != nil {
+		defer closeMongo()
+	}
+
+	repo := repository.NewDriverRepo(db)
+	h := handler.NewDriverHandler(mongoDb, repo, &cfg.Dispatch)
+
 	addr := fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port)
 	lis, _ := net.Listen("tcp", addr)
 	s := grpc.NewServer()
-	//driver.RegisterDriverServiceServer(s, handler.NewDriverHandler(repo))
+	driver.RegisterDriverServiceServer(s, h)
 	reflection.Register(s)
-	log.Printf("Starting on %s", addr)
+	log.Println("Starting on", addr)
 	s.Serve(lis)
 }

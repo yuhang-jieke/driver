@@ -19,11 +19,27 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	DriverService_Create_FullMethodName = "/driver.DriverService/Create"
-	DriverService_Get_FullMethodName    = "/driver.DriverService/Get"
-	DriverService_List_FullMethodName   = "/driver.DriverService/List"
-	DriverService_Update_FullMethodName = "/driver.DriverService/Update"
-	DriverService_Delete_FullMethodName = "/driver.DriverService/Delete"
+	DriverService_Create_FullMethodName               = "/driver.DriverService/Create"
+	DriverService_Get_FullMethodName                  = "/driver.DriverService/Get"
+	DriverService_List_FullMethodName                 = "/driver.DriverService/List"
+	DriverService_Update_FullMethodName               = "/driver.DriverService/Update"
+	DriverService_Delete_FullMethodName               = "/driver.DriverService/Delete"
+	DriverService_GoOnline_FullMethodName             = "/driver.DriverService/GoOnline"
+	DriverService_StartListening_FullMethodName       = "/driver.DriverService/StartListening"
+	DriverService_GoOffline_FullMethodName            = "/driver.DriverService/GoOffline"
+	DriverService_ReportLocation_FullMethodName       = "/driver.DriverService/ReportLocation"
+	DriverService_DispatchOrder_FullMethodName        = "/driver.DriverService/DispatchOrder"
+	DriverService_AcceptOrder_FullMethodName          = "/driver.DriverService/AcceptOrder"
+	DriverService_RejectOrder_FullMethodName          = "/driver.DriverService/RejectOrder"
+	DriverService_CancelOrder_FullMethodName          = "/driver.DriverService/CancelOrder"
+	DriverService_DriverArrive_FullMethodName         = "/driver.DriverService/DriverArrive"
+	DriverService_StartTrip_FullMethodName            = "/driver.DriverService/StartTrip"
+	DriverService_EndTrip_FullMethodName              = "/driver.DriverService/EndTrip"
+	DriverService_VerifyPassengerPhone_FullMethodName = "/driver.DriverService/VerifyPassengerPhone"
+	DriverService_ListPoolOrders_FullMethodName       = "/driver.DriverService/ListPoolOrders"
+	DriverService_GrabOrder_FullMethodName            = "/driver.DriverService/GrabOrder"
+	DriverService_ListOrders_FullMethodName           = "/driver.DriverService/ListOrders"
+	DriverService_GetOrder_FullMethodName             = "/driver.DriverService/GetOrder"
 )
 
 // DriverServiceClient is the client API for DriverService service.
@@ -35,6 +51,38 @@ type DriverServiceClient interface {
 	List(ctx context.Context, in *ListDriverReq, opts ...grpc.CallOption) (*ListDriverResp, error)
 	Update(ctx context.Context, in *UpdateDriverReq, opts ...grpc.CallOption) (*UpdateDriverResp, error)
 	Delete(ctx context.Context, in *DeleteDriverReq, opts ...grpc.CallOption) (*DeleteDriverResp, error)
+	// 司机出车上线
+	GoOnline(ctx context.Context, in *GoOnlineReq, opts ...grpc.CallOption) (*GoOnlineResp, error)
+	// 开始听单
+	StartListening(ctx context.Context, in *StartListeningReq, opts ...grpc.CallOption) (*StartListeningResp, error)
+	// 收车下线
+	GoOffline(ctx context.Context, in *GoOfflineReq, opts ...grpc.CallOption) (*GoOfflineResp, error)
+	// 位置上报
+	ReportLocation(ctx context.Context, in *ReportLocationReq, opts ...grpc.CallOption) (*ReportLocationResp, error)
+	// 派单
+	DispatchOrder(ctx context.Context, in *DispatchOrderReq, opts ...grpc.CallOption) (*DispatchOrderResp, error)
+	// 司机接单
+	AcceptOrder(ctx context.Context, in *AcceptOrderReq, opts ...grpc.CallOption) (*AcceptOrderResp, error)
+	// 司机拒绝接单
+	RejectOrder(ctx context.Context, in *RejectOrderReq, opts ...grpc.CallOption) (*RejectOrderResp, error)
+	// 司机取消订单（已接单后主动取消）
+	CancelOrder(ctx context.Context, in *CancelOrderReq, opts ...grpc.CallOption) (*CancelOrderResp, error)
+	// 司机已到达
+	DriverArrive(ctx context.Context, in *DriverArriveReq, opts ...grpc.CallOption) (*DriverArriveResp, error)
+	// 开始行程
+	StartTrip(ctx context.Context, in *StartTripReq, opts ...grpc.CallOption) (*StartTripResp, error)
+	// 到达目的地
+	EndTrip(ctx context.Context, in *EndTripReq, opts ...grpc.CallOption) (*EndTripResp, error)
+	// 验证乘客手机号后四位
+	VerifyPassengerPhone(ctx context.Context, in *VerifyPassengerPhoneReq, opts ...grpc.CallOption) (*VerifyPassengerPhoneResp, error)
+	// 抢单池：查看池中订单
+	ListPoolOrders(ctx context.Context, in *ListPoolOrdersReq, opts ...grpc.CallOption) (*ListPoolOrdersResp, error)
+	// 抢单：司机抢单
+	GrabOrder(ctx context.Context, in *GrabOrderReq, opts ...grpc.CallOption) (*GrabOrderResp, error)
+	// 订单列表
+	ListOrders(ctx context.Context, in *ListOrdersReq, opts ...grpc.CallOption) (*ListOrdersResp, error)
+	// 订单详情
+	GetOrder(ctx context.Context, in *GetOrderReq, opts ...grpc.CallOption) (*GetOrderResp, error)
 }
 
 type driverServiceClient struct {
@@ -95,6 +143,166 @@ func (c *driverServiceClient) Delete(ctx context.Context, in *DeleteDriverReq, o
 	return out, nil
 }
 
+func (c *driverServiceClient) GoOnline(ctx context.Context, in *GoOnlineReq, opts ...grpc.CallOption) (*GoOnlineResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GoOnlineResp)
+	err := c.cc.Invoke(ctx, DriverService_GoOnline_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *driverServiceClient) StartListening(ctx context.Context, in *StartListeningReq, opts ...grpc.CallOption) (*StartListeningResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StartListeningResp)
+	err := c.cc.Invoke(ctx, DriverService_StartListening_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *driverServiceClient) GoOffline(ctx context.Context, in *GoOfflineReq, opts ...grpc.CallOption) (*GoOfflineResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GoOfflineResp)
+	err := c.cc.Invoke(ctx, DriverService_GoOffline_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *driverServiceClient) ReportLocation(ctx context.Context, in *ReportLocationReq, opts ...grpc.CallOption) (*ReportLocationResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ReportLocationResp)
+	err := c.cc.Invoke(ctx, DriverService_ReportLocation_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *driverServiceClient) DispatchOrder(ctx context.Context, in *DispatchOrderReq, opts ...grpc.CallOption) (*DispatchOrderResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DispatchOrderResp)
+	err := c.cc.Invoke(ctx, DriverService_DispatchOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *driverServiceClient) AcceptOrder(ctx context.Context, in *AcceptOrderReq, opts ...grpc.CallOption) (*AcceptOrderResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AcceptOrderResp)
+	err := c.cc.Invoke(ctx, DriverService_AcceptOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *driverServiceClient) RejectOrder(ctx context.Context, in *RejectOrderReq, opts ...grpc.CallOption) (*RejectOrderResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RejectOrderResp)
+	err := c.cc.Invoke(ctx, DriverService_RejectOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *driverServiceClient) CancelOrder(ctx context.Context, in *CancelOrderReq, opts ...grpc.CallOption) (*CancelOrderResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CancelOrderResp)
+	err := c.cc.Invoke(ctx, DriverService_CancelOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *driverServiceClient) DriverArrive(ctx context.Context, in *DriverArriveReq, opts ...grpc.CallOption) (*DriverArriveResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DriverArriveResp)
+	err := c.cc.Invoke(ctx, DriverService_DriverArrive_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *driverServiceClient) StartTrip(ctx context.Context, in *StartTripReq, opts ...grpc.CallOption) (*StartTripResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StartTripResp)
+	err := c.cc.Invoke(ctx, DriverService_StartTrip_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *driverServiceClient) EndTrip(ctx context.Context, in *EndTripReq, opts ...grpc.CallOption) (*EndTripResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EndTripResp)
+	err := c.cc.Invoke(ctx, DriverService_EndTrip_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *driverServiceClient) VerifyPassengerPhone(ctx context.Context, in *VerifyPassengerPhoneReq, opts ...grpc.CallOption) (*VerifyPassengerPhoneResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(VerifyPassengerPhoneResp)
+	err := c.cc.Invoke(ctx, DriverService_VerifyPassengerPhone_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *driverServiceClient) ListPoolOrders(ctx context.Context, in *ListPoolOrdersReq, opts ...grpc.CallOption) (*ListPoolOrdersResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListPoolOrdersResp)
+	err := c.cc.Invoke(ctx, DriverService_ListPoolOrders_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *driverServiceClient) GrabOrder(ctx context.Context, in *GrabOrderReq, opts ...grpc.CallOption) (*GrabOrderResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GrabOrderResp)
+	err := c.cc.Invoke(ctx, DriverService_GrabOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *driverServiceClient) ListOrders(ctx context.Context, in *ListOrdersReq, opts ...grpc.CallOption) (*ListOrdersResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListOrdersResp)
+	err := c.cc.Invoke(ctx, DriverService_ListOrders_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *driverServiceClient) GetOrder(ctx context.Context, in *GetOrderReq, opts ...grpc.CallOption) (*GetOrderResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetOrderResp)
+	err := c.cc.Invoke(ctx, DriverService_GetOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DriverServiceServer is the server API for DriverService service.
 // All implementations must embed UnimplementedDriverServiceServer
 // for forward compatibility.
@@ -104,6 +312,38 @@ type DriverServiceServer interface {
 	List(context.Context, *ListDriverReq) (*ListDriverResp, error)
 	Update(context.Context, *UpdateDriverReq) (*UpdateDriverResp, error)
 	Delete(context.Context, *DeleteDriverReq) (*DeleteDriverResp, error)
+	// 司机出车上线
+	GoOnline(context.Context, *GoOnlineReq) (*GoOnlineResp, error)
+	// 开始听单
+	StartListening(context.Context, *StartListeningReq) (*StartListeningResp, error)
+	// 收车下线
+	GoOffline(context.Context, *GoOfflineReq) (*GoOfflineResp, error)
+	// 位置上报
+	ReportLocation(context.Context, *ReportLocationReq) (*ReportLocationResp, error)
+	// 派单
+	DispatchOrder(context.Context, *DispatchOrderReq) (*DispatchOrderResp, error)
+	// 司机接单
+	AcceptOrder(context.Context, *AcceptOrderReq) (*AcceptOrderResp, error)
+	// 司机拒绝接单
+	RejectOrder(context.Context, *RejectOrderReq) (*RejectOrderResp, error)
+	// 司机取消订单（已接单后主动取消）
+	CancelOrder(context.Context, *CancelOrderReq) (*CancelOrderResp, error)
+	// 司机已到达
+	DriverArrive(context.Context, *DriverArriveReq) (*DriverArriveResp, error)
+	// 开始行程
+	StartTrip(context.Context, *StartTripReq) (*StartTripResp, error)
+	// 到达目的地
+	EndTrip(context.Context, *EndTripReq) (*EndTripResp, error)
+	// 验证乘客手机号后四位
+	VerifyPassengerPhone(context.Context, *VerifyPassengerPhoneReq) (*VerifyPassengerPhoneResp, error)
+	// 抢单池：查看池中订单
+	ListPoolOrders(context.Context, *ListPoolOrdersReq) (*ListPoolOrdersResp, error)
+	// 抢单：司机抢单
+	GrabOrder(context.Context, *GrabOrderReq) (*GrabOrderResp, error)
+	// 订单列表
+	ListOrders(context.Context, *ListOrdersReq) (*ListOrdersResp, error)
+	// 订单详情
+	GetOrder(context.Context, *GetOrderReq) (*GetOrderResp, error)
 	mustEmbedUnimplementedDriverServiceServer()
 }
 
@@ -128,6 +368,54 @@ func (UnimplementedDriverServiceServer) Update(context.Context, *UpdateDriverReq
 }
 func (UnimplementedDriverServiceServer) Delete(context.Context, *DeleteDriverReq) (*DeleteDriverResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedDriverServiceServer) GoOnline(context.Context, *GoOnlineReq) (*GoOnlineResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GoOnline not implemented")
+}
+func (UnimplementedDriverServiceServer) StartListening(context.Context, *StartListeningReq) (*StartListeningResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method StartListening not implemented")
+}
+func (UnimplementedDriverServiceServer) GoOffline(context.Context, *GoOfflineReq) (*GoOfflineResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GoOffline not implemented")
+}
+func (UnimplementedDriverServiceServer) ReportLocation(context.Context, *ReportLocationReq) (*ReportLocationResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ReportLocation not implemented")
+}
+func (UnimplementedDriverServiceServer) DispatchOrder(context.Context, *DispatchOrderReq) (*DispatchOrderResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method DispatchOrder not implemented")
+}
+func (UnimplementedDriverServiceServer) AcceptOrder(context.Context, *AcceptOrderReq) (*AcceptOrderResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method AcceptOrder not implemented")
+}
+func (UnimplementedDriverServiceServer) RejectOrder(context.Context, *RejectOrderReq) (*RejectOrderResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method RejectOrder not implemented")
+}
+func (UnimplementedDriverServiceServer) CancelOrder(context.Context, *CancelOrderReq) (*CancelOrderResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method CancelOrder not implemented")
+}
+func (UnimplementedDriverServiceServer) DriverArrive(context.Context, *DriverArriveReq) (*DriverArriveResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method DriverArrive not implemented")
+}
+func (UnimplementedDriverServiceServer) StartTrip(context.Context, *StartTripReq) (*StartTripResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method StartTrip not implemented")
+}
+func (UnimplementedDriverServiceServer) EndTrip(context.Context, *EndTripReq) (*EndTripResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method EndTrip not implemented")
+}
+func (UnimplementedDriverServiceServer) VerifyPassengerPhone(context.Context, *VerifyPassengerPhoneReq) (*VerifyPassengerPhoneResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method VerifyPassengerPhone not implemented")
+}
+func (UnimplementedDriverServiceServer) ListPoolOrders(context.Context, *ListPoolOrdersReq) (*ListPoolOrdersResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListPoolOrders not implemented")
+}
+func (UnimplementedDriverServiceServer) GrabOrder(context.Context, *GrabOrderReq) (*GrabOrderResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GrabOrder not implemented")
+}
+func (UnimplementedDriverServiceServer) ListOrders(context.Context, *ListOrdersReq) (*ListOrdersResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListOrders not implemented")
+}
+func (UnimplementedDriverServiceServer) GetOrder(context.Context, *GetOrderReq) (*GetOrderResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetOrder not implemented")
 }
 func (UnimplementedDriverServiceServer) mustEmbedUnimplementedDriverServiceServer() {}
 func (UnimplementedDriverServiceServer) testEmbeddedByValue()                       {}
@@ -240,6 +528,294 @@ func _DriverService_Delete_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DriverService_GoOnline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GoOnlineReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).GoOnline(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_GoOnline_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).GoOnline(ctx, req.(*GoOnlineReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DriverService_StartListening_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StartListeningReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).StartListening(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_StartListening_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).StartListening(ctx, req.(*StartListeningReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DriverService_GoOffline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GoOfflineReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).GoOffline(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_GoOffline_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).GoOffline(ctx, req.(*GoOfflineReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DriverService_ReportLocation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReportLocationReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).ReportLocation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_ReportLocation_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).ReportLocation(ctx, req.(*ReportLocationReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DriverService_DispatchOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DispatchOrderReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).DispatchOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_DispatchOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).DispatchOrder(ctx, req.(*DispatchOrderReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DriverService_AcceptOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AcceptOrderReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).AcceptOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_AcceptOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).AcceptOrder(ctx, req.(*AcceptOrderReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DriverService_RejectOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RejectOrderReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).RejectOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_RejectOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).RejectOrder(ctx, req.(*RejectOrderReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DriverService_CancelOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CancelOrderReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).CancelOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_CancelOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).CancelOrder(ctx, req.(*CancelOrderReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DriverService_DriverArrive_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DriverArriveReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).DriverArrive(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_DriverArrive_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).DriverArrive(ctx, req.(*DriverArriveReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DriverService_StartTrip_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StartTripReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).StartTrip(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_StartTrip_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).StartTrip(ctx, req.(*StartTripReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DriverService_EndTrip_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EndTripReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).EndTrip(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_EndTrip_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).EndTrip(ctx, req.(*EndTripReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DriverService_VerifyPassengerPhone_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VerifyPassengerPhoneReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).VerifyPassengerPhone(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_VerifyPassengerPhone_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).VerifyPassengerPhone(ctx, req.(*VerifyPassengerPhoneReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DriverService_ListPoolOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListPoolOrdersReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).ListPoolOrders(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_ListPoolOrders_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).ListPoolOrders(ctx, req.(*ListPoolOrdersReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DriverService_GrabOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GrabOrderReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).GrabOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_GrabOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).GrabOrder(ctx, req.(*GrabOrderReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DriverService_ListOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListOrdersReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).ListOrders(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_ListOrders_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).ListOrders(ctx, req.(*ListOrdersReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DriverService_GetOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOrderReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).GetOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_GetOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).GetOrder(ctx, req.(*GetOrderReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DriverService_ServiceDesc is the grpc.ServiceDesc for DriverService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -266,6 +842,70 @@ var DriverService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _DriverService_Delete_Handler,
+		},
+		{
+			MethodName: "GoOnline",
+			Handler:    _DriverService_GoOnline_Handler,
+		},
+		{
+			MethodName: "StartListening",
+			Handler:    _DriverService_StartListening_Handler,
+		},
+		{
+			MethodName: "GoOffline",
+			Handler:    _DriverService_GoOffline_Handler,
+		},
+		{
+			MethodName: "ReportLocation",
+			Handler:    _DriverService_ReportLocation_Handler,
+		},
+		{
+			MethodName: "DispatchOrder",
+			Handler:    _DriverService_DispatchOrder_Handler,
+		},
+		{
+			MethodName: "AcceptOrder",
+			Handler:    _DriverService_AcceptOrder_Handler,
+		},
+		{
+			MethodName: "RejectOrder",
+			Handler:    _DriverService_RejectOrder_Handler,
+		},
+		{
+			MethodName: "CancelOrder",
+			Handler:    _DriverService_CancelOrder_Handler,
+		},
+		{
+			MethodName: "DriverArrive",
+			Handler:    _DriverService_DriverArrive_Handler,
+		},
+		{
+			MethodName: "StartTrip",
+			Handler:    _DriverService_StartTrip_Handler,
+		},
+		{
+			MethodName: "EndTrip",
+			Handler:    _DriverService_EndTrip_Handler,
+		},
+		{
+			MethodName: "VerifyPassengerPhone",
+			Handler:    _DriverService_VerifyPassengerPhone_Handler,
+		},
+		{
+			MethodName: "ListPoolOrders",
+			Handler:    _DriverService_ListPoolOrders_Handler,
+		},
+		{
+			MethodName: "GrabOrder",
+			Handler:    _DriverService_GrabOrder_Handler,
+		},
+		{
+			MethodName: "ListOrders",
+			Handler:    _DriverService_ListOrders_Handler,
+		},
+		{
+			MethodName: "GetOrder",
+			Handler:    _DriverService_GetOrder_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

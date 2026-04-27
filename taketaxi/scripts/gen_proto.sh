@@ -3,5 +3,5 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 mkdir -p "$PROJECT_DIR/common/kitexGen"
 cd "$PROJECT_DIR/common/idl"
-protoc --go_out=../../common/kitexGen --go_opt=module=taketaxi/common/kitexGen --go-grpc_out=../../common/kitexGen --go-grpc_opt=module=taketaxi/common/kitexGen driver.proto
+protoc --go_out=../../common/kitexGen --go_opt=paths=source_relative --go-grpc_out=../../common/kitexGen --go-grpc_opt=paths=source_relative driver.proto
 echo "Done"

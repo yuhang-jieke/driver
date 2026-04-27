@@ -13,3 +13,11 @@ redis:
   Port: 6379
   Password: 4ay1nkal3u8ed77y
   Database: 0
+mongo:
+  uri: "mongodb://root:4ay1nkal3u8ed77y@115.190.57.118:27017"
+  database: driver_place
+dispatch:
+  radius_km: 3.0
+  min_service_score: 60.0
+  arrive_check_radius: 30.0
+  end_trip_check_radius: 30.0

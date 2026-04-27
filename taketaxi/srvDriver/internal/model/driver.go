@@ -37,23 +37,25 @@ func (Passenger) TableName() string {
 
 // / Driver 司机基础信息表
 type DriverS struct {
-	DriverId       int64   `gorm:"column:driver_id;primaryKey;comment:司机ID，分布式ID" json:"driver_id"`
-	Mobile         string  `gorm:"column:mobile;size:20;not null;comment:登录手机号" json:"mobile"`
-	MobileEncrypt  string  `gorm:"column:mobile_encrypt;size:100;comment:手机号AES加密" json:"mobile_encrypt"`
-	Nickname       string  `gorm:"column:nickname;size:64;comment:司机昵称" json:"nickname"`
-	Avatar         string  `gorm:"column:avatar;size:512;comment:头像URL" json:"avatar"`
-	Gender         int8    `gorm:"column:gender;default:0;comment:性别: 0-未知 1-男 2-女" json:"gender"`
-	Status         int8    `gorm:"column:status;not null;default:1;comment:账号状态: 1-正常 2-冻结 3-已注销" json:"status"`
-	VerifyStatus   int8    `gorm:"column:verify_status;not null;default:0;comment:认证状态: 0-未认证 1-认证中 2-已认证 3-认证失败" json:"verify_status"`
-	ServiceScore   float64 `gorm:"column:service_score;type:decimal(3,1);not null;default:80.0;comment:服务评分" json:"service_score"`
-	OrderCount     int     `gorm:"column:order_count;not null;default:0;comment:累计完成订单数" json:"order_count"`
-	TotalIncome    float64 `gorm:"column:total_income;type:decimal(12,2);not null;default:0.00;comment:累计收入金额" json:"total_income"`
-	RegisterSource string  `gorm:"column:register_source;size:32;comment:注册来源" json:"register_source"`
-	CityId         int64   `gorm:"column:city_id;comment:服务城市ID" json:"city_id"`
-	LastOnlineAt   string  `gorm:"column:last_online_at;comment:最后在线时间" json:"last_online_at"`
-	CreatedAt      string  `gorm:"column:created_at;not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"created_at"`
-	UpdatedAt      string  `gorm:"column:updated_at;not null;default:CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;comment:更新时间" json:"updated_at"`
-	DeletedAt      string  `gorm:"column:deleted_at;comment:删除时间" json:"deleted_at"`
+	DriverId        int64   `gorm:"column:driver_id;primaryKey;comment:司机ID，分布式ID" json:"driver_id"`
+	Mobile          string  `gorm:"column:mobile;size:20;not null;comment:登录手机号" json:"mobile"`
+	MobileEncrypt   string  `gorm:"column:mobile_encrypt;size:100;comment:手机号AES加密" json:"mobile_encrypt"`
+	Nickname        string  `gorm:"column:nickname;size:64;comment:司机昵称" json:"nickname"`
+	Avatar          string  `gorm:"column:avatar;size:512;comment:头像URL" json:"avatar"`
+	Gender          int8    `gorm:"column:gender;default:0;comment:性别: 0-未知 1-男 2-女" json:"gender"`
+	Status          int8    `gorm:"column:status;not null;default:1;comment:账号状态: 1-正常 2-冻结 3-已注销" json:"status"`
+	VerifyStatus    int8    `gorm:"column:verify_status;not null;default:0;comment:认证状态: 0-未认证 1-认证中 2-已认证 3-认证失败" json:"verify_status"`
+	ServiceScore    float64 `gorm:"column:service_score;type:decimal(3,1);not null;default:80.0;comment:服务评分" json:"service_score"`
+	OrderCount      int     `gorm:"column:order_count;not null;default:0;comment:累计完成订单数" json:"order_count"`
+	TotalIncome     float64 `gorm:"column:total_income;type:decimal(12,2);not null;default:0.00;comment:累计收入金额" json:"total_income"`
+	RegisterSource  string  `gorm:"column:register_source;size:32;comment:注册来源" json:"register_source"`
+	CityId          int64   `gorm:"column:city_id;comment:服务城市ID" json:"city_id"`
+	LastOnlineAt    string  `gorm:"column:last_online_at;comment:最后在线时间" json:"last_online_at"`
+	WorkStatus      int64   `gorm:"column:work_status;comment:工作状态" json:"work_status"`
+	DailyOrderLimit int     `gorm:"column:daily_order_limit;comment:接单上限" json:"daily_order_limit"`
+	CreatedAt       string  `gorm:"column:created_at;not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"created_at"`
+	UpdatedAt       string  `gorm:"column:updated_at;not null;default:CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;comment:更新时间" json:"updated_at"`
+	DeletedAt       string  `gorm:"column:deleted_at;comment:删除时间" json:"deleted_at"`
 }
 
 func (DriverS) TableName() string {
@@ -132,6 +134,7 @@ type DriverVehicle struct {
 	Status            int8      `gorm:"column:status;comment:认证状态: 0-未认证 1-认证中 2-已认证 3-认证失败" json:"status"`
 	FailReason        string    `gorm:"column:fail_reason;comment:认证失败原因" json:"fail_reason"`
 	VerifyTime        time.Time `gorm:"column:verify_time;comment:认证完成时间" json:"verify_time"`
+	ServiceType       int8      `gorm:"column:service_type;comment:服务类型 1-快车 2-特惠快车" json:"service_type"`
 	CreatedAt         time.Time `gorm:"column:created_at;comment:创建时间" json:"created_at"`
 	UpdatedAt         time.Time `gorm:"column:updated_at;comment:更新时间" json:"updated_at"`
 }
@@ -334,7 +337,7 @@ type Order struct {
 	OrderNo          string    `gorm:"column:order_no;comment:订单编号" json:"order_no"`
 	OrderType        int8      `gorm:"column:order_type;comment:订单类型: 1-即时单 2-预约单 3-拼车单" json:"order_type"`
 	ServiceType      int8      `gorm:"column:service_type;comment:服务类型: 1-快车 2-特惠快车" json:"service_type"`
-	Status           int8      `gorm:"column:status;comment:订单状态: 0-待派单 1-已派单 2-司机已到达 3-行程中 4-已完成 5-已取消" json:"status"`
+	Status           int8      `gorm:"column:status;comment:订单状态: 0-待派单 1-已派单 2-司机已接单 3-司机已到达 4-行程中 5-已完成 6-已取消" json:"status"`
 	DriverId         int64     `gorm:"column:driver_id;comment:司机ID" json:"driver_id"`
 	PassengerId      int64     `gorm:"column:passenger_id;comment:乘客ID" json:"passenger_id"`
 	PassengerMobile  string    `gorm:"column:passenger_mobile;comment:乘客手机号(脱敏)" json:"passenger_mobile"`

@@ -10,6 +10,8 @@ type Config struct {
 	Database DatabaseConfig `yaml:"database"`
 	Redis    RedisConfig    `yaml:"redis"`
 	Registry RegistryConfig `yaml:"registry"`
+	Mongo    MongoConfig    `yaml:"mongo"`
+	Dispatch DispatchConfig `yaml:"dispatch"`
 }
 
 type ServerConfig struct {
@@ -37,6 +39,18 @@ type RedisConfig struct {
 type RegistryConfig struct {
 	Type    string `yaml:"type"`
 	Address string `yaml:"address"`
+}
+
+type MongoConfig struct {
+	Uri      string `yaml:"uri"`
+	Database string `yaml:"database"`
+}
+
+type DispatchConfig struct {
+	RadiusKm          float64 `yaml:"radius_km"`
+	MinServiceScore   float64 `yaml:"min_service_score"`
+	ArriveCheckRadius float64 `yaml:"arrive_check_radius"`
+	EndTripCheckRadius float64 `yaml:"end_trip_check_radius"`
 }
 
 func Load(path string) (*Config, error) {

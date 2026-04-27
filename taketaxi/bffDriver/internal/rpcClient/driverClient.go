@@ -43,3 +43,67 @@ func (c *DriverClient) Update(ctx context.Context, req *driver.UpdateDriverReq) 
 func (c *DriverClient) Delete(ctx context.Context, req *driver.DeleteDriverReq) (*driver.DeleteDriverResp, error) {
 	return c.client.Delete(ctx, req)
 }
+
+func (c *DriverClient) GoOnline(ctx context.Context, req *driver.GoOnlineReq) (*driver.GoOnlineResp, error) {
+	return c.client.GoOnline(ctx, req)
+}
+
+func (c *DriverClient) StartListening(ctx context.Context, req *driver.StartListeningReq) (*driver.StartListeningResp, error) {
+	return c.client.StartListening(ctx, req)
+}
+
+func (c *DriverClient) GoOffline(ctx context.Context, req *driver.GoOfflineReq) (*driver.GoOfflineResp, error) {
+	return c.client.GoOffline(ctx, req)
+}
+
+func (c *DriverClient) ReportLocation(ctx context.Context, req *driver.ReportLocationReq) (*driver.ReportLocationResp, error) {
+	return c.client.ReportLocation(ctx, req)
+}
+
+func (c *DriverClient) DispatchOrder(ctx context.Context, req *driver.DispatchOrderReq) (*driver.DispatchOrderResp, error) {
+	return c.client.DispatchOrder(ctx, req)
+}
+
+func (c *DriverClient) AcceptOrder(ctx context.Context, req *driver.AcceptOrderReq) (*driver.AcceptOrderResp, error) {
+	return c.client.AcceptOrder(ctx, req)
+}
+
+func (c *DriverClient) RejectOrder(ctx context.Context, req *driver.RejectOrderReq) (*driver.RejectOrderResp, error) {
+	return c.client.RejectOrder(ctx, req)
+}
+
+func (c *DriverClient) CancelOrder(ctx context.Context, req *driver.CancelOrderReq) (*driver.CancelOrderResp, error) {
+	return c.client.CancelOrder(ctx, req)
+}
+
+func (c *DriverClient) DriverArrive(ctx context.Context, req *driver.DriverArriveReq) (*driver.DriverArriveResp, error) {
+	return c.client.DriverArrive(ctx, req)
+}
+
+func (c *DriverClient) VerifyPassengerPhone(ctx context.Context, req *driver.VerifyPassengerPhoneReq) (*driver.VerifyPassengerPhoneResp, error) {
+	return c.client.VerifyPassengerPhone(ctx, req)
+}
+
+func (c *DriverClient) StartTrip(ctx context.Context, req *driver.StartTripReq) (*driver.StartTripResp, error) {
+	return c.client.StartTrip(ctx, req)
+}
+
+func (c *DriverClient) EndTrip(ctx context.Context, req *driver.EndTripReq) (*driver.EndTripResp, error) {
+	return c.client.EndTrip(ctx, req)
+}
+
+func (c *DriverClient) ListPoolOrders(ctx context.Context, req *driver.ListPoolOrdersReq) (*driver.ListPoolOrdersResp, error) {
+	return c.client.ListPoolOrders(ctx, req)
+}
+
+func (c *DriverClient) GrabOrder(ctx context.Context, req *driver.GrabOrderReq) (*driver.GrabOrderResp, error) {
+	return c.client.GrabOrder(ctx, req)
+}
+
+func (c *DriverClient) ListOrders(ctx context.Context, req *driver.ListOrdersReq) (*driver.ListOrdersResp, error) {
+	return c.client.ListOrders(ctx, req)
+}
+
+func (c *DriverClient) GetOrder(ctx context.Context, req *driver.GetOrderReq) (*driver.GetOrderResp, error) {
+	return c.client.GetOrder(ctx, req)
+}

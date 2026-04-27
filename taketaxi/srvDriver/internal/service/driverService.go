@@ -18,11 +18,21 @@ func (s *DriverService) Create(ctx context.Context, req *driver.CreateDriverReq)
 	return &driver.CreateDriverResp{Id: int64(m.ID)}, s.repo.Create(ctx, m)
 }
 func (s *DriverService) Get(ctx context.Context, req *driver.GetDriverReq) (*driver.GetDriverResp, error) {
-	m, err := s.repo.GetByID(ctx, uint(req.Id))
+	d, err := s.repo.GetDriverSByDriverId(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
-	return &driver.GetDriverResp{Id: int64(m.ID), Name: m.Name, Status: int32(m.Status)}, nil
+	return &driver.GetDriverResp{
+		Id:           d.DriverId,
+		Name:         d.Nickname,
+		Mobile:       d.Mobile,
+		Nickname:     d.Nickname,
+		WorkStatus:   int32(d.WorkStatus),
+		ServiceScore: float32(d.ServiceScore),
+		OrderCount:   int32(d.OrderCount),
+		TotalIncome:  float32(d.TotalIncome),
+		Status:       int32(d.Status),
+	}, nil
 }
 func (s *DriverService) List(ctx context.Context, req *driver.ListDriverReq) (*driver.ListDriverResp, error) {
 	list, err := s.repo.List(ctx)
