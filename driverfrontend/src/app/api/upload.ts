@@ -22,7 +22,7 @@ const MAX_FILE_SIZE = 2 * 1024 * 1024;  // 2MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/png'];
 
 // 校验结果
-interface ValidationResult {
+export interface ValidationResult {
   valid: boolean;
   error?: string;
 }
@@ -52,29 +52,37 @@ export function dataURLtoFile(dataURL: string, filename: string): File {
 }
 
 // 上传图片
-export async function uploadImage(file: File, bizType: BizType): Promise<UploadResult> {
-  const validation = validateFile(file);
-  if (!validation.valid) {
-    throw new Error(validation.error);
+export async function uploadImage(file: File, bizType: BizType): Promise<UploadResult | null> {
+  try {
+    const validation = validateFile(file);
+    if (!validation.valid) {
+      console.error("Upload validation failed:", validation.error);
+      return null;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('biz_type', bizType);
+
+    const response = await fetch(`${API_BASE}/api/v1/upload`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      console.error("Upload API error:", response.status, response.statusText);
+      return null;
+    }
+
+    const result: UploadResponse = await response.json();
+    if (result.code !== 0 || !result.data) {
+      console.error("Upload API failed:", result.msg || 'Unknown error');
+      return null;
+    }
+
+    return result.data;
+  } catch (err) {
+    console.error("Upload API fetch failed:", err);
+    return null;
   }
-
-  const formData = new FormData();
-  formData.append('file', file);
-  formData.append('biz_type', bizType);
-
-  const response = await fetch(`${API_BASE}/api/v1/upload`, {
-    method: 'POST',
-    body: formData,
-  });
-
-  if (!response.ok) {
-    throw new Error('上传失败，请重试');
-  }
-
-  const result: UploadResponse = await response.json();
-  if (result.code !== 0 || !result.data) {
-    throw new Error(result.msg || '上传失败');
-  }
-
-  return result.data;
 }
