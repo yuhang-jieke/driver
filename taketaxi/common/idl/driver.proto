@@ -10,6 +10,23 @@ service DriverService {
   rpc Delete(DeleteDriverReq) returns (DeleteDriverResp);
   rpc GetProfile(GetDriverProfileReq) returns (GetDriverProfileResp);
   rpc GetIncome(GetDriverIncomeReq) returns (GetDriverIncomeResp);
+  rpc ChangeMobile(ChangeMobileReq) returns (ChangeMobileResp);
+  rpc ChangePassword(ChangePasswordReq) returns (ChangePasswordResp);
+  rpc ResetPassword(ResetPasswordReq) returns (ResetPasswordResp);
+  rpc UpdateProfile(UpdateProfileReq) returns (UpdateProfileResp);
+  rpc UpdateRealname(UpdateRealnameReq) returns (UpdateRealnameResp);
+  rpc UpdateLicense(UpdateLicenseReq) returns (UpdateLicenseResp);
+  rpc UpdateVehicle(UpdateVehicleReq) returns (UpdateVehicleResp);
+  // 银行卡
+  rpc BindBankCard(BindBankCardReq) returns (BindBankCardResp);
+  rpc GetBankCard(GetBankCardReq) returns (GetBankCardResp);
+  rpc UpdateBankCard(UpdateBankCardReq) returns (UpdateBankCardResp);
+  // 钱包 & 提现
+  rpc GetWallet(GetWalletReq) returns (GetWalletResp);
+  rpc GetWithdrawPage(GetWithdrawPageReq) returns (GetWithdrawPageResp);
+  rpc ApplyWithdraw(ApplyWithdrawReq) returns (ApplyWithdrawResp);
+  rpc GetWithdrawRecords(GetWithdrawRecordsReq) returns (GetWithdrawRecordsResp);
+  rpc GetIncomeDetail(GetIncomeDetailReq) returns (GetIncomeDetailResp);
 }
 
 message CreateDriverReq { string name = 1; }
@@ -35,6 +52,37 @@ message GetDriverProfileResp {
   PersonalInfo personal_info = 1;
   OrderStats order_stats = 2;
   int32 verify_status = 3;
+  RealnameInfo realname_info = 4;
+  LicenseInfo license_info = 5;
+  VehicleInfo vehicle_info = 6;
+}
+
+// 实名认证信息（用于前端回显已提交数据）
+message RealnameInfo {
+  string real_name = 1;
+  string id_card_front_url = 2;
+  string id_card_back_url = 3;
+  int32 status = 4;
+}
+
+// 驾驶证认证信息（用于前端回显已提交数据）
+message LicenseInfo {
+  string license_no = 1;
+  string license_type = 2;
+  string license_url = 3;
+  int32 status = 4;
+}
+
+// 车辆信息（用于前端回显已提交数据）
+message VehicleInfo {
+  string plate_no = 1;
+  string vehicle_brand = 2;
+  string vehicle_model = 3;
+  string vehicle_color = 4;
+  int32 seat_count = 5;
+  string driving_license_url = 6;
+  string vehicle_photo_url = 7;
+  int32 status = 8;
 }
 
 message PersonalInfo {
@@ -63,12 +111,12 @@ message GetDriverIncomeReq {
 
 message DailyIncome {
   string date = 1;
-  double income = 2;
+  int64 income = 2;              // 收入(单位:分)
 }
 
 message IncomeSummary {
   int32 order_count = 1;
-  double income = 2;
+  int64 income = 2;              // 收入(单位:分)
   int32 online_duration = 3;
 }
 
@@ -77,6 +125,260 @@ message GetDriverIncomeResp {
   repeated DailyIncome trend = 2;
 }
 
+// 修改手机号
+message ChangeMobileReq {
+  int64 driver_id = 1;
+  string new_mobile = 2;
+  string verify_code = 3;
+}
+
+message ChangeMobileResp {
+  bool success = 1;
+  string message = 2;
+}
+
+// 修改密码
+message ChangePasswordReq {
+  int64 driver_id = 1;
+  string old_password = 2;
+  string new_password = 3;
+}
+
+message ChangePasswordResp {
+  bool success = 1;
+  string message = 2;
+}
+
+// 重置密码（忘记密码）
+message ResetPasswordReq {
+  string mobile = 1;
+  string verify_code = 2;
+  string new_password = 3;
+}
+
+message ResetPasswordResp {
+  bool success = 1;
+  string message = 2;
+}
+
+
+// UpdateProfile 更新司机个人资料(通用，字段为空则不更新)
+message UpdateProfileReq {
+  int64 driver_id = 1;
+  string nickname = 2;
+  string avatar = 3;
+  int32 gender = 4;
+}
+message UpdateProfileResp {
+  bool success = 1;
+  string message = 2;
+}
+
+// UpdateRealname 更新/提交实名认证
+message UpdateRealnameReq {
+  int64 driver_id = 1;
+  string real_name = 2;
+  string id_card_no = 3;
+  string id_card_front_url = 4;
+  string id_card_back_url = 5;
+  int32 gender = 6;
+  string birthday = 7;
+  string address = 8;
+  string nation = 9;
+  string expire_date = 10;
+}
+message UpdateRealnameResp {
+  bool success = 1;
+  string message = 2;
+}
+
+// UpdateLicense 更新/提交驾驶证认证
+message UpdateLicenseReq {
+  int64 driver_id = 1;
+  string license_no = 2;
+  string license_type = 3;
+  string license_url = 4;
+  string first_issue_date = 5;
+  string issue_date = 6;
+  string expire_date = 7;
+}
+message UpdateLicenseResp {
+  bool success = 1;
+  string message = 2;
+}
+
+// UpdateVehicle 更新/提交车辆信息
+message UpdateVehicleReq {
+  int64 driver_id = 1;
+  string plate_no = 2;
+  string vehicle_model = 3;
+  string vehicle_brand = 4;
+  string vehicle_color = 5;
+  string vehicle_color_code = 6;
+  int32 seat_count = 7;
+  string driving_license_url = 8;
+  string vehicle_photo_url = 9;
+}
+message UpdateVehicleResp {
+  bool success = 1;
+  string message = 2;
+}
+
+// ==================== 银行卡 ====================
+
+// BindBankCard 绑定银行卡（首次绑定或更换，每月最多1次）
+message BindBankCardReq {
+  int64 driver_id = 1;
+  string bank_name = 2;          // 银行名称(如"工商银行")
+  string bank_code = 3;          // 银行代码
+  string bank_card_no = 4;       // 银行卡号(明文，后端加密存储)
+  string account_name = 5;       // 持卡人姓名
+  int32 card_type = 6;           // 卡类型: 1-借记卡 2-信用卡
+  string branch_name = 7;        // 开户支行
+}
+message BindBankCardResp {
+  bool success = 1;
+  string message = 2;
+}
+
+// GetBankCard 查询司机绑定的银行卡信息
+message GetBankCardReq {
+  int64 driver_id = 1;
+}
+message GetBankCardResp {
+  string bank_name = 1;          // 银行名称
+  string bank_code = 2;          // 银行代码
+  string bank_card_no = 3;       // 银行卡号(脱敏, 如****8821)
+  string account_name = 4;       // 持卡人姓名(脱敏)
+  int32 card_type = 5;           // 卡类型
+  string branch_name = 6;        // 开户支行
+  bool has_card = 7;             // 是否已绑定银行卡
+  string last_modified_at = 8;   // 最后修改时间(前端提示下次可修改时间)
+}
+
+// UpdateBankCard 更换银行卡（等同于重新绑定，同样受月频次限制）
+message UpdateBankCardReq {
+  int64 driver_id = 1;
+  string bank_name = 2;
+  string bank_code = 3;
+  string bank_card_no = 4;
+  string account_name = 5;
+  int32 card_type = 6;
+  string branch_name = 7;
+}
+message UpdateBankCardResp {
+  bool success = 1;
+  string message = 2;
+}
+
+// ==================== 钱包 & 提现 ====================
+
+// GetWallet 查询钱包概览
+message GetWalletReq {
+  int64 driver_id = 1;
+}
+message GetWalletResp {
+  int64 balance = 1;             // 可提现余额(单位:分)
+  int64 frozen_amount = 2;       // 冻结金额(未结算/在途)(单位:分)
+  int64 today_income = 3;        // 今日收入(单位:分)
+  int64 week_income = 4;         // 本周收入(单位:分)
+  int64 month_income = 5;        // 本月收入(单位:分)
+  int64 total_income = 6;        // 累计总收入(单位:分)
+  int64 total_withdraw = 7;      // 累计提现金额(单位:分)
+  int32 today_withdraw_count = 8;// 今日已提现次数(最多3次)
+  string bank_card_no = 9;       // 已绑定银行卡(脱敏)
+  bool has_bank_card = 10;       // 是否已绑定银行卡
+}
+
+// GetWithdrawPage 查询提现页信息
+message GetWithdrawPageReq {
+  int64 driver_id = 1;
+}
+
+message WithdrawRuleInfo {
+  int64 min_withdraw_amount = 1; // 最低提现金额(单位:分)
+  int64 max_withdraw_amount = 2; // 最高提现金额(单位:分)
+  int32 today_withdraw_count = 3;
+  int32 today_withdraw_limit = 4;
+  string estimated_arrival_text = 5;
+  bool fee_free = 6;
+  int64 fee_amount = 7;          // 手续费(单位:分)
+  string fee_desc = 8;
+}
+
+message WithdrawPageBankCard {
+  bool has_bank_card = 1;
+  string bank_name = 2;
+  string bank_card_no = 3;
+}
+
+message WithdrawPageActionState {
+  bool can_withdraw = 1;
+  string disable_reason_code = 2;
+  string disable_reason_text = 3;
+}
+
+message GetWithdrawPageResp {
+  int64 wallet_balance = 1;          // 钱包余额(单位:分)
+  int64 frozen_amount = 2;           // 冻结金额(单位:分)
+  int64 available_withdraw_amount = 3; // 可提现金额(单位:分)
+  WithdrawRuleInfo rule_info = 4;
+  WithdrawPageBankCard bank_card = 5;
+  WithdrawPageActionState action_state = 6;
+  repeated int64 suggested_amounts = 7; // 建议提现金额(单位:分)
+  repeated string withdraw_notice = 8;
+}
+
+// ApplyWithdraw 申请提现
+message ApplyWithdrawReq {
+  int64 driver_id = 1;
+  int64 amount = 2;              // 提现金额(单位:分)
+}
+message ApplyWithdrawResp {
+  bool success = 1;
+  string message = 2;
+  string withdraw_no = 3;        // 提现单号
+}
+
+// GetWithdrawRecords 查询提现记录
+message GetWithdrawRecordsReq {
+  int64 driver_id = 1;
+  int32 page = 2;                // 页码(从1开始)
+  int32 page_size = 3;           // 每页条数(默认20)
+}
+message WithdrawRecordItem {
+  int64 id = 1;
+  string withdraw_no = 2;        // 提现单号
+  int64 amount = 3;              // 提现金额(单位:分)
+  int64 fee = 4;                 // 手续费(单位:分)
+  int64 actual_amount = 5;       // 实际到账(单位:分)
+  string bank_name = 6;          // 银行名称
+  string bank_card_no = 7;       // 银行卡号(脱敏)
+  int32 status = 8;              // 1-处理中 2-成功 3-失败
+  string fail_reason = 9;        // 失败原因
+  string apply_time = 10;        // 申请时间
+  string finish_time = 11;       // 完成时间
+}
+message GetWithdrawRecordsResp {
+  repeated WithdrawRecordItem records = 1;
+  int32 total = 2;               // 总条数
+}
+
+// GetIncomeDetail 收入明细(分类汇总)
+message GetIncomeDetailReq {
+  int64 driver_id = 1;
+  int32 days = 2;                // 查询天数: 1-今日 7-本周 30-本月
+}
+message IncomeDetailItem {
+  string type_name = 1;          // 收入类型名称
+  int32 type_code = 2;           // 收入类型代码: 1-基础车费 2-奖励 3-空驶补偿 4-高速费 5-其他
+  int64 amount = 3;              // 金额(单位:分)
+  int32 count = 4;               // 笔数
+}
+message GetIncomeDetailResp {
+  repeated IncomeDetailItem items = 1;
+  int64 total_amount = 2;        // 总金额(单位:分)
+}
 
 //protoc driver.proto `
 //>> --go_out=../kitexGen `
