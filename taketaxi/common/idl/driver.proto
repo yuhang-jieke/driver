@@ -1,6 +1,6 @@
 syntax = "proto3";
 package driver;
-option go_package = "taketaxi/common/kitexGen/driver";
+option go_package = "taketaxi/common/kitexGen";
 
 service DriverService {
   rpc Create(CreateDriverReq) returns (CreateDriverResp);

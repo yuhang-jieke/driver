@@ -4,7 +4,7 @@
 // - protoc             v3.19.1
 // source: driver.proto
 
-package driver
+package kitexGen
 
 import (
 	context "context"
@@ -19,13 +19,28 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	DriverService_Create_FullMethodName     = "/driver.DriverService/Create"
-	DriverService_Get_FullMethodName        = "/driver.DriverService/Get"
-	DriverService_List_FullMethodName       = "/driver.DriverService/List"
-	DriverService_Update_FullMethodName     = "/driver.DriverService/Update"
-	DriverService_Delete_FullMethodName     = "/driver.DriverService/Delete"
-	DriverService_GetProfile_FullMethodName = "/driver.DriverService/GetProfile"
-	DriverService_GetIncome_FullMethodName  = "/driver.DriverService/GetIncome"
+	DriverService_Create_FullMethodName             = "/driver.DriverService/Create"
+	DriverService_Get_FullMethodName                = "/driver.DriverService/Get"
+	DriverService_List_FullMethodName               = "/driver.DriverService/List"
+	DriverService_Update_FullMethodName             = "/driver.DriverService/Update"
+	DriverService_Delete_FullMethodName             = "/driver.DriverService/Delete"
+	DriverService_GetProfile_FullMethodName         = "/driver.DriverService/GetProfile"
+	DriverService_GetIncome_FullMethodName          = "/driver.DriverService/GetIncome"
+	DriverService_ChangeMobile_FullMethodName       = "/driver.DriverService/ChangeMobile"
+	DriverService_ChangePassword_FullMethodName     = "/driver.DriverService/ChangePassword"
+	DriverService_ResetPassword_FullMethodName      = "/driver.DriverService/ResetPassword"
+	DriverService_UpdateProfile_FullMethodName      = "/driver.DriverService/UpdateProfile"
+	DriverService_UpdateRealname_FullMethodName     = "/driver.DriverService/UpdateRealname"
+	DriverService_UpdateLicense_FullMethodName      = "/driver.DriverService/UpdateLicense"
+	DriverService_UpdateVehicle_FullMethodName      = "/driver.DriverService/UpdateVehicle"
+	DriverService_BindBankCard_FullMethodName       = "/driver.DriverService/BindBankCard"
+	DriverService_GetBankCard_FullMethodName        = "/driver.DriverService/GetBankCard"
+	DriverService_UpdateBankCard_FullMethodName     = "/driver.DriverService/UpdateBankCard"
+	DriverService_GetWallet_FullMethodName          = "/driver.DriverService/GetWallet"
+	DriverService_GetWithdrawPage_FullMethodName    = "/driver.DriverService/GetWithdrawPage"
+	DriverService_ApplyWithdraw_FullMethodName      = "/driver.DriverService/ApplyWithdraw"
+	DriverService_GetWithdrawRecords_FullMethodName = "/driver.DriverService/GetWithdrawRecords"
+	DriverService_GetIncomeDetail_FullMethodName    = "/driver.DriverService/GetIncomeDetail"
 )
 
 // DriverServiceClient is the client API for DriverService service.
@@ -39,6 +54,23 @@ type DriverServiceClient interface {
 	Delete(ctx context.Context, in *DeleteDriverReq, opts ...grpc.CallOption) (*DeleteDriverResp, error)
 	GetProfile(ctx context.Context, in *GetDriverProfileReq, opts ...grpc.CallOption) (*GetDriverProfileResp, error)
 	GetIncome(ctx context.Context, in *GetDriverIncomeReq, opts ...grpc.CallOption) (*GetDriverIncomeResp, error)
+	ChangeMobile(ctx context.Context, in *ChangeMobileReq, opts ...grpc.CallOption) (*ChangeMobileResp, error)
+	ChangePassword(ctx context.Context, in *ChangePasswordReq, opts ...grpc.CallOption) (*ChangePasswordResp, error)
+	ResetPassword(ctx context.Context, in *ResetPasswordReq, opts ...grpc.CallOption) (*ResetPasswordResp, error)
+	UpdateProfile(ctx context.Context, in *UpdateProfileReq, opts ...grpc.CallOption) (*UpdateProfileResp, error)
+	UpdateRealname(ctx context.Context, in *UpdateRealnameReq, opts ...grpc.CallOption) (*UpdateRealnameResp, error)
+	UpdateLicense(ctx context.Context, in *UpdateLicenseReq, opts ...grpc.CallOption) (*UpdateLicenseResp, error)
+	UpdateVehicle(ctx context.Context, in *UpdateVehicleReq, opts ...grpc.CallOption) (*UpdateVehicleResp, error)
+	// 银行卡
+	BindBankCard(ctx context.Context, in *BindBankCardReq, opts ...grpc.CallOption) (*BindBankCardResp, error)
+	GetBankCard(ctx context.Context, in *GetBankCardReq, opts ...grpc.CallOption) (*GetBankCardResp, error)
+	UpdateBankCard(ctx context.Context, in *UpdateBankCardReq, opts ...grpc.CallOption) (*UpdateBankCardResp, error)
+	// 钱包 & 提现
+	GetWallet(ctx context.Context, in *GetWalletReq, opts ...grpc.CallOption) (*GetWalletResp, error)
+	GetWithdrawPage(ctx context.Context, in *GetWithdrawPageReq, opts ...grpc.CallOption) (*GetWithdrawPageResp, error)
+	ApplyWithdraw(ctx context.Context, in *ApplyWithdrawReq, opts ...grpc.CallOption) (*ApplyWithdrawResp, error)
+	GetWithdrawRecords(ctx context.Context, in *GetWithdrawRecordsReq, opts ...grpc.CallOption) (*GetWithdrawRecordsResp, error)
+	GetIncomeDetail(ctx context.Context, in *GetIncomeDetailReq, opts ...grpc.CallOption) (*GetIncomeDetailResp, error)
 }
 
 type driverServiceClient struct {
@@ -119,6 +151,156 @@ func (c *driverServiceClient) GetIncome(ctx context.Context, in *GetDriverIncome
 	return out, nil
 }
 
+func (c *driverServiceClient) ChangeMobile(ctx context.Context, in *ChangeMobileReq, opts ...grpc.CallOption) (*ChangeMobileResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ChangeMobileResp)
+	err := c.cc.Invoke(ctx, DriverService_ChangeMobile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *driverServiceClient) ChangePassword(ctx context.Context, in *ChangePasswordReq, opts ...grpc.CallOption) (*ChangePasswordResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ChangePasswordResp)
+	err := c.cc.Invoke(ctx, DriverService_ChangePassword_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *driverServiceClient) ResetPassword(ctx context.Context, in *ResetPasswordReq, opts ...grpc.CallOption) (*ResetPasswordResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ResetPasswordResp)
+	err := c.cc.Invoke(ctx, DriverService_ResetPassword_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *driverServiceClient) UpdateProfile(ctx context.Context, in *UpdateProfileReq, opts ...grpc.CallOption) (*UpdateProfileResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateProfileResp)
+	err := c.cc.Invoke(ctx, DriverService_UpdateProfile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *driverServiceClient) UpdateRealname(ctx context.Context, in *UpdateRealnameReq, opts ...grpc.CallOption) (*UpdateRealnameResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateRealnameResp)
+	err := c.cc.Invoke(ctx, DriverService_UpdateRealname_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *driverServiceClient) UpdateLicense(ctx context.Context, in *UpdateLicenseReq, opts ...grpc.CallOption) (*UpdateLicenseResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateLicenseResp)
+	err := c.cc.Invoke(ctx, DriverService_UpdateLicense_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *driverServiceClient) UpdateVehicle(ctx context.Context, in *UpdateVehicleReq, opts ...grpc.CallOption) (*UpdateVehicleResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateVehicleResp)
+	err := c.cc.Invoke(ctx, DriverService_UpdateVehicle_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *driverServiceClient) BindBankCard(ctx context.Context, in *BindBankCardReq, opts ...grpc.CallOption) (*BindBankCardResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(BindBankCardResp)
+	err := c.cc.Invoke(ctx, DriverService_BindBankCard_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *driverServiceClient) GetBankCard(ctx context.Context, in *GetBankCardReq, opts ...grpc.CallOption) (*GetBankCardResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetBankCardResp)
+	err := c.cc.Invoke(ctx, DriverService_GetBankCard_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *driverServiceClient) UpdateBankCard(ctx context.Context, in *UpdateBankCardReq, opts ...grpc.CallOption) (*UpdateBankCardResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateBankCardResp)
+	err := c.cc.Invoke(ctx, DriverService_UpdateBankCard_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *driverServiceClient) GetWallet(ctx context.Context, in *GetWalletReq, opts ...grpc.CallOption) (*GetWalletResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetWalletResp)
+	err := c.cc.Invoke(ctx, DriverService_GetWallet_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *driverServiceClient) GetWithdrawPage(ctx context.Context, in *GetWithdrawPageReq, opts ...grpc.CallOption) (*GetWithdrawPageResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetWithdrawPageResp)
+	err := c.cc.Invoke(ctx, DriverService_GetWithdrawPage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *driverServiceClient) ApplyWithdraw(ctx context.Context, in *ApplyWithdrawReq, opts ...grpc.CallOption) (*ApplyWithdrawResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ApplyWithdrawResp)
+	err := c.cc.Invoke(ctx, DriverService_ApplyWithdraw_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *driverServiceClient) GetWithdrawRecords(ctx context.Context, in *GetWithdrawRecordsReq, opts ...grpc.CallOption) (*GetWithdrawRecordsResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetWithdrawRecordsResp)
+	err := c.cc.Invoke(ctx, DriverService_GetWithdrawRecords_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *driverServiceClient) GetIncomeDetail(ctx context.Context, in *GetIncomeDetailReq, opts ...grpc.CallOption) (*GetIncomeDetailResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetIncomeDetailResp)
+	err := c.cc.Invoke(ctx, DriverService_GetIncomeDetail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DriverServiceServer is the server API for DriverService service.
 // All implementations must embed UnimplementedDriverServiceServer
 // for forward compatibility.
@@ -130,6 +312,23 @@ type DriverServiceServer interface {
 	Delete(context.Context, *DeleteDriverReq) (*DeleteDriverResp, error)
 	GetProfile(context.Context, *GetDriverProfileReq) (*GetDriverProfileResp, error)
 	GetIncome(context.Context, *GetDriverIncomeReq) (*GetDriverIncomeResp, error)
+	ChangeMobile(context.Context, *ChangeMobileReq) (*ChangeMobileResp, error)
+	ChangePassword(context.Context, *ChangePasswordReq) (*ChangePasswordResp, error)
+	ResetPassword(context.Context, *ResetPasswordReq) (*ResetPasswordResp, error)
+	UpdateProfile(context.Context, *UpdateProfileReq) (*UpdateProfileResp, error)
+	UpdateRealname(context.Context, *UpdateRealnameReq) (*UpdateRealnameResp, error)
+	UpdateLicense(context.Context, *UpdateLicenseReq) (*UpdateLicenseResp, error)
+	UpdateVehicle(context.Context, *UpdateVehicleReq) (*UpdateVehicleResp, error)
+	// 银行卡
+	BindBankCard(context.Context, *BindBankCardReq) (*BindBankCardResp, error)
+	GetBankCard(context.Context, *GetBankCardReq) (*GetBankCardResp, error)
+	UpdateBankCard(context.Context, *UpdateBankCardReq) (*UpdateBankCardResp, error)
+	// 钱包 & 提现
+	GetWallet(context.Context, *GetWalletReq) (*GetWalletResp, error)
+	GetWithdrawPage(context.Context, *GetWithdrawPageReq) (*GetWithdrawPageResp, error)
+	ApplyWithdraw(context.Context, *ApplyWithdrawReq) (*ApplyWithdrawResp, error)
+	GetWithdrawRecords(context.Context, *GetWithdrawRecordsReq) (*GetWithdrawRecordsResp, error)
+	GetIncomeDetail(context.Context, *GetIncomeDetailReq) (*GetIncomeDetailResp, error)
 	mustEmbedUnimplementedDriverServiceServer()
 }
 
@@ -160,6 +359,51 @@ func (UnimplementedDriverServiceServer) GetProfile(context.Context, *GetDriverPr
 }
 func (UnimplementedDriverServiceServer) GetIncome(context.Context, *GetDriverIncomeReq) (*GetDriverIncomeResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetIncome not implemented")
+}
+func (UnimplementedDriverServiceServer) ChangeMobile(context.Context, *ChangeMobileReq) (*ChangeMobileResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ChangeMobile not implemented")
+}
+func (UnimplementedDriverServiceServer) ChangePassword(context.Context, *ChangePasswordReq) (*ChangePasswordResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ChangePassword not implemented")
+}
+func (UnimplementedDriverServiceServer) ResetPassword(context.Context, *ResetPasswordReq) (*ResetPasswordResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ResetPassword not implemented")
+}
+func (UnimplementedDriverServiceServer) UpdateProfile(context.Context, *UpdateProfileReq) (*UpdateProfileResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateProfile not implemented")
+}
+func (UnimplementedDriverServiceServer) UpdateRealname(context.Context, *UpdateRealnameReq) (*UpdateRealnameResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateRealname not implemented")
+}
+func (UnimplementedDriverServiceServer) UpdateLicense(context.Context, *UpdateLicenseReq) (*UpdateLicenseResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateLicense not implemented")
+}
+func (UnimplementedDriverServiceServer) UpdateVehicle(context.Context, *UpdateVehicleReq) (*UpdateVehicleResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateVehicle not implemented")
+}
+func (UnimplementedDriverServiceServer) BindBankCard(context.Context, *BindBankCardReq) (*BindBankCardResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method BindBankCard not implemented")
+}
+func (UnimplementedDriverServiceServer) GetBankCard(context.Context, *GetBankCardReq) (*GetBankCardResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetBankCard not implemented")
+}
+func (UnimplementedDriverServiceServer) UpdateBankCard(context.Context, *UpdateBankCardReq) (*UpdateBankCardResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateBankCard not implemented")
+}
+func (UnimplementedDriverServiceServer) GetWallet(context.Context, *GetWalletReq) (*GetWalletResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetWallet not implemented")
+}
+func (UnimplementedDriverServiceServer) GetWithdrawPage(context.Context, *GetWithdrawPageReq) (*GetWithdrawPageResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetWithdrawPage not implemented")
+}
+func (UnimplementedDriverServiceServer) ApplyWithdraw(context.Context, *ApplyWithdrawReq) (*ApplyWithdrawResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ApplyWithdraw not implemented")
+}
+func (UnimplementedDriverServiceServer) GetWithdrawRecords(context.Context, *GetWithdrawRecordsReq) (*GetWithdrawRecordsResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetWithdrawRecords not implemented")
+}
+func (UnimplementedDriverServiceServer) GetIncomeDetail(context.Context, *GetIncomeDetailReq) (*GetIncomeDetailResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetIncomeDetail not implemented")
 }
 func (UnimplementedDriverServiceServer) mustEmbedUnimplementedDriverServiceServer() {}
 func (UnimplementedDriverServiceServer) testEmbeddedByValue()                       {}
@@ -308,6 +552,276 @@ func _DriverService_GetIncome_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DriverService_ChangeMobile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChangeMobileReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).ChangeMobile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_ChangeMobile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).ChangeMobile(ctx, req.(*ChangeMobileReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DriverService_ChangePassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChangePasswordReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).ChangePassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_ChangePassword_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).ChangePassword(ctx, req.(*ChangePasswordReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DriverService_ResetPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResetPasswordReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).ResetPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_ResetPassword_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).ResetPassword(ctx, req.(*ResetPasswordReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DriverService_UpdateProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateProfileReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).UpdateProfile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_UpdateProfile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).UpdateProfile(ctx, req.(*UpdateProfileReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DriverService_UpdateRealname_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateRealnameReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).UpdateRealname(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_UpdateRealname_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).UpdateRealname(ctx, req.(*UpdateRealnameReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DriverService_UpdateLicense_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateLicenseReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).UpdateLicense(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_UpdateLicense_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).UpdateLicense(ctx, req.(*UpdateLicenseReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DriverService_UpdateVehicle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateVehicleReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).UpdateVehicle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_UpdateVehicle_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).UpdateVehicle(ctx, req.(*UpdateVehicleReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DriverService_BindBankCard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BindBankCardReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).BindBankCard(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_BindBankCard_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).BindBankCard(ctx, req.(*BindBankCardReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DriverService_GetBankCard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBankCardReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).GetBankCard(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_GetBankCard_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).GetBankCard(ctx, req.(*GetBankCardReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DriverService_UpdateBankCard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateBankCardReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).UpdateBankCard(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_UpdateBankCard_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).UpdateBankCard(ctx, req.(*UpdateBankCardReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DriverService_GetWallet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetWalletReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).GetWallet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_GetWallet_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).GetWallet(ctx, req.(*GetWalletReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DriverService_GetWithdrawPage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetWithdrawPageReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).GetWithdrawPage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_GetWithdrawPage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).GetWithdrawPage(ctx, req.(*GetWithdrawPageReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DriverService_ApplyWithdraw_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ApplyWithdrawReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).ApplyWithdraw(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_ApplyWithdraw_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).ApplyWithdraw(ctx, req.(*ApplyWithdrawReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DriverService_GetWithdrawRecords_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetWithdrawRecordsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).GetWithdrawRecords(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_GetWithdrawRecords_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).GetWithdrawRecords(ctx, req.(*GetWithdrawRecordsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DriverService_GetIncomeDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetIncomeDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServiceServer).GetIncomeDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DriverService_GetIncomeDetail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServiceServer).GetIncomeDetail(ctx, req.(*GetIncomeDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DriverService_ServiceDesc is the grpc.ServiceDesc for DriverService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -342,6 +856,66 @@ var DriverService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetIncome",
 			Handler:    _DriverService_GetIncome_Handler,
+		},
+		{
+			MethodName: "ChangeMobile",
+			Handler:    _DriverService_ChangeMobile_Handler,
+		},
+		{
+			MethodName: "ChangePassword",
+			Handler:    _DriverService_ChangePassword_Handler,
+		},
+		{
+			MethodName: "ResetPassword",
+			Handler:    _DriverService_ResetPassword_Handler,
+		},
+		{
+			MethodName: "UpdateProfile",
+			Handler:    _DriverService_UpdateProfile_Handler,
+		},
+		{
+			MethodName: "UpdateRealname",
+			Handler:    _DriverService_UpdateRealname_Handler,
+		},
+		{
+			MethodName: "UpdateLicense",
+			Handler:    _DriverService_UpdateLicense_Handler,
+		},
+		{
+			MethodName: "UpdateVehicle",
+			Handler:    _DriverService_UpdateVehicle_Handler,
+		},
+		{
+			MethodName: "BindBankCard",
+			Handler:    _DriverService_BindBankCard_Handler,
+		},
+		{
+			MethodName: "GetBankCard",
+			Handler:    _DriverService_GetBankCard_Handler,
+		},
+		{
+			MethodName: "UpdateBankCard",
+			Handler:    _DriverService_UpdateBankCard_Handler,
+		},
+		{
+			MethodName: "GetWallet",
+			Handler:    _DriverService_GetWallet_Handler,
+		},
+		{
+			MethodName: "GetWithdrawPage",
+			Handler:    _DriverService_GetWithdrawPage_Handler,
+		},
+		{
+			MethodName: "ApplyWithdraw",
+			Handler:    _DriverService_ApplyWithdraw_Handler,
+		},
+		{
+			MethodName: "GetWithdrawRecords",
+			Handler:    _DriverService_GetWithdrawRecords_Handler,
+		},
+		{
+			MethodName: "GetIncomeDetail",
+			Handler:    _DriverService_GetIncomeDetail_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

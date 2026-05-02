@@ -4,7 +4,7 @@
 // 	protoc        v3.19.1
 // source: driver.proto
 
-package driver
+package kitexGen
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -603,6 +603,9 @@ type GetDriverProfileResp struct {
 	PersonalInfo  *PersonalInfo          `protobuf:"bytes,1,opt,name=personal_info,json=personalInfo,proto3" json:"personal_info,omitempty"`
 	OrderStats    *OrderStats            `protobuf:"bytes,2,opt,name=order_stats,json=orderStats,proto3" json:"order_stats,omitempty"`
 	VerifyStatus  int32                  `protobuf:"varint,3,opt,name=verify_status,json=verifyStatus,proto3" json:"verify_status,omitempty"`
+	RealnameInfo  *RealnameInfo          `protobuf:"bytes,4,opt,name=realname_info,json=realnameInfo,proto3" json:"realname_info,omitempty"`
+	LicenseInfo   *LicenseInfo           `protobuf:"bytes,5,opt,name=license_info,json=licenseInfo,proto3" json:"license_info,omitempty"`
+	VehicleInfo   *VehicleInfo           `protobuf:"bytes,6,opt,name=vehicle_info,json=vehicleInfo,proto3" json:"vehicle_info,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -658,6 +661,266 @@ func (x *GetDriverProfileResp) GetVerifyStatus() int32 {
 	return 0
 }
 
+func (x *GetDriverProfileResp) GetRealnameInfo() *RealnameInfo {
+	if x != nil {
+		return x.RealnameInfo
+	}
+	return nil
+}
+
+func (x *GetDriverProfileResp) GetLicenseInfo() *LicenseInfo {
+	if x != nil {
+		return x.LicenseInfo
+	}
+	return nil
+}
+
+func (x *GetDriverProfileResp) GetVehicleInfo() *VehicleInfo {
+	if x != nil {
+		return x.VehicleInfo
+	}
+	return nil
+}
+
+// 实名认证信息（用于前端回显已提交数据）
+type RealnameInfo struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	RealName       string                 `protobuf:"bytes,1,opt,name=real_name,json=realName,proto3" json:"real_name,omitempty"`
+	IdCardFrontUrl string                 `protobuf:"bytes,2,opt,name=id_card_front_url,json=idCardFrontUrl,proto3" json:"id_card_front_url,omitempty"`
+	IdCardBackUrl  string                 `protobuf:"bytes,3,opt,name=id_card_back_url,json=idCardBackUrl,proto3" json:"id_card_back_url,omitempty"`
+	Status         int32                  `protobuf:"varint,4,opt,name=status,proto3" json:"status,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *RealnameInfo) Reset() {
+	*x = RealnameInfo{}
+	mi := &file_driver_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RealnameInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RealnameInfo) ProtoMessage() {}
+
+func (x *RealnameInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RealnameInfo.ProtoReflect.Descriptor instead.
+func (*RealnameInfo) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *RealnameInfo) GetRealName() string {
+	if x != nil {
+		return x.RealName
+	}
+	return ""
+}
+
+func (x *RealnameInfo) GetIdCardFrontUrl() string {
+	if x != nil {
+		return x.IdCardFrontUrl
+	}
+	return ""
+}
+
+func (x *RealnameInfo) GetIdCardBackUrl() string {
+	if x != nil {
+		return x.IdCardBackUrl
+	}
+	return ""
+}
+
+func (x *RealnameInfo) GetStatus() int32 {
+	if x != nil {
+		return x.Status
+	}
+	return 0
+}
+
+// 驾驶证认证信息（用于前端回显已提交数据）
+type LicenseInfo struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	LicenseNo     string                 `protobuf:"bytes,1,opt,name=license_no,json=licenseNo,proto3" json:"license_no,omitempty"`
+	LicenseType   string                 `protobuf:"bytes,2,opt,name=license_type,json=licenseType,proto3" json:"license_type,omitempty"`
+	LicenseUrl    string                 `protobuf:"bytes,3,opt,name=license_url,json=licenseUrl,proto3" json:"license_url,omitempty"`
+	Status        int32                  `protobuf:"varint,4,opt,name=status,proto3" json:"status,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LicenseInfo) Reset() {
+	*x = LicenseInfo{}
+	mi := &file_driver_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LicenseInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LicenseInfo) ProtoMessage() {}
+
+func (x *LicenseInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LicenseInfo.ProtoReflect.Descriptor instead.
+func (*LicenseInfo) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *LicenseInfo) GetLicenseNo() string {
+	if x != nil {
+		return x.LicenseNo
+	}
+	return ""
+}
+
+func (x *LicenseInfo) GetLicenseType() string {
+	if x != nil {
+		return x.LicenseType
+	}
+	return ""
+}
+
+func (x *LicenseInfo) GetLicenseUrl() string {
+	if x != nil {
+		return x.LicenseUrl
+	}
+	return ""
+}
+
+func (x *LicenseInfo) GetStatus() int32 {
+	if x != nil {
+		return x.Status
+	}
+	return 0
+}
+
+// 车辆信息（用于前端回显已提交数据）
+type VehicleInfo struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	PlateNo           string                 `protobuf:"bytes,1,opt,name=plate_no,json=plateNo,proto3" json:"plate_no,omitempty"`
+	VehicleBrand      string                 `protobuf:"bytes,2,opt,name=vehicle_brand,json=vehicleBrand,proto3" json:"vehicle_brand,omitempty"`
+	VehicleModel      string                 `protobuf:"bytes,3,opt,name=vehicle_model,json=vehicleModel,proto3" json:"vehicle_model,omitempty"`
+	VehicleColor      string                 `protobuf:"bytes,4,opt,name=vehicle_color,json=vehicleColor,proto3" json:"vehicle_color,omitempty"`
+	SeatCount         int32                  `protobuf:"varint,5,opt,name=seat_count,json=seatCount,proto3" json:"seat_count,omitempty"`
+	DrivingLicenseUrl string                 `protobuf:"bytes,6,opt,name=driving_license_url,json=drivingLicenseUrl,proto3" json:"driving_license_url,omitempty"`
+	VehiclePhotoUrl   string                 `protobuf:"bytes,7,opt,name=vehicle_photo_url,json=vehiclePhotoUrl,proto3" json:"vehicle_photo_url,omitempty"`
+	Status            int32                  `protobuf:"varint,8,opt,name=status,proto3" json:"status,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *VehicleInfo) Reset() {
+	*x = VehicleInfo{}
+	mi := &file_driver_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *VehicleInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*VehicleInfo) ProtoMessage() {}
+
+func (x *VehicleInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use VehicleInfo.ProtoReflect.Descriptor instead.
+func (*VehicleInfo) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *VehicleInfo) GetPlateNo() string {
+	if x != nil {
+		return x.PlateNo
+	}
+	return ""
+}
+
+func (x *VehicleInfo) GetVehicleBrand() string {
+	if x != nil {
+		return x.VehicleBrand
+	}
+	return ""
+}
+
+func (x *VehicleInfo) GetVehicleModel() string {
+	if x != nil {
+		return x.VehicleModel
+	}
+	return ""
+}
+
+func (x *VehicleInfo) GetVehicleColor() string {
+	if x != nil {
+		return x.VehicleColor
+	}
+	return ""
+}
+
+func (x *VehicleInfo) GetSeatCount() int32 {
+	if x != nil {
+		return x.SeatCount
+	}
+	return 0
+}
+
+func (x *VehicleInfo) GetDrivingLicenseUrl() string {
+	if x != nil {
+		return x.DrivingLicenseUrl
+	}
+	return ""
+}
+
+func (x *VehicleInfo) GetVehiclePhotoUrl() string {
+	if x != nil {
+		return x.VehiclePhotoUrl
+	}
+	return ""
+}
+
+func (x *VehicleInfo) GetStatus() int32 {
+	if x != nil {
+		return x.Status
+	}
+	return 0
+}
+
 type PersonalInfo struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Nickname      string                 `protobuf:"bytes,1,opt,name=nickname,proto3" json:"nickname,omitempty"`
@@ -675,7 +938,7 @@ type PersonalInfo struct {
 
 func (x *PersonalInfo) Reset() {
 	*x = PersonalInfo{}
-	mi := &file_driver_proto_msgTypes[13]
+	mi := &file_driver_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -687,7 +950,7 @@ func (x *PersonalInfo) String() string {
 func (*PersonalInfo) ProtoMessage() {}
 
 func (x *PersonalInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_driver_proto_msgTypes[13]
+	mi := &file_driver_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -700,7 +963,7 @@ func (x *PersonalInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PersonalInfo.ProtoReflect.Descriptor instead.
 func (*PersonalInfo) Descriptor() ([]byte, []int) {
-	return file_driver_proto_rawDescGZIP(), []int{13}
+	return file_driver_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *PersonalInfo) GetNickname() string {
@@ -777,7 +1040,7 @@ type OrderStats struct {
 
 func (x *OrderStats) Reset() {
 	*x = OrderStats{}
-	mi := &file_driver_proto_msgTypes[14]
+	mi := &file_driver_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -789,7 +1052,7 @@ func (x *OrderStats) String() string {
 func (*OrderStats) ProtoMessage() {}
 
 func (x *OrderStats) ProtoReflect() protoreflect.Message {
-	mi := &file_driver_proto_msgTypes[14]
+	mi := &file_driver_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -802,7 +1065,7 @@ func (x *OrderStats) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrderStats.ProtoReflect.Descriptor instead.
 func (*OrderStats) Descriptor() ([]byte, []int) {
-	return file_driver_proto_rawDescGZIP(), []int{14}
+	return file_driver_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *OrderStats) GetOrderCount() int32 {
@@ -837,7 +1100,7 @@ type GetDriverIncomeReq struct {
 
 func (x *GetDriverIncomeReq) Reset() {
 	*x = GetDriverIncomeReq{}
-	mi := &file_driver_proto_msgTypes[15]
+	mi := &file_driver_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -849,7 +1112,7 @@ func (x *GetDriverIncomeReq) String() string {
 func (*GetDriverIncomeReq) ProtoMessage() {}
 
 func (x *GetDriverIncomeReq) ProtoReflect() protoreflect.Message {
-	mi := &file_driver_proto_msgTypes[15]
+	mi := &file_driver_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -862,7 +1125,7 @@ func (x *GetDriverIncomeReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetDriverIncomeReq.ProtoReflect.Descriptor instead.
 func (*GetDriverIncomeReq) Descriptor() ([]byte, []int) {
-	return file_driver_proto_rawDescGZIP(), []int{15}
+	return file_driver_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *GetDriverIncomeReq) GetDriverId() int64 {
@@ -882,14 +1145,14 @@ func (x *GetDriverIncomeReq) GetPeriod() string {
 type DailyIncome struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Date          string                 `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty"`
-	Income        float64                `protobuf:"fixed64,2,opt,name=income,proto3" json:"income,omitempty"`
+	Income        int64                  `protobuf:"varint,2,opt,name=income,proto3" json:"income,omitempty"` // 收入(单位:分)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *DailyIncome) Reset() {
 	*x = DailyIncome{}
-	mi := &file_driver_proto_msgTypes[16]
+	mi := &file_driver_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -901,7 +1164,7 @@ func (x *DailyIncome) String() string {
 func (*DailyIncome) ProtoMessage() {}
 
 func (x *DailyIncome) ProtoReflect() protoreflect.Message {
-	mi := &file_driver_proto_msgTypes[16]
+	mi := &file_driver_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -914,7 +1177,7 @@ func (x *DailyIncome) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DailyIncome.ProtoReflect.Descriptor instead.
 func (*DailyIncome) Descriptor() ([]byte, []int) {
-	return file_driver_proto_rawDescGZIP(), []int{16}
+	return file_driver_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *DailyIncome) GetDate() string {
@@ -924,7 +1187,7 @@ func (x *DailyIncome) GetDate() string {
 	return ""
 }
 
-func (x *DailyIncome) GetIncome() float64 {
+func (x *DailyIncome) GetIncome() int64 {
 	if x != nil {
 		return x.Income
 	}
@@ -934,7 +1197,7 @@ func (x *DailyIncome) GetIncome() float64 {
 type IncomeSummary struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	OrderCount     int32                  `protobuf:"varint,1,opt,name=order_count,json=orderCount,proto3" json:"order_count,omitempty"`
-	Income         float64                `protobuf:"fixed64,2,opt,name=income,proto3" json:"income,omitempty"`
+	Income         int64                  `protobuf:"varint,2,opt,name=income,proto3" json:"income,omitempty"` // 收入(单位:分)
 	OnlineDuration int32                  `protobuf:"varint,3,opt,name=online_duration,json=onlineDuration,proto3" json:"online_duration,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
@@ -942,7 +1205,7 @@ type IncomeSummary struct {
 
 func (x *IncomeSummary) Reset() {
 	*x = IncomeSummary{}
-	mi := &file_driver_proto_msgTypes[17]
+	mi := &file_driver_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -954,7 +1217,7 @@ func (x *IncomeSummary) String() string {
 func (*IncomeSummary) ProtoMessage() {}
 
 func (x *IncomeSummary) ProtoReflect() protoreflect.Message {
-	mi := &file_driver_proto_msgTypes[17]
+	mi := &file_driver_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -967,7 +1230,7 @@ func (x *IncomeSummary) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IncomeSummary.ProtoReflect.Descriptor instead.
 func (*IncomeSummary) Descriptor() ([]byte, []int) {
-	return file_driver_proto_rawDescGZIP(), []int{17}
+	return file_driver_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *IncomeSummary) GetOrderCount() int32 {
@@ -977,7 +1240,7 @@ func (x *IncomeSummary) GetOrderCount() int32 {
 	return 0
 }
 
-func (x *IncomeSummary) GetIncome() float64 {
+func (x *IncomeSummary) GetIncome() int64 {
 	if x != nil {
 		return x.Income
 	}
@@ -1001,7 +1264,7 @@ type GetDriverIncomeResp struct {
 
 func (x *GetDriverIncomeResp) Reset() {
 	*x = GetDriverIncomeResp{}
-	mi := &file_driver_proto_msgTypes[18]
+	mi := &file_driver_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1013,7 +1276,7 @@ func (x *GetDriverIncomeResp) String() string {
 func (*GetDriverIncomeResp) ProtoMessage() {}
 
 func (x *GetDriverIncomeResp) ProtoReflect() protoreflect.Message {
-	mi := &file_driver_proto_msgTypes[18]
+	mi := &file_driver_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1026,7 +1289,7 @@ func (x *GetDriverIncomeResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetDriverIncomeResp.ProtoReflect.Descriptor instead.
 func (*GetDriverIncomeResp) Descriptor() ([]byte, []int) {
-	return file_driver_proto_rawDescGZIP(), []int{18}
+	return file_driver_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *GetDriverIncomeResp) GetSummary() *IncomeSummary {
@@ -1041,6 +1304,2425 @@ func (x *GetDriverIncomeResp) GetTrend() []*DailyIncome {
 		return x.Trend
 	}
 	return nil
+}
+
+// 修改手机号
+type ChangeMobileReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	DriverId      int64                  `protobuf:"varint,1,opt,name=driver_id,json=driverId,proto3" json:"driver_id,omitempty"`
+	NewMobile     string                 `protobuf:"bytes,2,opt,name=new_mobile,json=newMobile,proto3" json:"new_mobile,omitempty"`
+	VerifyCode    string                 `protobuf:"bytes,3,opt,name=verify_code,json=verifyCode,proto3" json:"verify_code,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ChangeMobileReq) Reset() {
+	*x = ChangeMobileReq{}
+	mi := &file_driver_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ChangeMobileReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChangeMobileReq) ProtoMessage() {}
+
+func (x *ChangeMobileReq) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChangeMobileReq.ProtoReflect.Descriptor instead.
+func (*ChangeMobileReq) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *ChangeMobileReq) GetDriverId() int64 {
+	if x != nil {
+		return x.DriverId
+	}
+	return 0
+}
+
+func (x *ChangeMobileReq) GetNewMobile() string {
+	if x != nil {
+		return x.NewMobile
+	}
+	return ""
+}
+
+func (x *ChangeMobileReq) GetVerifyCode() string {
+	if x != nil {
+		return x.VerifyCode
+	}
+	return ""
+}
+
+type ChangeMobileResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ChangeMobileResp) Reset() {
+	*x = ChangeMobileResp{}
+	mi := &file_driver_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ChangeMobileResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChangeMobileResp) ProtoMessage() {}
+
+func (x *ChangeMobileResp) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChangeMobileResp.ProtoReflect.Descriptor instead.
+func (*ChangeMobileResp) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *ChangeMobileResp) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *ChangeMobileResp) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+// 修改密码
+type ChangePasswordReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	DriverId      int64                  `protobuf:"varint,1,opt,name=driver_id,json=driverId,proto3" json:"driver_id,omitempty"`
+	OldPassword   string                 `protobuf:"bytes,2,opt,name=old_password,json=oldPassword,proto3" json:"old_password,omitempty"`
+	NewPassword   string                 `protobuf:"bytes,3,opt,name=new_password,json=newPassword,proto3" json:"new_password,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ChangePasswordReq) Reset() {
+	*x = ChangePasswordReq{}
+	mi := &file_driver_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ChangePasswordReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChangePasswordReq) ProtoMessage() {}
+
+func (x *ChangePasswordReq) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChangePasswordReq.ProtoReflect.Descriptor instead.
+func (*ChangePasswordReq) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *ChangePasswordReq) GetDriverId() int64 {
+	if x != nil {
+		return x.DriverId
+	}
+	return 0
+}
+
+func (x *ChangePasswordReq) GetOldPassword() string {
+	if x != nil {
+		return x.OldPassword
+	}
+	return ""
+}
+
+func (x *ChangePasswordReq) GetNewPassword() string {
+	if x != nil {
+		return x.NewPassword
+	}
+	return ""
+}
+
+type ChangePasswordResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ChangePasswordResp) Reset() {
+	*x = ChangePasswordResp{}
+	mi := &file_driver_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ChangePasswordResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChangePasswordResp) ProtoMessage() {}
+
+func (x *ChangePasswordResp) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChangePasswordResp.ProtoReflect.Descriptor instead.
+func (*ChangePasswordResp) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *ChangePasswordResp) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *ChangePasswordResp) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+// 重置密码（忘记密码）
+type ResetPasswordReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Mobile        string                 `protobuf:"bytes,1,opt,name=mobile,proto3" json:"mobile,omitempty"`
+	VerifyCode    string                 `protobuf:"bytes,2,opt,name=verify_code,json=verifyCode,proto3" json:"verify_code,omitempty"`
+	NewPassword   string                 `protobuf:"bytes,3,opt,name=new_password,json=newPassword,proto3" json:"new_password,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ResetPasswordReq) Reset() {
+	*x = ResetPasswordReq{}
+	mi := &file_driver_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ResetPasswordReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ResetPasswordReq) ProtoMessage() {}
+
+func (x *ResetPasswordReq) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ResetPasswordReq.ProtoReflect.Descriptor instead.
+func (*ResetPasswordReq) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *ResetPasswordReq) GetMobile() string {
+	if x != nil {
+		return x.Mobile
+	}
+	return ""
+}
+
+func (x *ResetPasswordReq) GetVerifyCode() string {
+	if x != nil {
+		return x.VerifyCode
+	}
+	return ""
+}
+
+func (x *ResetPasswordReq) GetNewPassword() string {
+	if x != nil {
+		return x.NewPassword
+	}
+	return ""
+}
+
+type ResetPasswordResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ResetPasswordResp) Reset() {
+	*x = ResetPasswordResp{}
+	mi := &file_driver_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ResetPasswordResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ResetPasswordResp) ProtoMessage() {}
+
+func (x *ResetPasswordResp) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ResetPasswordResp.ProtoReflect.Descriptor instead.
+func (*ResetPasswordResp) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *ResetPasswordResp) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *ResetPasswordResp) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+// UpdateProfile 更新司机个人资料(通用，字段为空则不更新)
+type UpdateProfileReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	DriverId      int64                  `protobuf:"varint,1,opt,name=driver_id,json=driverId,proto3" json:"driver_id,omitempty"`
+	Nickname      string                 `protobuf:"bytes,2,opt,name=nickname,proto3" json:"nickname,omitempty"`
+	Avatar        string                 `protobuf:"bytes,3,opt,name=avatar,proto3" json:"avatar,omitempty"`
+	Gender        int32                  `protobuf:"varint,4,opt,name=gender,proto3" json:"gender,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateProfileReq) Reset() {
+	*x = UpdateProfileReq{}
+	mi := &file_driver_proto_msgTypes[28]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateProfileReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateProfileReq) ProtoMessage() {}
+
+func (x *UpdateProfileReq) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[28]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateProfileReq.ProtoReflect.Descriptor instead.
+func (*UpdateProfileReq) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{28}
+}
+
+func (x *UpdateProfileReq) GetDriverId() int64 {
+	if x != nil {
+		return x.DriverId
+	}
+	return 0
+}
+
+func (x *UpdateProfileReq) GetNickname() string {
+	if x != nil {
+		return x.Nickname
+	}
+	return ""
+}
+
+func (x *UpdateProfileReq) GetAvatar() string {
+	if x != nil {
+		return x.Avatar
+	}
+	return ""
+}
+
+func (x *UpdateProfileReq) GetGender() int32 {
+	if x != nil {
+		return x.Gender
+	}
+	return 0
+}
+
+type UpdateProfileResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateProfileResp) Reset() {
+	*x = UpdateProfileResp{}
+	mi := &file_driver_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateProfileResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateProfileResp) ProtoMessage() {}
+
+func (x *UpdateProfileResp) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateProfileResp.ProtoReflect.Descriptor instead.
+func (*UpdateProfileResp) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *UpdateProfileResp) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *UpdateProfileResp) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+// UpdateRealname 更新/提交实名认证
+type UpdateRealnameReq struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	DriverId       int64                  `protobuf:"varint,1,opt,name=driver_id,json=driverId,proto3" json:"driver_id,omitempty"`
+	RealName       string                 `protobuf:"bytes,2,opt,name=real_name,json=realName,proto3" json:"real_name,omitempty"`
+	IdCardNo       string                 `protobuf:"bytes,3,opt,name=id_card_no,json=idCardNo,proto3" json:"id_card_no,omitempty"`
+	IdCardFrontUrl string                 `protobuf:"bytes,4,opt,name=id_card_front_url,json=idCardFrontUrl,proto3" json:"id_card_front_url,omitempty"`
+	IdCardBackUrl  string                 `protobuf:"bytes,5,opt,name=id_card_back_url,json=idCardBackUrl,proto3" json:"id_card_back_url,omitempty"`
+	Gender         int32                  `protobuf:"varint,6,opt,name=gender,proto3" json:"gender,omitempty"`
+	Birthday       string                 `protobuf:"bytes,7,opt,name=birthday,proto3" json:"birthday,omitempty"`
+	Address        string                 `protobuf:"bytes,8,opt,name=address,proto3" json:"address,omitempty"`
+	Nation         string                 `protobuf:"bytes,9,opt,name=nation,proto3" json:"nation,omitempty"`
+	ExpireDate     string                 `protobuf:"bytes,10,opt,name=expire_date,json=expireDate,proto3" json:"expire_date,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *UpdateRealnameReq) Reset() {
+	*x = UpdateRealnameReq{}
+	mi := &file_driver_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateRealnameReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateRealnameReq) ProtoMessage() {}
+
+func (x *UpdateRealnameReq) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateRealnameReq.ProtoReflect.Descriptor instead.
+func (*UpdateRealnameReq) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *UpdateRealnameReq) GetDriverId() int64 {
+	if x != nil {
+		return x.DriverId
+	}
+	return 0
+}
+
+func (x *UpdateRealnameReq) GetRealName() string {
+	if x != nil {
+		return x.RealName
+	}
+	return ""
+}
+
+func (x *UpdateRealnameReq) GetIdCardNo() string {
+	if x != nil {
+		return x.IdCardNo
+	}
+	return ""
+}
+
+func (x *UpdateRealnameReq) GetIdCardFrontUrl() string {
+	if x != nil {
+		return x.IdCardFrontUrl
+	}
+	return ""
+}
+
+func (x *UpdateRealnameReq) GetIdCardBackUrl() string {
+	if x != nil {
+		return x.IdCardBackUrl
+	}
+	return ""
+}
+
+func (x *UpdateRealnameReq) GetGender() int32 {
+	if x != nil {
+		return x.Gender
+	}
+	return 0
+}
+
+func (x *UpdateRealnameReq) GetBirthday() string {
+	if x != nil {
+		return x.Birthday
+	}
+	return ""
+}
+
+func (x *UpdateRealnameReq) GetAddress() string {
+	if x != nil {
+		return x.Address
+	}
+	return ""
+}
+
+func (x *UpdateRealnameReq) GetNation() string {
+	if x != nil {
+		return x.Nation
+	}
+	return ""
+}
+
+func (x *UpdateRealnameReq) GetExpireDate() string {
+	if x != nil {
+		return x.ExpireDate
+	}
+	return ""
+}
+
+type UpdateRealnameResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateRealnameResp) Reset() {
+	*x = UpdateRealnameResp{}
+	mi := &file_driver_proto_msgTypes[31]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateRealnameResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateRealnameResp) ProtoMessage() {}
+
+func (x *UpdateRealnameResp) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[31]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateRealnameResp.ProtoReflect.Descriptor instead.
+func (*UpdateRealnameResp) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{31}
+}
+
+func (x *UpdateRealnameResp) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *UpdateRealnameResp) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+// UpdateLicense 更新/提交驾驶证认证
+type UpdateLicenseReq struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	DriverId       int64                  `protobuf:"varint,1,opt,name=driver_id,json=driverId,proto3" json:"driver_id,omitempty"`
+	LicenseNo      string                 `protobuf:"bytes,2,opt,name=license_no,json=licenseNo,proto3" json:"license_no,omitempty"`
+	LicenseType    string                 `protobuf:"bytes,3,opt,name=license_type,json=licenseType,proto3" json:"license_type,omitempty"`
+	LicenseUrl     string                 `protobuf:"bytes,4,opt,name=license_url,json=licenseUrl,proto3" json:"license_url,omitempty"`
+	FirstIssueDate string                 `protobuf:"bytes,5,opt,name=first_issue_date,json=firstIssueDate,proto3" json:"first_issue_date,omitempty"`
+	IssueDate      string                 `protobuf:"bytes,6,opt,name=issue_date,json=issueDate,proto3" json:"issue_date,omitempty"`
+	ExpireDate     string                 `protobuf:"bytes,7,opt,name=expire_date,json=expireDate,proto3" json:"expire_date,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *UpdateLicenseReq) Reset() {
+	*x = UpdateLicenseReq{}
+	mi := &file_driver_proto_msgTypes[32]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateLicenseReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateLicenseReq) ProtoMessage() {}
+
+func (x *UpdateLicenseReq) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[32]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateLicenseReq.ProtoReflect.Descriptor instead.
+func (*UpdateLicenseReq) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{32}
+}
+
+func (x *UpdateLicenseReq) GetDriverId() int64 {
+	if x != nil {
+		return x.DriverId
+	}
+	return 0
+}
+
+func (x *UpdateLicenseReq) GetLicenseNo() string {
+	if x != nil {
+		return x.LicenseNo
+	}
+	return ""
+}
+
+func (x *UpdateLicenseReq) GetLicenseType() string {
+	if x != nil {
+		return x.LicenseType
+	}
+	return ""
+}
+
+func (x *UpdateLicenseReq) GetLicenseUrl() string {
+	if x != nil {
+		return x.LicenseUrl
+	}
+	return ""
+}
+
+func (x *UpdateLicenseReq) GetFirstIssueDate() string {
+	if x != nil {
+		return x.FirstIssueDate
+	}
+	return ""
+}
+
+func (x *UpdateLicenseReq) GetIssueDate() string {
+	if x != nil {
+		return x.IssueDate
+	}
+	return ""
+}
+
+func (x *UpdateLicenseReq) GetExpireDate() string {
+	if x != nil {
+		return x.ExpireDate
+	}
+	return ""
+}
+
+type UpdateLicenseResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateLicenseResp) Reset() {
+	*x = UpdateLicenseResp{}
+	mi := &file_driver_proto_msgTypes[33]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateLicenseResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateLicenseResp) ProtoMessage() {}
+
+func (x *UpdateLicenseResp) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[33]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateLicenseResp.ProtoReflect.Descriptor instead.
+func (*UpdateLicenseResp) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{33}
+}
+
+func (x *UpdateLicenseResp) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *UpdateLicenseResp) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+// UpdateVehicle 更新/提交车辆信息
+type UpdateVehicleReq struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	DriverId          int64                  `protobuf:"varint,1,opt,name=driver_id,json=driverId,proto3" json:"driver_id,omitempty"`
+	PlateNo           string                 `protobuf:"bytes,2,opt,name=plate_no,json=plateNo,proto3" json:"plate_no,omitempty"`
+	VehicleModel      string                 `protobuf:"bytes,3,opt,name=vehicle_model,json=vehicleModel,proto3" json:"vehicle_model,omitempty"`
+	VehicleBrand      string                 `protobuf:"bytes,4,opt,name=vehicle_brand,json=vehicleBrand,proto3" json:"vehicle_brand,omitempty"`
+	VehicleColor      string                 `protobuf:"bytes,5,opt,name=vehicle_color,json=vehicleColor,proto3" json:"vehicle_color,omitempty"`
+	VehicleColorCode  string                 `protobuf:"bytes,6,opt,name=vehicle_color_code,json=vehicleColorCode,proto3" json:"vehicle_color_code,omitempty"`
+	SeatCount         int32                  `protobuf:"varint,7,opt,name=seat_count,json=seatCount,proto3" json:"seat_count,omitempty"`
+	DrivingLicenseUrl string                 `protobuf:"bytes,8,opt,name=driving_license_url,json=drivingLicenseUrl,proto3" json:"driving_license_url,omitempty"`
+	VehiclePhotoUrl   string                 `protobuf:"bytes,9,opt,name=vehicle_photo_url,json=vehiclePhotoUrl,proto3" json:"vehicle_photo_url,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *UpdateVehicleReq) Reset() {
+	*x = UpdateVehicleReq{}
+	mi := &file_driver_proto_msgTypes[34]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateVehicleReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateVehicleReq) ProtoMessage() {}
+
+func (x *UpdateVehicleReq) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[34]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateVehicleReq.ProtoReflect.Descriptor instead.
+func (*UpdateVehicleReq) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{34}
+}
+
+func (x *UpdateVehicleReq) GetDriverId() int64 {
+	if x != nil {
+		return x.DriverId
+	}
+	return 0
+}
+
+func (x *UpdateVehicleReq) GetPlateNo() string {
+	if x != nil {
+		return x.PlateNo
+	}
+	return ""
+}
+
+func (x *UpdateVehicleReq) GetVehicleModel() string {
+	if x != nil {
+		return x.VehicleModel
+	}
+	return ""
+}
+
+func (x *UpdateVehicleReq) GetVehicleBrand() string {
+	if x != nil {
+		return x.VehicleBrand
+	}
+	return ""
+}
+
+func (x *UpdateVehicleReq) GetVehicleColor() string {
+	if x != nil {
+		return x.VehicleColor
+	}
+	return ""
+}
+
+func (x *UpdateVehicleReq) GetVehicleColorCode() string {
+	if x != nil {
+		return x.VehicleColorCode
+	}
+	return ""
+}
+
+func (x *UpdateVehicleReq) GetSeatCount() int32 {
+	if x != nil {
+		return x.SeatCount
+	}
+	return 0
+}
+
+func (x *UpdateVehicleReq) GetDrivingLicenseUrl() string {
+	if x != nil {
+		return x.DrivingLicenseUrl
+	}
+	return ""
+}
+
+func (x *UpdateVehicleReq) GetVehiclePhotoUrl() string {
+	if x != nil {
+		return x.VehiclePhotoUrl
+	}
+	return ""
+}
+
+type UpdateVehicleResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateVehicleResp) Reset() {
+	*x = UpdateVehicleResp{}
+	mi := &file_driver_proto_msgTypes[35]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateVehicleResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateVehicleResp) ProtoMessage() {}
+
+func (x *UpdateVehicleResp) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[35]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateVehicleResp.ProtoReflect.Descriptor instead.
+func (*UpdateVehicleResp) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{35}
+}
+
+func (x *UpdateVehicleResp) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *UpdateVehicleResp) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+// BindBankCard 绑定银行卡（首次绑定或更换，每月最多1次）
+type BindBankCardReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	DriverId      int64                  `protobuf:"varint,1,opt,name=driver_id,json=driverId,proto3" json:"driver_id,omitempty"`
+	BankName      string                 `protobuf:"bytes,2,opt,name=bank_name,json=bankName,proto3" json:"bank_name,omitempty"`          // 银行名称(如"工商银行")
+	BankCode      string                 `protobuf:"bytes,3,opt,name=bank_code,json=bankCode,proto3" json:"bank_code,omitempty"`          // 银行代码
+	BankCardNo    string                 `protobuf:"bytes,4,opt,name=bank_card_no,json=bankCardNo,proto3" json:"bank_card_no,omitempty"`  // 银行卡号(明文，后端加密存储)
+	AccountName   string                 `protobuf:"bytes,5,opt,name=account_name,json=accountName,proto3" json:"account_name,omitempty"` // 持卡人姓名
+	CardType      int32                  `protobuf:"varint,6,opt,name=card_type,json=cardType,proto3" json:"card_type,omitempty"`         // 卡类型: 1-借记卡 2-信用卡
+	BranchName    string                 `protobuf:"bytes,7,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`    // 开户支行
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BindBankCardReq) Reset() {
+	*x = BindBankCardReq{}
+	mi := &file_driver_proto_msgTypes[36]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BindBankCardReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BindBankCardReq) ProtoMessage() {}
+
+func (x *BindBankCardReq) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[36]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BindBankCardReq.ProtoReflect.Descriptor instead.
+func (*BindBankCardReq) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{36}
+}
+
+func (x *BindBankCardReq) GetDriverId() int64 {
+	if x != nil {
+		return x.DriverId
+	}
+	return 0
+}
+
+func (x *BindBankCardReq) GetBankName() string {
+	if x != nil {
+		return x.BankName
+	}
+	return ""
+}
+
+func (x *BindBankCardReq) GetBankCode() string {
+	if x != nil {
+		return x.BankCode
+	}
+	return ""
+}
+
+func (x *BindBankCardReq) GetBankCardNo() string {
+	if x != nil {
+		return x.BankCardNo
+	}
+	return ""
+}
+
+func (x *BindBankCardReq) GetAccountName() string {
+	if x != nil {
+		return x.AccountName
+	}
+	return ""
+}
+
+func (x *BindBankCardReq) GetCardType() int32 {
+	if x != nil {
+		return x.CardType
+	}
+	return 0
+}
+
+func (x *BindBankCardReq) GetBranchName() string {
+	if x != nil {
+		return x.BranchName
+	}
+	return ""
+}
+
+type BindBankCardResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BindBankCardResp) Reset() {
+	*x = BindBankCardResp{}
+	mi := &file_driver_proto_msgTypes[37]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BindBankCardResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BindBankCardResp) ProtoMessage() {}
+
+func (x *BindBankCardResp) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[37]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BindBankCardResp.ProtoReflect.Descriptor instead.
+func (*BindBankCardResp) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{37}
+}
+
+func (x *BindBankCardResp) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *BindBankCardResp) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+// GetBankCard 查询司机绑定的银行卡信息
+type GetBankCardReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	DriverId      int64                  `protobuf:"varint,1,opt,name=driver_id,json=driverId,proto3" json:"driver_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetBankCardReq) Reset() {
+	*x = GetBankCardReq{}
+	mi := &file_driver_proto_msgTypes[38]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetBankCardReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetBankCardReq) ProtoMessage() {}
+
+func (x *GetBankCardReq) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[38]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetBankCardReq.ProtoReflect.Descriptor instead.
+func (*GetBankCardReq) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{38}
+}
+
+func (x *GetBankCardReq) GetDriverId() int64 {
+	if x != nil {
+		return x.DriverId
+	}
+	return 0
+}
+
+type GetBankCardResp struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	BankName       string                 `protobuf:"bytes,1,opt,name=bank_name,json=bankName,proto3" json:"bank_name,omitempty"`                     // 银行名称
+	BankCode       string                 `protobuf:"bytes,2,opt,name=bank_code,json=bankCode,proto3" json:"bank_code,omitempty"`                     // 银行代码
+	BankCardNo     string                 `protobuf:"bytes,3,opt,name=bank_card_no,json=bankCardNo,proto3" json:"bank_card_no,omitempty"`             // 银行卡号(脱敏, 如****8821)
+	AccountName    string                 `protobuf:"bytes,4,opt,name=account_name,json=accountName,proto3" json:"account_name,omitempty"`            // 持卡人姓名(脱敏)
+	CardType       int32                  `protobuf:"varint,5,opt,name=card_type,json=cardType,proto3" json:"card_type,omitempty"`                    // 卡类型
+	BranchName     string                 `protobuf:"bytes,6,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`               // 开户支行
+	HasCard        bool                   `protobuf:"varint,7,opt,name=has_card,json=hasCard,proto3" json:"has_card,omitempty"`                       // 是否已绑定银行卡
+	LastModifiedAt string                 `protobuf:"bytes,8,opt,name=last_modified_at,json=lastModifiedAt,proto3" json:"last_modified_at,omitempty"` // 最后修改时间(前端提示下次可修改时间)
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *GetBankCardResp) Reset() {
+	*x = GetBankCardResp{}
+	mi := &file_driver_proto_msgTypes[39]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetBankCardResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetBankCardResp) ProtoMessage() {}
+
+func (x *GetBankCardResp) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[39]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetBankCardResp.ProtoReflect.Descriptor instead.
+func (*GetBankCardResp) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{39}
+}
+
+func (x *GetBankCardResp) GetBankName() string {
+	if x != nil {
+		return x.BankName
+	}
+	return ""
+}
+
+func (x *GetBankCardResp) GetBankCode() string {
+	if x != nil {
+		return x.BankCode
+	}
+	return ""
+}
+
+func (x *GetBankCardResp) GetBankCardNo() string {
+	if x != nil {
+		return x.BankCardNo
+	}
+	return ""
+}
+
+func (x *GetBankCardResp) GetAccountName() string {
+	if x != nil {
+		return x.AccountName
+	}
+	return ""
+}
+
+func (x *GetBankCardResp) GetCardType() int32 {
+	if x != nil {
+		return x.CardType
+	}
+	return 0
+}
+
+func (x *GetBankCardResp) GetBranchName() string {
+	if x != nil {
+		return x.BranchName
+	}
+	return ""
+}
+
+func (x *GetBankCardResp) GetHasCard() bool {
+	if x != nil {
+		return x.HasCard
+	}
+	return false
+}
+
+func (x *GetBankCardResp) GetLastModifiedAt() string {
+	if x != nil {
+		return x.LastModifiedAt
+	}
+	return ""
+}
+
+// UpdateBankCard 更换银行卡（等同于重新绑定，同样受月频次限制）
+type UpdateBankCardReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	DriverId      int64                  `protobuf:"varint,1,opt,name=driver_id,json=driverId,proto3" json:"driver_id,omitempty"`
+	BankName      string                 `protobuf:"bytes,2,opt,name=bank_name,json=bankName,proto3" json:"bank_name,omitempty"`
+	BankCode      string                 `protobuf:"bytes,3,opt,name=bank_code,json=bankCode,proto3" json:"bank_code,omitempty"`
+	BankCardNo    string                 `protobuf:"bytes,4,opt,name=bank_card_no,json=bankCardNo,proto3" json:"bank_card_no,omitempty"`
+	AccountName   string                 `protobuf:"bytes,5,opt,name=account_name,json=accountName,proto3" json:"account_name,omitempty"`
+	CardType      int32                  `protobuf:"varint,6,opt,name=card_type,json=cardType,proto3" json:"card_type,omitempty"`
+	BranchName    string                 `protobuf:"bytes,7,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateBankCardReq) Reset() {
+	*x = UpdateBankCardReq{}
+	mi := &file_driver_proto_msgTypes[40]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateBankCardReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateBankCardReq) ProtoMessage() {}
+
+func (x *UpdateBankCardReq) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[40]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateBankCardReq.ProtoReflect.Descriptor instead.
+func (*UpdateBankCardReq) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{40}
+}
+
+func (x *UpdateBankCardReq) GetDriverId() int64 {
+	if x != nil {
+		return x.DriverId
+	}
+	return 0
+}
+
+func (x *UpdateBankCardReq) GetBankName() string {
+	if x != nil {
+		return x.BankName
+	}
+	return ""
+}
+
+func (x *UpdateBankCardReq) GetBankCode() string {
+	if x != nil {
+		return x.BankCode
+	}
+	return ""
+}
+
+func (x *UpdateBankCardReq) GetBankCardNo() string {
+	if x != nil {
+		return x.BankCardNo
+	}
+	return ""
+}
+
+func (x *UpdateBankCardReq) GetAccountName() string {
+	if x != nil {
+		return x.AccountName
+	}
+	return ""
+}
+
+func (x *UpdateBankCardReq) GetCardType() int32 {
+	if x != nil {
+		return x.CardType
+	}
+	return 0
+}
+
+func (x *UpdateBankCardReq) GetBranchName() string {
+	if x != nil {
+		return x.BranchName
+	}
+	return ""
+}
+
+type UpdateBankCardResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateBankCardResp) Reset() {
+	*x = UpdateBankCardResp{}
+	mi := &file_driver_proto_msgTypes[41]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateBankCardResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateBankCardResp) ProtoMessage() {}
+
+func (x *UpdateBankCardResp) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[41]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateBankCardResp.ProtoReflect.Descriptor instead.
+func (*UpdateBankCardResp) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{41}
+}
+
+func (x *UpdateBankCardResp) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *UpdateBankCardResp) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+// GetWallet 查询钱包概览
+type GetWalletReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	DriverId      int64                  `protobuf:"varint,1,opt,name=driver_id,json=driverId,proto3" json:"driver_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetWalletReq) Reset() {
+	*x = GetWalletReq{}
+	mi := &file_driver_proto_msgTypes[42]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetWalletReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetWalletReq) ProtoMessage() {}
+
+func (x *GetWalletReq) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[42]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetWalletReq.ProtoReflect.Descriptor instead.
+func (*GetWalletReq) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{42}
+}
+
+func (x *GetWalletReq) GetDriverId() int64 {
+	if x != nil {
+		return x.DriverId
+	}
+	return 0
+}
+
+type GetWalletResp struct {
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	Balance            int64                  `protobuf:"varint,1,opt,name=balance,proto3" json:"balance,omitempty"`                                                   // 可提现余额(单位:分)
+	FrozenAmount       int64                  `protobuf:"varint,2,opt,name=frozen_amount,json=frozenAmount,proto3" json:"frozen_amount,omitempty"`                     // 冻结金额(未结算/在途)(单位:分)
+	TodayIncome        int64                  `protobuf:"varint,3,opt,name=today_income,json=todayIncome,proto3" json:"today_income,omitempty"`                        // 今日收入(单位:分)
+	WeekIncome         int64                  `protobuf:"varint,4,opt,name=week_income,json=weekIncome,proto3" json:"week_income,omitempty"`                           // 本周收入(单位:分)
+	MonthIncome        int64                  `protobuf:"varint,5,opt,name=month_income,json=monthIncome,proto3" json:"month_income,omitempty"`                        // 本月收入(单位:分)
+	TotalIncome        int64                  `protobuf:"varint,6,opt,name=total_income,json=totalIncome,proto3" json:"total_income,omitempty"`                        // 累计总收入(单位:分)
+	TotalWithdraw      int64                  `protobuf:"varint,7,opt,name=total_withdraw,json=totalWithdraw,proto3" json:"total_withdraw,omitempty"`                  // 累计提现金额(单位:分)
+	TodayWithdrawCount int32                  `protobuf:"varint,8,opt,name=today_withdraw_count,json=todayWithdrawCount,proto3" json:"today_withdraw_count,omitempty"` // 今日已提现次数(最多3次)
+	BankCardNo         string                 `protobuf:"bytes,9,opt,name=bank_card_no,json=bankCardNo,proto3" json:"bank_card_no,omitempty"`                          // 已绑定银行卡(脱敏)
+	HasBankCard        bool                   `protobuf:"varint,10,opt,name=has_bank_card,json=hasBankCard,proto3" json:"has_bank_card,omitempty"`                     // 是否已绑定银行卡
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
+}
+
+func (x *GetWalletResp) Reset() {
+	*x = GetWalletResp{}
+	mi := &file_driver_proto_msgTypes[43]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetWalletResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetWalletResp) ProtoMessage() {}
+
+func (x *GetWalletResp) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[43]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetWalletResp.ProtoReflect.Descriptor instead.
+func (*GetWalletResp) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{43}
+}
+
+func (x *GetWalletResp) GetBalance() int64 {
+	if x != nil {
+		return x.Balance
+	}
+	return 0
+}
+
+func (x *GetWalletResp) GetFrozenAmount() int64 {
+	if x != nil {
+		return x.FrozenAmount
+	}
+	return 0
+}
+
+func (x *GetWalletResp) GetTodayIncome() int64 {
+	if x != nil {
+		return x.TodayIncome
+	}
+	return 0
+}
+
+func (x *GetWalletResp) GetWeekIncome() int64 {
+	if x != nil {
+		return x.WeekIncome
+	}
+	return 0
+}
+
+func (x *GetWalletResp) GetMonthIncome() int64 {
+	if x != nil {
+		return x.MonthIncome
+	}
+	return 0
+}
+
+func (x *GetWalletResp) GetTotalIncome() int64 {
+	if x != nil {
+		return x.TotalIncome
+	}
+	return 0
+}
+
+func (x *GetWalletResp) GetTotalWithdraw() int64 {
+	if x != nil {
+		return x.TotalWithdraw
+	}
+	return 0
+}
+
+func (x *GetWalletResp) GetTodayWithdrawCount() int32 {
+	if x != nil {
+		return x.TodayWithdrawCount
+	}
+	return 0
+}
+
+func (x *GetWalletResp) GetBankCardNo() string {
+	if x != nil {
+		return x.BankCardNo
+	}
+	return ""
+}
+
+func (x *GetWalletResp) GetHasBankCard() bool {
+	if x != nil {
+		return x.HasBankCard
+	}
+	return false
+}
+
+// GetWithdrawPage 查询提现页信息
+type GetWithdrawPageReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	DriverId      int64                  `protobuf:"varint,1,opt,name=driver_id,json=driverId,proto3" json:"driver_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetWithdrawPageReq) Reset() {
+	*x = GetWithdrawPageReq{}
+	mi := &file_driver_proto_msgTypes[44]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetWithdrawPageReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetWithdrawPageReq) ProtoMessage() {}
+
+func (x *GetWithdrawPageReq) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[44]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetWithdrawPageReq.ProtoReflect.Descriptor instead.
+func (*GetWithdrawPageReq) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{44}
+}
+
+func (x *GetWithdrawPageReq) GetDriverId() int64 {
+	if x != nil {
+		return x.DriverId
+	}
+	return 0
+}
+
+type WithdrawRuleInfo struct {
+	state                protoimpl.MessageState `protogen:"open.v1"`
+	MinWithdrawAmount    int64                  `protobuf:"varint,1,opt,name=min_withdraw_amount,json=minWithdrawAmount,proto3" json:"min_withdraw_amount,omitempty"` // 最低提现金额(单位:分)
+	MaxWithdrawAmount    int64                  `protobuf:"varint,2,opt,name=max_withdraw_amount,json=maxWithdrawAmount,proto3" json:"max_withdraw_amount,omitempty"` // 最高提现金额(单位:分)
+	TodayWithdrawCount   int32                  `protobuf:"varint,3,opt,name=today_withdraw_count,json=todayWithdrawCount,proto3" json:"today_withdraw_count,omitempty"`
+	TodayWithdrawLimit   int32                  `protobuf:"varint,4,opt,name=today_withdraw_limit,json=todayWithdrawLimit,proto3" json:"today_withdraw_limit,omitempty"`
+	EstimatedArrivalText string                 `protobuf:"bytes,5,opt,name=estimated_arrival_text,json=estimatedArrivalText,proto3" json:"estimated_arrival_text,omitempty"`
+	FeeFree              bool                   `protobuf:"varint,6,opt,name=fee_free,json=feeFree,proto3" json:"fee_free,omitempty"`
+	FeeAmount            int64                  `protobuf:"varint,7,opt,name=fee_amount,json=feeAmount,proto3" json:"fee_amount,omitempty"` // 手续费(单位:分)
+	FeeDesc              string                 `protobuf:"bytes,8,opt,name=fee_desc,json=feeDesc,proto3" json:"fee_desc,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
+}
+
+func (x *WithdrawRuleInfo) Reset() {
+	*x = WithdrawRuleInfo{}
+	mi := &file_driver_proto_msgTypes[45]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WithdrawRuleInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WithdrawRuleInfo) ProtoMessage() {}
+
+func (x *WithdrawRuleInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[45]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WithdrawRuleInfo.ProtoReflect.Descriptor instead.
+func (*WithdrawRuleInfo) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{45}
+}
+
+func (x *WithdrawRuleInfo) GetMinWithdrawAmount() int64 {
+	if x != nil {
+		return x.MinWithdrawAmount
+	}
+	return 0
+}
+
+func (x *WithdrawRuleInfo) GetMaxWithdrawAmount() int64 {
+	if x != nil {
+		return x.MaxWithdrawAmount
+	}
+	return 0
+}
+
+func (x *WithdrawRuleInfo) GetTodayWithdrawCount() int32 {
+	if x != nil {
+		return x.TodayWithdrawCount
+	}
+	return 0
+}
+
+func (x *WithdrawRuleInfo) GetTodayWithdrawLimit() int32 {
+	if x != nil {
+		return x.TodayWithdrawLimit
+	}
+	return 0
+}
+
+func (x *WithdrawRuleInfo) GetEstimatedArrivalText() string {
+	if x != nil {
+		return x.EstimatedArrivalText
+	}
+	return ""
+}
+
+func (x *WithdrawRuleInfo) GetFeeFree() bool {
+	if x != nil {
+		return x.FeeFree
+	}
+	return false
+}
+
+func (x *WithdrawRuleInfo) GetFeeAmount() int64 {
+	if x != nil {
+		return x.FeeAmount
+	}
+	return 0
+}
+
+func (x *WithdrawRuleInfo) GetFeeDesc() string {
+	if x != nil {
+		return x.FeeDesc
+	}
+	return ""
+}
+
+type WithdrawPageBankCard struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	HasBankCard   bool                   `protobuf:"varint,1,opt,name=has_bank_card,json=hasBankCard,proto3" json:"has_bank_card,omitempty"`
+	BankName      string                 `protobuf:"bytes,2,opt,name=bank_name,json=bankName,proto3" json:"bank_name,omitempty"`
+	BankCardNo    string                 `protobuf:"bytes,3,opt,name=bank_card_no,json=bankCardNo,proto3" json:"bank_card_no,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *WithdrawPageBankCard) Reset() {
+	*x = WithdrawPageBankCard{}
+	mi := &file_driver_proto_msgTypes[46]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WithdrawPageBankCard) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WithdrawPageBankCard) ProtoMessage() {}
+
+func (x *WithdrawPageBankCard) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[46]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WithdrawPageBankCard.ProtoReflect.Descriptor instead.
+func (*WithdrawPageBankCard) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{46}
+}
+
+func (x *WithdrawPageBankCard) GetHasBankCard() bool {
+	if x != nil {
+		return x.HasBankCard
+	}
+	return false
+}
+
+func (x *WithdrawPageBankCard) GetBankName() string {
+	if x != nil {
+		return x.BankName
+	}
+	return ""
+}
+
+func (x *WithdrawPageBankCard) GetBankCardNo() string {
+	if x != nil {
+		return x.BankCardNo
+	}
+	return ""
+}
+
+type WithdrawPageActionState struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	CanWithdraw       bool                   `protobuf:"varint,1,opt,name=can_withdraw,json=canWithdraw,proto3" json:"can_withdraw,omitempty"`
+	DisableReasonCode string                 `protobuf:"bytes,2,opt,name=disable_reason_code,json=disableReasonCode,proto3" json:"disable_reason_code,omitempty"`
+	DisableReasonText string                 `protobuf:"bytes,3,opt,name=disable_reason_text,json=disableReasonText,proto3" json:"disable_reason_text,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *WithdrawPageActionState) Reset() {
+	*x = WithdrawPageActionState{}
+	mi := &file_driver_proto_msgTypes[47]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WithdrawPageActionState) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WithdrawPageActionState) ProtoMessage() {}
+
+func (x *WithdrawPageActionState) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[47]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WithdrawPageActionState.ProtoReflect.Descriptor instead.
+func (*WithdrawPageActionState) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{47}
+}
+
+func (x *WithdrawPageActionState) GetCanWithdraw() bool {
+	if x != nil {
+		return x.CanWithdraw
+	}
+	return false
+}
+
+func (x *WithdrawPageActionState) GetDisableReasonCode() string {
+	if x != nil {
+		return x.DisableReasonCode
+	}
+	return ""
+}
+
+func (x *WithdrawPageActionState) GetDisableReasonText() string {
+	if x != nil {
+		return x.DisableReasonText
+	}
+	return ""
+}
+
+type GetWithdrawPageResp struct {
+	state                   protoimpl.MessageState   `protogen:"open.v1"`
+	WalletBalance           int64                    `protobuf:"varint,1,opt,name=wallet_balance,json=walletBalance,proto3" json:"wallet_balance,omitempty"`                                 // 钱包余额(单位:分)
+	FrozenAmount            int64                    `protobuf:"varint,2,opt,name=frozen_amount,json=frozenAmount,proto3" json:"frozen_amount,omitempty"`                                    // 冻结金额(单位:分)
+	AvailableWithdrawAmount int64                    `protobuf:"varint,3,opt,name=available_withdraw_amount,json=availableWithdrawAmount,proto3" json:"available_withdraw_amount,omitempty"` // 可提现金额(单位:分)
+	RuleInfo                *WithdrawRuleInfo        `protobuf:"bytes,4,opt,name=rule_info,json=ruleInfo,proto3" json:"rule_info,omitempty"`
+	BankCard                *WithdrawPageBankCard    `protobuf:"bytes,5,opt,name=bank_card,json=bankCard,proto3" json:"bank_card,omitempty"`
+	ActionState             *WithdrawPageActionState `protobuf:"bytes,6,opt,name=action_state,json=actionState,proto3" json:"action_state,omitempty"`
+	SuggestedAmounts        []int64                  `protobuf:"varint,7,rep,packed,name=suggested_amounts,json=suggestedAmounts,proto3" json:"suggested_amounts,omitempty"` // 建议提现金额(单位:分)
+	WithdrawNotice          []string                 `protobuf:"bytes,8,rep,name=withdraw_notice,json=withdrawNotice,proto3" json:"withdraw_notice,omitempty"`
+	unknownFields           protoimpl.UnknownFields
+	sizeCache               protoimpl.SizeCache
+}
+
+func (x *GetWithdrawPageResp) Reset() {
+	*x = GetWithdrawPageResp{}
+	mi := &file_driver_proto_msgTypes[48]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetWithdrawPageResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetWithdrawPageResp) ProtoMessage() {}
+
+func (x *GetWithdrawPageResp) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[48]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetWithdrawPageResp.ProtoReflect.Descriptor instead.
+func (*GetWithdrawPageResp) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{48}
+}
+
+func (x *GetWithdrawPageResp) GetWalletBalance() int64 {
+	if x != nil {
+		return x.WalletBalance
+	}
+	return 0
+}
+
+func (x *GetWithdrawPageResp) GetFrozenAmount() int64 {
+	if x != nil {
+		return x.FrozenAmount
+	}
+	return 0
+}
+
+func (x *GetWithdrawPageResp) GetAvailableWithdrawAmount() int64 {
+	if x != nil {
+		return x.AvailableWithdrawAmount
+	}
+	return 0
+}
+
+func (x *GetWithdrawPageResp) GetRuleInfo() *WithdrawRuleInfo {
+	if x != nil {
+		return x.RuleInfo
+	}
+	return nil
+}
+
+func (x *GetWithdrawPageResp) GetBankCard() *WithdrawPageBankCard {
+	if x != nil {
+		return x.BankCard
+	}
+	return nil
+}
+
+func (x *GetWithdrawPageResp) GetActionState() *WithdrawPageActionState {
+	if x != nil {
+		return x.ActionState
+	}
+	return nil
+}
+
+func (x *GetWithdrawPageResp) GetSuggestedAmounts() []int64 {
+	if x != nil {
+		return x.SuggestedAmounts
+	}
+	return nil
+}
+
+func (x *GetWithdrawPageResp) GetWithdrawNotice() []string {
+	if x != nil {
+		return x.WithdrawNotice
+	}
+	return nil
+}
+
+// ApplyWithdraw 申请提现
+type ApplyWithdrawReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	DriverId      int64                  `protobuf:"varint,1,opt,name=driver_id,json=driverId,proto3" json:"driver_id,omitempty"`
+	Amount        int64                  `protobuf:"varint,2,opt,name=amount,proto3" json:"amount,omitempty"` // 提现金额(单位:分)
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ApplyWithdrawReq) Reset() {
+	*x = ApplyWithdrawReq{}
+	mi := &file_driver_proto_msgTypes[49]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ApplyWithdrawReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ApplyWithdrawReq) ProtoMessage() {}
+
+func (x *ApplyWithdrawReq) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[49]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ApplyWithdrawReq.ProtoReflect.Descriptor instead.
+func (*ApplyWithdrawReq) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{49}
+}
+
+func (x *ApplyWithdrawReq) GetDriverId() int64 {
+	if x != nil {
+		return x.DriverId
+	}
+	return 0
+}
+
+func (x *ApplyWithdrawReq) GetAmount() int64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+type ApplyWithdrawResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	WithdrawNo    string                 `protobuf:"bytes,3,opt,name=withdraw_no,json=withdrawNo,proto3" json:"withdraw_no,omitempty"` // 提现单号
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ApplyWithdrawResp) Reset() {
+	*x = ApplyWithdrawResp{}
+	mi := &file_driver_proto_msgTypes[50]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ApplyWithdrawResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ApplyWithdrawResp) ProtoMessage() {}
+
+func (x *ApplyWithdrawResp) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[50]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ApplyWithdrawResp.ProtoReflect.Descriptor instead.
+func (*ApplyWithdrawResp) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{50}
+}
+
+func (x *ApplyWithdrawResp) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *ApplyWithdrawResp) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+func (x *ApplyWithdrawResp) GetWithdrawNo() string {
+	if x != nil {
+		return x.WithdrawNo
+	}
+	return ""
+}
+
+// GetWithdrawRecords 查询提现记录
+type GetWithdrawRecordsReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	DriverId      int64                  `protobuf:"varint,1,opt,name=driver_id,json=driverId,proto3" json:"driver_id,omitempty"`
+	Page          int32                  `protobuf:"varint,2,opt,name=page,proto3" json:"page,omitempty"`                         // 页码(从1开始)
+	PageSize      int32                  `protobuf:"varint,3,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"` // 每页条数(默认20)
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetWithdrawRecordsReq) Reset() {
+	*x = GetWithdrawRecordsReq{}
+	mi := &file_driver_proto_msgTypes[51]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetWithdrawRecordsReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetWithdrawRecordsReq) ProtoMessage() {}
+
+func (x *GetWithdrawRecordsReq) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[51]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetWithdrawRecordsReq.ProtoReflect.Descriptor instead.
+func (*GetWithdrawRecordsReq) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{51}
+}
+
+func (x *GetWithdrawRecordsReq) GetDriverId() int64 {
+	if x != nil {
+		return x.DriverId
+	}
+	return 0
+}
+
+func (x *GetWithdrawRecordsReq) GetPage() int32 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *GetWithdrawRecordsReq) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+type WithdrawRecordItem struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	WithdrawNo    string                 `protobuf:"bytes,2,opt,name=withdraw_no,json=withdrawNo,proto3" json:"withdraw_no,omitempty"`        // 提现单号
+	Amount        int64                  `protobuf:"varint,3,opt,name=amount,proto3" json:"amount,omitempty"`                                 // 提现金额(单位:分)
+	Fee           int64                  `protobuf:"varint,4,opt,name=fee,proto3" json:"fee,omitempty"`                                       // 手续费(单位:分)
+	ActualAmount  int64                  `protobuf:"varint,5,opt,name=actual_amount,json=actualAmount,proto3" json:"actual_amount,omitempty"` // 实际到账(单位:分)
+	BankName      string                 `protobuf:"bytes,6,opt,name=bank_name,json=bankName,proto3" json:"bank_name,omitempty"`              // 银行名称
+	BankCardNo    string                 `protobuf:"bytes,7,opt,name=bank_card_no,json=bankCardNo,proto3" json:"bank_card_no,omitempty"`      // 银行卡号(脱敏)
+	Status        int32                  `protobuf:"varint,8,opt,name=status,proto3" json:"status,omitempty"`                                 // 1-处理中 2-成功 3-失败
+	FailReason    string                 `protobuf:"bytes,9,opt,name=fail_reason,json=failReason,proto3" json:"fail_reason,omitempty"`        // 失败原因
+	ApplyTime     string                 `protobuf:"bytes,10,opt,name=apply_time,json=applyTime,proto3" json:"apply_time,omitempty"`          // 申请时间
+	FinishTime    string                 `protobuf:"bytes,11,opt,name=finish_time,json=finishTime,proto3" json:"finish_time,omitempty"`       // 完成时间
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *WithdrawRecordItem) Reset() {
+	*x = WithdrawRecordItem{}
+	mi := &file_driver_proto_msgTypes[52]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WithdrawRecordItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WithdrawRecordItem) ProtoMessage() {}
+
+func (x *WithdrawRecordItem) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[52]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WithdrawRecordItem.ProtoReflect.Descriptor instead.
+func (*WithdrawRecordItem) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{52}
+}
+
+func (x *WithdrawRecordItem) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *WithdrawRecordItem) GetWithdrawNo() string {
+	if x != nil {
+		return x.WithdrawNo
+	}
+	return ""
+}
+
+func (x *WithdrawRecordItem) GetAmount() int64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+func (x *WithdrawRecordItem) GetFee() int64 {
+	if x != nil {
+		return x.Fee
+	}
+	return 0
+}
+
+func (x *WithdrawRecordItem) GetActualAmount() int64 {
+	if x != nil {
+		return x.ActualAmount
+	}
+	return 0
+}
+
+func (x *WithdrawRecordItem) GetBankName() string {
+	if x != nil {
+		return x.BankName
+	}
+	return ""
+}
+
+func (x *WithdrawRecordItem) GetBankCardNo() string {
+	if x != nil {
+		return x.BankCardNo
+	}
+	return ""
+}
+
+func (x *WithdrawRecordItem) GetStatus() int32 {
+	if x != nil {
+		return x.Status
+	}
+	return 0
+}
+
+func (x *WithdrawRecordItem) GetFailReason() string {
+	if x != nil {
+		return x.FailReason
+	}
+	return ""
+}
+
+func (x *WithdrawRecordItem) GetApplyTime() string {
+	if x != nil {
+		return x.ApplyTime
+	}
+	return ""
+}
+
+func (x *WithdrawRecordItem) GetFinishTime() string {
+	if x != nil {
+		return x.FinishTime
+	}
+	return ""
+}
+
+type GetWithdrawRecordsResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Records       []*WithdrawRecordItem  `protobuf:"bytes,1,rep,name=records,proto3" json:"records,omitempty"`
+	Total         int32                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"` // 总条数
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetWithdrawRecordsResp) Reset() {
+	*x = GetWithdrawRecordsResp{}
+	mi := &file_driver_proto_msgTypes[53]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetWithdrawRecordsResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetWithdrawRecordsResp) ProtoMessage() {}
+
+func (x *GetWithdrawRecordsResp) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[53]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetWithdrawRecordsResp.ProtoReflect.Descriptor instead.
+func (*GetWithdrawRecordsResp) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{53}
+}
+
+func (x *GetWithdrawRecordsResp) GetRecords() []*WithdrawRecordItem {
+	if x != nil {
+		return x.Records
+	}
+	return nil
+}
+
+func (x *GetWithdrawRecordsResp) GetTotal() int32 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+// GetIncomeDetail 收入明细(分类汇总)
+type GetIncomeDetailReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	DriverId      int64                  `protobuf:"varint,1,opt,name=driver_id,json=driverId,proto3" json:"driver_id,omitempty"`
+	Days          int32                  `protobuf:"varint,2,opt,name=days,proto3" json:"days,omitempty"` // 查询天数: 1-今日 7-本周 30-本月
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetIncomeDetailReq) Reset() {
+	*x = GetIncomeDetailReq{}
+	mi := &file_driver_proto_msgTypes[54]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetIncomeDetailReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetIncomeDetailReq) ProtoMessage() {}
+
+func (x *GetIncomeDetailReq) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[54]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetIncomeDetailReq.ProtoReflect.Descriptor instead.
+func (*GetIncomeDetailReq) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{54}
+}
+
+func (x *GetIncomeDetailReq) GetDriverId() int64 {
+	if x != nil {
+		return x.DriverId
+	}
+	return 0
+}
+
+func (x *GetIncomeDetailReq) GetDays() int32 {
+	if x != nil {
+		return x.Days
+	}
+	return 0
+}
+
+type IncomeDetailItem struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TypeName      string                 `protobuf:"bytes,1,opt,name=type_name,json=typeName,proto3" json:"type_name,omitempty"`  // 收入类型名称
+	TypeCode      int32                  `protobuf:"varint,2,opt,name=type_code,json=typeCode,proto3" json:"type_code,omitempty"` // 收入类型代码: 1-基础车费 2-奖励 3-空驶补偿 4-高速费 5-其他
+	Amount        int64                  `protobuf:"varint,3,opt,name=amount,proto3" json:"amount,omitempty"`                     // 金额(单位:分)
+	Count         int32                  `protobuf:"varint,4,opt,name=count,proto3" json:"count,omitempty"`                       // 笔数
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *IncomeDetailItem) Reset() {
+	*x = IncomeDetailItem{}
+	mi := &file_driver_proto_msgTypes[55]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *IncomeDetailItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IncomeDetailItem) ProtoMessage() {}
+
+func (x *IncomeDetailItem) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[55]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IncomeDetailItem.ProtoReflect.Descriptor instead.
+func (*IncomeDetailItem) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{55}
+}
+
+func (x *IncomeDetailItem) GetTypeName() string {
+	if x != nil {
+		return x.TypeName
+	}
+	return ""
+}
+
+func (x *IncomeDetailItem) GetTypeCode() int32 {
+	if x != nil {
+		return x.TypeCode
+	}
+	return 0
+}
+
+func (x *IncomeDetailItem) GetAmount() int64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+func (x *IncomeDetailItem) GetCount() int32 {
+	if x != nil {
+		return x.Count
+	}
+	return 0
+}
+
+type GetIncomeDetailResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Items         []*IncomeDetailItem    `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	TotalAmount   int64                  `protobuf:"varint,2,opt,name=total_amount,json=totalAmount,proto3" json:"total_amount,omitempty"` // 总金额(单位:分)
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetIncomeDetailResp) Reset() {
+	*x = GetIncomeDetailResp{}
+	mi := &file_driver_proto_msgTypes[56]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetIncomeDetailResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetIncomeDetailResp) ProtoMessage() {}
+
+func (x *GetIncomeDetailResp) ProtoReflect() protoreflect.Message {
+	mi := &file_driver_proto_msgTypes[56]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetIncomeDetailResp.ProtoReflect.Descriptor instead.
+func (*GetIncomeDetailResp) Descriptor() ([]byte, []int) {
+	return file_driver_proto_rawDescGZIP(), []int{56}
+}
+
+func (x *GetIncomeDetailResp) GetItems() []*IncomeDetailItem {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+func (x *GetIncomeDetailResp) GetTotalAmount() int64 {
+	if x != nil {
+		return x.TotalAmount
+	}
+	return 0
 }
 
 var File_driver_proto protoreflect.FileDescriptor
@@ -1078,12 +3760,37 @@ const file_driver_proto_rawDesc = "" +
 	"\x13GetDriverProfileReq\x12\x1b\n" +
 	"\tdriver_id\x18\x01 \x01(\x03R\bdriverId\x12\x12\n" +
 	"\x04date\x18\x02 \x01(\tR\x04date\x12\x12\n" +
-	"\x04days\x18\x03 \x01(\x05R\x04days\"\xab\x01\n" +
+	"\x04days\x18\x03 \x01(\x05R\x04days\"\xd6\x02\n" +
 	"\x14GetDriverProfileResp\x129\n" +
 	"\rpersonal_info\x18\x01 \x01(\v2\x14.driver.PersonalInfoR\fpersonalInfo\x123\n" +
 	"\vorder_stats\x18\x02 \x01(\v2\x12.driver.OrderStatsR\n" +
 	"orderStats\x12#\n" +
-	"\rverify_status\x18\x03 \x01(\x05R\fverifyStatus\"\xf6\x01\n" +
+	"\rverify_status\x18\x03 \x01(\x05R\fverifyStatus\x129\n" +
+	"\rrealname_info\x18\x04 \x01(\v2\x14.driver.RealnameInfoR\frealnameInfo\x126\n" +
+	"\flicense_info\x18\x05 \x01(\v2\x13.driver.LicenseInfoR\vlicenseInfo\x126\n" +
+	"\fvehicle_info\x18\x06 \x01(\v2\x13.driver.VehicleInfoR\vvehicleInfo\"\x97\x01\n" +
+	"\fRealnameInfo\x12\x1b\n" +
+	"\treal_name\x18\x01 \x01(\tR\brealName\x12)\n" +
+	"\x11id_card_front_url\x18\x02 \x01(\tR\x0eidCardFrontUrl\x12'\n" +
+	"\x10id_card_back_url\x18\x03 \x01(\tR\ridCardBackUrl\x12\x16\n" +
+	"\x06status\x18\x04 \x01(\x05R\x06status\"\x88\x01\n" +
+	"\vLicenseInfo\x12\x1d\n" +
+	"\n" +
+	"license_no\x18\x01 \x01(\tR\tlicenseNo\x12!\n" +
+	"\flicense_type\x18\x02 \x01(\tR\vlicenseType\x12\x1f\n" +
+	"\vlicense_url\x18\x03 \x01(\tR\n" +
+	"licenseUrl\x12\x16\n" +
+	"\x06status\x18\x04 \x01(\x05R\x06status\"\xaa\x02\n" +
+	"\vVehicleInfo\x12\x19\n" +
+	"\bplate_no\x18\x01 \x01(\tR\aplateNo\x12#\n" +
+	"\rvehicle_brand\x18\x02 \x01(\tR\fvehicleBrand\x12#\n" +
+	"\rvehicle_model\x18\x03 \x01(\tR\fvehicleModel\x12#\n" +
+	"\rvehicle_color\x18\x04 \x01(\tR\fvehicleColor\x12\x1d\n" +
+	"\n" +
+	"seat_count\x18\x05 \x01(\x05R\tseatCount\x12.\n" +
+	"\x13driving_license_url\x18\x06 \x01(\tR\x11drivingLicenseUrl\x12*\n" +
+	"\x11vehicle_photo_url\x18\a \x01(\tR\x0fvehiclePhotoUrl\x12\x16\n" +
+	"\x06status\x18\b \x01(\x05R\x06status\"\xf6\x01\n" +
 	"\fPersonalInfo\x12\x1a\n" +
 	"\bnickname\x18\x01 \x01(\tR\bnickname\x12\x16\n" +
 	"\x06avatar\x18\x02 \x01(\tR\x06avatar\x12#\n" +
@@ -1106,15 +3813,222 @@ const file_driver_proto_rawDesc = "" +
 	"\x06period\x18\x02 \x01(\tR\x06period\"9\n" +
 	"\vDailyIncome\x12\x12\n" +
 	"\x04date\x18\x01 \x01(\tR\x04date\x12\x16\n" +
-	"\x06income\x18\x02 \x01(\x01R\x06income\"q\n" +
+	"\x06income\x18\x02 \x01(\x03R\x06income\"q\n" +
 	"\rIncomeSummary\x12\x1f\n" +
 	"\vorder_count\x18\x01 \x01(\x05R\n" +
 	"orderCount\x12\x16\n" +
-	"\x06income\x18\x02 \x01(\x01R\x06income\x12'\n" +
+	"\x06income\x18\x02 \x01(\x03R\x06income\x12'\n" +
 	"\x0fonline_duration\x18\x03 \x01(\x05R\x0eonlineDuration\"q\n" +
 	"\x13GetDriverIncomeResp\x12/\n" +
 	"\asummary\x18\x01 \x01(\v2\x15.driver.IncomeSummaryR\asummary\x12)\n" +
-	"\x05trend\x18\x02 \x03(\v2\x13.driver.DailyIncomeR\x05trend2\xc0\x03\n" +
+	"\x05trend\x18\x02 \x03(\v2\x13.driver.DailyIncomeR\x05trend\"n\n" +
+	"\x0fChangeMobileReq\x12\x1b\n" +
+	"\tdriver_id\x18\x01 \x01(\x03R\bdriverId\x12\x1d\n" +
+	"\n" +
+	"new_mobile\x18\x02 \x01(\tR\tnewMobile\x12\x1f\n" +
+	"\vverify_code\x18\x03 \x01(\tR\n" +
+	"verifyCode\"F\n" +
+	"\x10ChangeMobileResp\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"v\n" +
+	"\x11ChangePasswordReq\x12\x1b\n" +
+	"\tdriver_id\x18\x01 \x01(\x03R\bdriverId\x12!\n" +
+	"\fold_password\x18\x02 \x01(\tR\voldPassword\x12!\n" +
+	"\fnew_password\x18\x03 \x01(\tR\vnewPassword\"H\n" +
+	"\x12ChangePasswordResp\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"n\n" +
+	"\x10ResetPasswordReq\x12\x16\n" +
+	"\x06mobile\x18\x01 \x01(\tR\x06mobile\x12\x1f\n" +
+	"\vverify_code\x18\x02 \x01(\tR\n" +
+	"verifyCode\x12!\n" +
+	"\fnew_password\x18\x03 \x01(\tR\vnewPassword\"G\n" +
+	"\x11ResetPasswordResp\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"{\n" +
+	"\x10UpdateProfileReq\x12\x1b\n" +
+	"\tdriver_id\x18\x01 \x01(\x03R\bdriverId\x12\x1a\n" +
+	"\bnickname\x18\x02 \x01(\tR\bnickname\x12\x16\n" +
+	"\x06avatar\x18\x03 \x01(\tR\x06avatar\x12\x16\n" +
+	"\x06gender\x18\x04 \x01(\x05R\x06gender\"G\n" +
+	"\x11UpdateProfileResp\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"\xc6\x02\n" +
+	"\x11UpdateRealnameReq\x12\x1b\n" +
+	"\tdriver_id\x18\x01 \x01(\x03R\bdriverId\x12\x1b\n" +
+	"\treal_name\x18\x02 \x01(\tR\brealName\x12\x1c\n" +
+	"\n" +
+	"id_card_no\x18\x03 \x01(\tR\bidCardNo\x12)\n" +
+	"\x11id_card_front_url\x18\x04 \x01(\tR\x0eidCardFrontUrl\x12'\n" +
+	"\x10id_card_back_url\x18\x05 \x01(\tR\ridCardBackUrl\x12\x16\n" +
+	"\x06gender\x18\x06 \x01(\x05R\x06gender\x12\x1a\n" +
+	"\bbirthday\x18\a \x01(\tR\bbirthday\x12\x18\n" +
+	"\aaddress\x18\b \x01(\tR\aaddress\x12\x16\n" +
+	"\x06nation\x18\t \x01(\tR\x06nation\x12\x1f\n" +
+	"\vexpire_date\x18\n" +
+	" \x01(\tR\n" +
+	"expireDate\"H\n" +
+	"\x12UpdateRealnameResp\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"\xfc\x01\n" +
+	"\x10UpdateLicenseReq\x12\x1b\n" +
+	"\tdriver_id\x18\x01 \x01(\x03R\bdriverId\x12\x1d\n" +
+	"\n" +
+	"license_no\x18\x02 \x01(\tR\tlicenseNo\x12!\n" +
+	"\flicense_type\x18\x03 \x01(\tR\vlicenseType\x12\x1f\n" +
+	"\vlicense_url\x18\x04 \x01(\tR\n" +
+	"licenseUrl\x12(\n" +
+	"\x10first_issue_date\x18\x05 \x01(\tR\x0efirstIssueDate\x12\x1d\n" +
+	"\n" +
+	"issue_date\x18\x06 \x01(\tR\tissueDate\x12\x1f\n" +
+	"\vexpire_date\x18\a \x01(\tR\n" +
+	"expireDate\"G\n" +
+	"\x11UpdateLicenseResp\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"\xe2\x02\n" +
+	"\x10UpdateVehicleReq\x12\x1b\n" +
+	"\tdriver_id\x18\x01 \x01(\x03R\bdriverId\x12\x19\n" +
+	"\bplate_no\x18\x02 \x01(\tR\aplateNo\x12#\n" +
+	"\rvehicle_model\x18\x03 \x01(\tR\fvehicleModel\x12#\n" +
+	"\rvehicle_brand\x18\x04 \x01(\tR\fvehicleBrand\x12#\n" +
+	"\rvehicle_color\x18\x05 \x01(\tR\fvehicleColor\x12,\n" +
+	"\x12vehicle_color_code\x18\x06 \x01(\tR\x10vehicleColorCode\x12\x1d\n" +
+	"\n" +
+	"seat_count\x18\a \x01(\x05R\tseatCount\x12.\n" +
+	"\x13driving_license_url\x18\b \x01(\tR\x11drivingLicenseUrl\x12*\n" +
+	"\x11vehicle_photo_url\x18\t \x01(\tR\x0fvehiclePhotoUrl\"G\n" +
+	"\x11UpdateVehicleResp\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"\xeb\x01\n" +
+	"\x0fBindBankCardReq\x12\x1b\n" +
+	"\tdriver_id\x18\x01 \x01(\x03R\bdriverId\x12\x1b\n" +
+	"\tbank_name\x18\x02 \x01(\tR\bbankName\x12\x1b\n" +
+	"\tbank_code\x18\x03 \x01(\tR\bbankCode\x12 \n" +
+	"\fbank_card_no\x18\x04 \x01(\tR\n" +
+	"bankCardNo\x12!\n" +
+	"\faccount_name\x18\x05 \x01(\tR\vaccountName\x12\x1b\n" +
+	"\tcard_type\x18\x06 \x01(\x05R\bcardType\x12\x1f\n" +
+	"\vbranch_name\x18\a \x01(\tR\n" +
+	"branchName\"F\n" +
+	"\x10BindBankCardResp\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"-\n" +
+	"\x0eGetBankCardReq\x12\x1b\n" +
+	"\tdriver_id\x18\x01 \x01(\x03R\bdriverId\"\x93\x02\n" +
+	"\x0fGetBankCardResp\x12\x1b\n" +
+	"\tbank_name\x18\x01 \x01(\tR\bbankName\x12\x1b\n" +
+	"\tbank_code\x18\x02 \x01(\tR\bbankCode\x12 \n" +
+	"\fbank_card_no\x18\x03 \x01(\tR\n" +
+	"bankCardNo\x12!\n" +
+	"\faccount_name\x18\x04 \x01(\tR\vaccountName\x12\x1b\n" +
+	"\tcard_type\x18\x05 \x01(\x05R\bcardType\x12\x1f\n" +
+	"\vbranch_name\x18\x06 \x01(\tR\n" +
+	"branchName\x12\x19\n" +
+	"\bhas_card\x18\a \x01(\bR\ahasCard\x12(\n" +
+	"\x10last_modified_at\x18\b \x01(\tR\x0elastModifiedAt\"\xed\x01\n" +
+	"\x11UpdateBankCardReq\x12\x1b\n" +
+	"\tdriver_id\x18\x01 \x01(\x03R\bdriverId\x12\x1b\n" +
+	"\tbank_name\x18\x02 \x01(\tR\bbankName\x12\x1b\n" +
+	"\tbank_code\x18\x03 \x01(\tR\bbankCode\x12 \n" +
+	"\fbank_card_no\x18\x04 \x01(\tR\n" +
+	"bankCardNo\x12!\n" +
+	"\faccount_name\x18\x05 \x01(\tR\vaccountName\x12\x1b\n" +
+	"\tcard_type\x18\x06 \x01(\x05R\bcardType\x12\x1f\n" +
+	"\vbranch_name\x18\a \x01(\tR\n" +
+	"branchName\"H\n" +
+	"\x12UpdateBankCardResp\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"+\n" +
+	"\fGetWalletReq\x12\x1b\n" +
+	"\tdriver_id\x18\x01 \x01(\x03R\bdriverId\"\xf7\x02\n" +
+	"\rGetWalletResp\x12\x18\n" +
+	"\abalance\x18\x01 \x01(\x03R\abalance\x12#\n" +
+	"\rfrozen_amount\x18\x02 \x01(\x03R\ffrozenAmount\x12!\n" +
+	"\ftoday_income\x18\x03 \x01(\x03R\vtodayIncome\x12\x1f\n" +
+	"\vweek_income\x18\x04 \x01(\x03R\n" +
+	"weekIncome\x12!\n" +
+	"\fmonth_income\x18\x05 \x01(\x03R\vmonthIncome\x12!\n" +
+	"\ftotal_income\x18\x06 \x01(\x03R\vtotalIncome\x12%\n" +
+	"\x0etotal_withdraw\x18\a \x01(\x03R\rtotalWithdraw\x120\n" +
+	"\x14today_withdraw_count\x18\b \x01(\x05R\x12todayWithdrawCount\x12 \n" +
+	"\fbank_card_no\x18\t \x01(\tR\n" +
+	"bankCardNo\x12\"\n" +
+	"\rhas_bank_card\x18\n" +
+	" \x01(\bR\vhasBankCard\"1\n" +
+	"\x12GetWithdrawPageReq\x12\x1b\n" +
+	"\tdriver_id\x18\x01 \x01(\x03R\bdriverId\"\xe1\x02\n" +
+	"\x10WithdrawRuleInfo\x12.\n" +
+	"\x13min_withdraw_amount\x18\x01 \x01(\x03R\x11minWithdrawAmount\x12.\n" +
+	"\x13max_withdraw_amount\x18\x02 \x01(\x03R\x11maxWithdrawAmount\x120\n" +
+	"\x14today_withdraw_count\x18\x03 \x01(\x05R\x12todayWithdrawCount\x120\n" +
+	"\x14today_withdraw_limit\x18\x04 \x01(\x05R\x12todayWithdrawLimit\x124\n" +
+	"\x16estimated_arrival_text\x18\x05 \x01(\tR\x14estimatedArrivalText\x12\x19\n" +
+	"\bfee_free\x18\x06 \x01(\bR\afeeFree\x12\x1d\n" +
+	"\n" +
+	"fee_amount\x18\a \x01(\x03R\tfeeAmount\x12\x19\n" +
+	"\bfee_desc\x18\b \x01(\tR\afeeDesc\"y\n" +
+	"\x14WithdrawPageBankCard\x12\"\n" +
+	"\rhas_bank_card\x18\x01 \x01(\bR\vhasBankCard\x12\x1b\n" +
+	"\tbank_name\x18\x02 \x01(\tR\bbankName\x12 \n" +
+	"\fbank_card_no\x18\x03 \x01(\tR\n" +
+	"bankCardNo\"\x9c\x01\n" +
+	"\x17WithdrawPageActionState\x12!\n" +
+	"\fcan_withdraw\x18\x01 \x01(\bR\vcanWithdraw\x12.\n" +
+	"\x13disable_reason_code\x18\x02 \x01(\tR\x11disableReasonCode\x12.\n" +
+	"\x13disable_reason_text\x18\x03 \x01(\tR\x11disableReasonText\"\xa9\x03\n" +
+	"\x13GetWithdrawPageResp\x12%\n" +
+	"\x0ewallet_balance\x18\x01 \x01(\x03R\rwalletBalance\x12#\n" +
+	"\rfrozen_amount\x18\x02 \x01(\x03R\ffrozenAmount\x12:\n" +
+	"\x19available_withdraw_amount\x18\x03 \x01(\x03R\x17availableWithdrawAmount\x125\n" +
+	"\trule_info\x18\x04 \x01(\v2\x18.driver.WithdrawRuleInfoR\bruleInfo\x129\n" +
+	"\tbank_card\x18\x05 \x01(\v2\x1c.driver.WithdrawPageBankCardR\bbankCard\x12B\n" +
+	"\faction_state\x18\x06 \x01(\v2\x1f.driver.WithdrawPageActionStateR\vactionState\x12+\n" +
+	"\x11suggested_amounts\x18\a \x03(\x03R\x10suggestedAmounts\x12'\n" +
+	"\x0fwithdraw_notice\x18\b \x03(\tR\x0ewithdrawNotice\"G\n" +
+	"\x10ApplyWithdrawReq\x12\x1b\n" +
+	"\tdriver_id\x18\x01 \x01(\x03R\bdriverId\x12\x16\n" +
+	"\x06amount\x18\x02 \x01(\x03R\x06amount\"h\n" +
+	"\x11ApplyWithdrawResp\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\x12\x1f\n" +
+	"\vwithdraw_no\x18\x03 \x01(\tR\n" +
+	"withdrawNo\"e\n" +
+	"\x15GetWithdrawRecordsReq\x12\x1b\n" +
+	"\tdriver_id\x18\x01 \x01(\x03R\bdriverId\x12\x12\n" +
+	"\x04page\x18\x02 \x01(\x05R\x04page\x12\x1b\n" +
+	"\tpage_size\x18\x03 \x01(\x05R\bpageSize\"\xcc\x02\n" +
+	"\x12WithdrawRecordItem\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
+	"\vwithdraw_no\x18\x02 \x01(\tR\n" +
+	"withdrawNo\x12\x16\n" +
+	"\x06amount\x18\x03 \x01(\x03R\x06amount\x12\x10\n" +
+	"\x03fee\x18\x04 \x01(\x03R\x03fee\x12#\n" +
+	"\ractual_amount\x18\x05 \x01(\x03R\factualAmount\x12\x1b\n" +
+	"\tbank_name\x18\x06 \x01(\tR\bbankName\x12 \n" +
+	"\fbank_card_no\x18\a \x01(\tR\n" +
+	"bankCardNo\x12\x16\n" +
+	"\x06status\x18\b \x01(\x05R\x06status\x12\x1f\n" +
+	"\vfail_reason\x18\t \x01(\tR\n" +
+	"failReason\x12\x1d\n" +
+	"\n" +
+	"apply_time\x18\n" +
+	" \x01(\tR\tapplyTime\x12\x1f\n" +
+	"\vfinish_time\x18\v \x01(\tR\n" +
+	"finishTime\"d\n" +
+	"\x16GetWithdrawRecordsResp\x124\n" +
+	"\arecords\x18\x01 \x03(\v2\x1a.driver.WithdrawRecordItemR\arecords\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\"E\n" +
+	"\x12GetIncomeDetailReq\x12\x1b\n" +
+	"\tdriver_id\x18\x01 \x01(\x03R\bdriverId\x12\x12\n" +
+	"\x04days\x18\x02 \x01(\x05R\x04days\"z\n" +
+	"\x10IncomeDetailItem\x12\x1b\n" +
+	"\ttype_name\x18\x01 \x01(\tR\btypeName\x12\x1b\n" +
+	"\ttype_code\x18\x02 \x01(\x05R\btypeCode\x12\x16\n" +
+	"\x06amount\x18\x03 \x01(\x03R\x06amount\x12\x14\n" +
+	"\x05count\x18\x04 \x01(\x05R\x05count\"h\n" +
+	"\x13GetIncomeDetailResp\x12.\n" +
+	"\x05items\x18\x01 \x03(\v2\x18.driver.IncomeDetailItemR\x05items\x12!\n" +
+	"\ftotal_amount\x18\x02 \x01(\x03R\vtotalAmount2\xe6\v\n" +
 	"\rDriverService\x12;\n" +
 	"\x06Create\x12\x17.driver.CreateDriverReq\x1a\x18.driver.CreateDriverResp\x122\n" +
 	"\x03Get\x12\x14.driver.GetDriverReq\x1a\x15.driver.GetDriverResp\x125\n" +
@@ -1123,7 +4037,22 @@ const file_driver_proto_rawDesc = "" +
 	"\x06Delete\x12\x17.driver.DeleteDriverReq\x1a\x18.driver.DeleteDriverResp\x12G\n" +
 	"\n" +
 	"GetProfile\x12\x1b.driver.GetDriverProfileReq\x1a\x1c.driver.GetDriverProfileResp\x12D\n" +
-	"\tGetIncome\x12\x1a.driver.GetDriverIncomeReq\x1a\x1b.driver.GetDriverIncomeRespB!Z\x1ftaketaxi/common/kitexGen/driverb\x06proto3"
+	"\tGetIncome\x12\x1a.driver.GetDriverIncomeReq\x1a\x1b.driver.GetDriverIncomeResp\x12A\n" +
+	"\fChangeMobile\x12\x17.driver.ChangeMobileReq\x1a\x18.driver.ChangeMobileResp\x12G\n" +
+	"\x0eChangePassword\x12\x19.driver.ChangePasswordReq\x1a\x1a.driver.ChangePasswordResp\x12D\n" +
+	"\rResetPassword\x12\x18.driver.ResetPasswordReq\x1a\x19.driver.ResetPasswordResp\x12D\n" +
+	"\rUpdateProfile\x12\x18.driver.UpdateProfileReq\x1a\x19.driver.UpdateProfileResp\x12G\n" +
+	"\x0eUpdateRealname\x12\x19.driver.UpdateRealnameReq\x1a\x1a.driver.UpdateRealnameResp\x12D\n" +
+	"\rUpdateLicense\x12\x18.driver.UpdateLicenseReq\x1a\x19.driver.UpdateLicenseResp\x12D\n" +
+	"\rUpdateVehicle\x12\x18.driver.UpdateVehicleReq\x1a\x19.driver.UpdateVehicleResp\x12A\n" +
+	"\fBindBankCard\x12\x17.driver.BindBankCardReq\x1a\x18.driver.BindBankCardResp\x12>\n" +
+	"\vGetBankCard\x12\x16.driver.GetBankCardReq\x1a\x17.driver.GetBankCardResp\x12G\n" +
+	"\x0eUpdateBankCard\x12\x19.driver.UpdateBankCardReq\x1a\x1a.driver.UpdateBankCardResp\x128\n" +
+	"\tGetWallet\x12\x14.driver.GetWalletReq\x1a\x15.driver.GetWalletResp\x12J\n" +
+	"\x0fGetWithdrawPage\x12\x1a.driver.GetWithdrawPageReq\x1a\x1b.driver.GetWithdrawPageResp\x12D\n" +
+	"\rApplyWithdraw\x12\x18.driver.ApplyWithdrawReq\x1a\x19.driver.ApplyWithdrawResp\x12S\n" +
+	"\x12GetWithdrawRecords\x12\x1d.driver.GetWithdrawRecordsReq\x1a\x1e.driver.GetWithdrawRecordsResp\x12J\n" +
+	"\x0fGetIncomeDetail\x12\x1a.driver.GetIncomeDetailReq\x1a\x1b.driver.GetIncomeDetailRespB\x1aZ\x18taketaxi/common/kitexGenb\x06proto3"
 
 var (
 	file_driver_proto_rawDescOnce sync.Once
@@ -1137,53 +4066,129 @@ func file_driver_proto_rawDescGZIP() []byte {
 	return file_driver_proto_rawDescData
 }
 
-var file_driver_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
+var file_driver_proto_msgTypes = make([]protoimpl.MessageInfo, 57)
 var file_driver_proto_goTypes = []any{
-	(*CreateDriverReq)(nil),      // 0: driver.CreateDriverReq
-	(*CreateDriverResp)(nil),     // 1: driver.CreateDriverResp
-	(*GetDriverReq)(nil),         // 2: driver.GetDriverReq
-	(*GetDriverResp)(nil),        // 3: driver.GetDriverResp
-	(*ListDriverReq)(nil),        // 4: driver.ListDriverReq
-	(*DriverItem)(nil),           // 5: driver.DriverItem
-	(*ListDriverResp)(nil),       // 6: driver.ListDriverResp
-	(*UpdateDriverReq)(nil),      // 7: driver.UpdateDriverReq
-	(*UpdateDriverResp)(nil),     // 8: driver.UpdateDriverResp
-	(*DeleteDriverReq)(nil),      // 9: driver.DeleteDriverReq
-	(*DeleteDriverResp)(nil),     // 10: driver.DeleteDriverResp
-	(*GetDriverProfileReq)(nil),  // 11: driver.GetDriverProfileReq
-	(*GetDriverProfileResp)(nil), // 12: driver.GetDriverProfileResp
-	(*PersonalInfo)(nil),         // 13: driver.PersonalInfo
-	(*OrderStats)(nil),           // 14: driver.OrderStats
-	(*GetDriverIncomeReq)(nil),   // 15: driver.GetDriverIncomeReq
-	(*DailyIncome)(nil),          // 16: driver.DailyIncome
-	(*IncomeSummary)(nil),        // 17: driver.IncomeSummary
-	(*GetDriverIncomeResp)(nil),  // 18: driver.GetDriverIncomeResp
+	(*CreateDriverReq)(nil),         // 0: driver.CreateDriverReq
+	(*CreateDriverResp)(nil),        // 1: driver.CreateDriverResp
+	(*GetDriverReq)(nil),            // 2: driver.GetDriverReq
+	(*GetDriverResp)(nil),           // 3: driver.GetDriverResp
+	(*ListDriverReq)(nil),           // 4: driver.ListDriverReq
+	(*DriverItem)(nil),              // 5: driver.DriverItem
+	(*ListDriverResp)(nil),          // 6: driver.ListDriverResp
+	(*UpdateDriverReq)(nil),         // 7: driver.UpdateDriverReq
+	(*UpdateDriverResp)(nil),        // 8: driver.UpdateDriverResp
+	(*DeleteDriverReq)(nil),         // 9: driver.DeleteDriverReq
+	(*DeleteDriverResp)(nil),        // 10: driver.DeleteDriverResp
+	(*GetDriverProfileReq)(nil),     // 11: driver.GetDriverProfileReq
+	(*GetDriverProfileResp)(nil),    // 12: driver.GetDriverProfileResp
+	(*RealnameInfo)(nil),            // 13: driver.RealnameInfo
+	(*LicenseInfo)(nil),             // 14: driver.LicenseInfo
+	(*VehicleInfo)(nil),             // 15: driver.VehicleInfo
+	(*PersonalInfo)(nil),            // 16: driver.PersonalInfo
+	(*OrderStats)(nil),              // 17: driver.OrderStats
+	(*GetDriverIncomeReq)(nil),      // 18: driver.GetDriverIncomeReq
+	(*DailyIncome)(nil),             // 19: driver.DailyIncome
+	(*IncomeSummary)(nil),           // 20: driver.IncomeSummary
+	(*GetDriverIncomeResp)(nil),     // 21: driver.GetDriverIncomeResp
+	(*ChangeMobileReq)(nil),         // 22: driver.ChangeMobileReq
+	(*ChangeMobileResp)(nil),        // 23: driver.ChangeMobileResp
+	(*ChangePasswordReq)(nil),       // 24: driver.ChangePasswordReq
+	(*ChangePasswordResp)(nil),      // 25: driver.ChangePasswordResp
+	(*ResetPasswordReq)(nil),        // 26: driver.ResetPasswordReq
+	(*ResetPasswordResp)(nil),       // 27: driver.ResetPasswordResp
+	(*UpdateProfileReq)(nil),        // 28: driver.UpdateProfileReq
+	(*UpdateProfileResp)(nil),       // 29: driver.UpdateProfileResp
+	(*UpdateRealnameReq)(nil),       // 30: driver.UpdateRealnameReq
+	(*UpdateRealnameResp)(nil),      // 31: driver.UpdateRealnameResp
+	(*UpdateLicenseReq)(nil),        // 32: driver.UpdateLicenseReq
+	(*UpdateLicenseResp)(nil),       // 33: driver.UpdateLicenseResp
+	(*UpdateVehicleReq)(nil),        // 34: driver.UpdateVehicleReq
+	(*UpdateVehicleResp)(nil),       // 35: driver.UpdateVehicleResp
+	(*BindBankCardReq)(nil),         // 36: driver.BindBankCardReq
+	(*BindBankCardResp)(nil),        // 37: driver.BindBankCardResp
+	(*GetBankCardReq)(nil),          // 38: driver.GetBankCardReq
+	(*GetBankCardResp)(nil),         // 39: driver.GetBankCardResp
+	(*UpdateBankCardReq)(nil),       // 40: driver.UpdateBankCardReq
+	(*UpdateBankCardResp)(nil),      // 41: driver.UpdateBankCardResp
+	(*GetWalletReq)(nil),            // 42: driver.GetWalletReq
+	(*GetWalletResp)(nil),           // 43: driver.GetWalletResp
+	(*GetWithdrawPageReq)(nil),      // 44: driver.GetWithdrawPageReq
+	(*WithdrawRuleInfo)(nil),        // 45: driver.WithdrawRuleInfo
+	(*WithdrawPageBankCard)(nil),    // 46: driver.WithdrawPageBankCard
+	(*WithdrawPageActionState)(nil), // 47: driver.WithdrawPageActionState
+	(*GetWithdrawPageResp)(nil),     // 48: driver.GetWithdrawPageResp
+	(*ApplyWithdrawReq)(nil),        // 49: driver.ApplyWithdrawReq
+	(*ApplyWithdrawResp)(nil),       // 50: driver.ApplyWithdrawResp
+	(*GetWithdrawRecordsReq)(nil),   // 51: driver.GetWithdrawRecordsReq
+	(*WithdrawRecordItem)(nil),      // 52: driver.WithdrawRecordItem
+	(*GetWithdrawRecordsResp)(nil),  // 53: driver.GetWithdrawRecordsResp
+	(*GetIncomeDetailReq)(nil),      // 54: driver.GetIncomeDetailReq
+	(*IncomeDetailItem)(nil),        // 55: driver.IncomeDetailItem
+	(*GetIncomeDetailResp)(nil),     // 56: driver.GetIncomeDetailResp
 }
 var file_driver_proto_depIdxs = []int32{
 	5,  // 0: driver.ListDriverResp.items:type_name -> driver.DriverItem
-	13, // 1: driver.GetDriverProfileResp.personal_info:type_name -> driver.PersonalInfo
-	14, // 2: driver.GetDriverProfileResp.order_stats:type_name -> driver.OrderStats
-	17, // 3: driver.GetDriverIncomeResp.summary:type_name -> driver.IncomeSummary
-	16, // 4: driver.GetDriverIncomeResp.trend:type_name -> driver.DailyIncome
-	0,  // 5: driver.DriverService.Create:input_type -> driver.CreateDriverReq
-	2,  // 6: driver.DriverService.Get:input_type -> driver.GetDriverReq
-	4,  // 7: driver.DriverService.List:input_type -> driver.ListDriverReq
-	7,  // 8: driver.DriverService.Update:input_type -> driver.UpdateDriverReq
-	9,  // 9: driver.DriverService.Delete:input_type -> driver.DeleteDriverReq
-	11, // 10: driver.DriverService.GetProfile:input_type -> driver.GetDriverProfileReq
-	15, // 11: driver.DriverService.GetIncome:input_type -> driver.GetDriverIncomeReq
-	1,  // 12: driver.DriverService.Create:output_type -> driver.CreateDriverResp
-	3,  // 13: driver.DriverService.Get:output_type -> driver.GetDriverResp
-	6,  // 14: driver.DriverService.List:output_type -> driver.ListDriverResp
-	8,  // 15: driver.DriverService.Update:output_type -> driver.UpdateDriverResp
-	10, // 16: driver.DriverService.Delete:output_type -> driver.DeleteDriverResp
-	12, // 17: driver.DriverService.GetProfile:output_type -> driver.GetDriverProfileResp
-	18, // 18: driver.DriverService.GetIncome:output_type -> driver.GetDriverIncomeResp
-	12, // [12:19] is the sub-list for method output_type
-	5,  // [5:12] is the sub-list for method input_type
-	5,  // [5:5] is the sub-list for extension type_name
-	5,  // [5:5] is the sub-list for extension extendee
-	0,  // [0:5] is the sub-list for field type_name
+	16, // 1: driver.GetDriverProfileResp.personal_info:type_name -> driver.PersonalInfo
+	17, // 2: driver.GetDriverProfileResp.order_stats:type_name -> driver.OrderStats
+	13, // 3: driver.GetDriverProfileResp.realname_info:type_name -> driver.RealnameInfo
+	14, // 4: driver.GetDriverProfileResp.license_info:type_name -> driver.LicenseInfo
+	15, // 5: driver.GetDriverProfileResp.vehicle_info:type_name -> driver.VehicleInfo
+	20, // 6: driver.GetDriverIncomeResp.summary:type_name -> driver.IncomeSummary
+	19, // 7: driver.GetDriverIncomeResp.trend:type_name -> driver.DailyIncome
+	45, // 8: driver.GetWithdrawPageResp.rule_info:type_name -> driver.WithdrawRuleInfo
+	46, // 9: driver.GetWithdrawPageResp.bank_card:type_name -> driver.WithdrawPageBankCard
+	47, // 10: driver.GetWithdrawPageResp.action_state:type_name -> driver.WithdrawPageActionState
+	52, // 11: driver.GetWithdrawRecordsResp.records:type_name -> driver.WithdrawRecordItem
+	55, // 12: driver.GetIncomeDetailResp.items:type_name -> driver.IncomeDetailItem
+	0,  // 13: driver.DriverService.Create:input_type -> driver.CreateDriverReq
+	2,  // 14: driver.DriverService.Get:input_type -> driver.GetDriverReq
+	4,  // 15: driver.DriverService.List:input_type -> driver.ListDriverReq
+	7,  // 16: driver.DriverService.Update:input_type -> driver.UpdateDriverReq
+	9,  // 17: driver.DriverService.Delete:input_type -> driver.DeleteDriverReq
+	11, // 18: driver.DriverService.GetProfile:input_type -> driver.GetDriverProfileReq
+	18, // 19: driver.DriverService.GetIncome:input_type -> driver.GetDriverIncomeReq
+	22, // 20: driver.DriverService.ChangeMobile:input_type -> driver.ChangeMobileReq
+	24, // 21: driver.DriverService.ChangePassword:input_type -> driver.ChangePasswordReq
+	26, // 22: driver.DriverService.ResetPassword:input_type -> driver.ResetPasswordReq
+	28, // 23: driver.DriverService.UpdateProfile:input_type -> driver.UpdateProfileReq
+	30, // 24: driver.DriverService.UpdateRealname:input_type -> driver.UpdateRealnameReq
+	32, // 25: driver.DriverService.UpdateLicense:input_type -> driver.UpdateLicenseReq
+	34, // 26: driver.DriverService.UpdateVehicle:input_type -> driver.UpdateVehicleReq
+	36, // 27: driver.DriverService.BindBankCard:input_type -> driver.BindBankCardReq
+	38, // 28: driver.DriverService.GetBankCard:input_type -> driver.GetBankCardReq
+	40, // 29: driver.DriverService.UpdateBankCard:input_type -> driver.UpdateBankCardReq
+	42, // 30: driver.DriverService.GetWallet:input_type -> driver.GetWalletReq
+	44, // 31: driver.DriverService.GetWithdrawPage:input_type -> driver.GetWithdrawPageReq
+	49, // 32: driver.DriverService.ApplyWithdraw:input_type -> driver.ApplyWithdrawReq
+	51, // 33: driver.DriverService.GetWithdrawRecords:input_type -> driver.GetWithdrawRecordsReq
+	54, // 34: driver.DriverService.GetIncomeDetail:input_type -> driver.GetIncomeDetailReq
+	1,  // 35: driver.DriverService.Create:output_type -> driver.CreateDriverResp
+	3,  // 36: driver.DriverService.Get:output_type -> driver.GetDriverResp
+	6,  // 37: driver.DriverService.List:output_type -> driver.ListDriverResp
+	8,  // 38: driver.DriverService.Update:output_type -> driver.UpdateDriverResp
+	10, // 39: driver.DriverService.Delete:output_type -> driver.DeleteDriverResp
+	12, // 40: driver.DriverService.GetProfile:output_type -> driver.GetDriverProfileResp
+	21, // 41: driver.DriverService.GetIncome:output_type -> driver.GetDriverIncomeResp
+	23, // 42: driver.DriverService.ChangeMobile:output_type -> driver.ChangeMobileResp
+	25, // 43: driver.DriverService.ChangePassword:output_type -> driver.ChangePasswordResp
+	27, // 44: driver.DriverService.ResetPassword:output_type -> driver.ResetPasswordResp
+	29, // 45: driver.DriverService.UpdateProfile:output_type -> driver.UpdateProfileResp
+	31, // 46: driver.DriverService.UpdateRealname:output_type -> driver.UpdateRealnameResp
+	33, // 47: driver.DriverService.UpdateLicense:output_type -> driver.UpdateLicenseResp
+	35, // 48: driver.DriverService.UpdateVehicle:output_type -> driver.UpdateVehicleResp
+	37, // 49: driver.DriverService.BindBankCard:output_type -> driver.BindBankCardResp
+	39, // 50: driver.DriverService.GetBankCard:output_type -> driver.GetBankCardResp
+	41, // 51: driver.DriverService.UpdateBankCard:output_type -> driver.UpdateBankCardResp
+	43, // 52: driver.DriverService.GetWallet:output_type -> driver.GetWalletResp
+	48, // 53: driver.DriverService.GetWithdrawPage:output_type -> driver.GetWithdrawPageResp
+	50, // 54: driver.DriverService.ApplyWithdraw:output_type -> driver.ApplyWithdrawResp
+	53, // 55: driver.DriverService.GetWithdrawRecords:output_type -> driver.GetWithdrawRecordsResp
+	56, // 56: driver.DriverService.GetIncomeDetail:output_type -> driver.GetIncomeDetailResp
+	35, // [35:57] is the sub-list for method output_type
+	13, // [13:35] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_driver_proto_init() }
@@ -1197,7 +4202,7 @@ func file_driver_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_driver_proto_rawDesc), len(file_driver_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   19,
+			NumMessages:   57,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
