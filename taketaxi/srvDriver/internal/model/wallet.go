@@ -93,7 +93,7 @@ type DriverWithdrawRecord struct {
 	UpdatedAt         time.Time  `gorm:"column:updated_at;comment:更新时间" json:"updated_at"`
 }
 
-func (DriverWithdrawRecord) TableName() string { return "withdraw_record" }
+func (DriverWithdrawRecord) TableName() string { return "driver_withdraw_record" }
 
 // WithdrawRecord 旧版提现记录表 (withdraw_record)
 // 保留兼容旧版本接口，新功能请使用 DriverWithdrawRecord
