@@ -177,11 +177,6 @@ func (e *BusinessError) GRPCStatus() *status.Status {
 	return status.New(grpcCode, e.Error())
 }
 
-// Is 判断是否为指定错误码
-func (e *BusinessError) Is(code Code) bool {
-	return e.Code == code
-}
-
 // ==================== 便捷函数 ====================
 
 // IsCode 判断 error 是否为指定错误码的 BusinessError
