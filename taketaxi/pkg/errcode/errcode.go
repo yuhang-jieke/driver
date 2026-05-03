@@ -160,7 +160,21 @@ func (e *BusinessError) Error() string {
 
 // GRPCStatus 转换为 gRPC status（用于 gRPC 传输）
 func (e *BusinessError) GRPCStatus() *status.Status {
-	return status.New(codes.Code(e.Code.Int()%1000+100), e.Error())
+	// 根据业务错误码范围映射到标准 gRPC code
+	var grpcCode codes.Code
+	switch {
+	case e.Code == Success:
+		grpcCode = codes.OK
+	case e.Code >= 40000 && e.Code < 50000:
+		grpcCode = codes.InvalidArgument
+	case e.Code >= 50000 && e.Code < 60000:
+		grpcCode = codes.FailedPrecondition
+	case e.Code >= 60000 && e.Code < 70000:
+		grpcCode = codes.Unavailable
+	default:
+		grpcCode = codes.Internal
+	}
+	return status.New(grpcCode, e.Error())
 }
 
 // Is 判断是否为指定错误码
