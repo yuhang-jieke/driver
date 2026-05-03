@@ -8,13 +8,14 @@ import "time"
 // DriverWallet 钱包表 (driver_wallet)
 //
 // 司机的资金账户，每个司机只有一条记录：
-//   - Balance: 当前可用余额（可提现部分）
-//   - FrozenAmount: 冻结金额（T-3 结算中不可提现的部分）
+//   - Balance: 总余额（包含冻结部分）
+//   - FrozenAmount: 冻结金额（T-3 结算中不可提现的部分，是 Balance 的子集）
+//   - 可提现金额 = Balance - FrozenAmount
 //   - Version: 乐观锁版本号，防止并发扣款冲突
 type DriverWallet struct {
 	Id            int64     `gorm:"column:id;primaryKey;autoIncrement;comment:主键ID" json:"id"`
 	DriverId      int64     `gorm:"column:driver_id;comment:司机ID" json:"driver_id"`
-	Balance       int64     `gorm:"column:balance;comment:可用余额(分)" json:"balance"`
+	Balance       int64     `gorm:"column:balance;comment:总余额(分,含冻结)" json:"balance"`
 	FrozenAmount  int64     `gorm:"column:frozen_amount;comment:冻结金额(分)" json:"frozen_amount"`
 	TotalIncome   int64     `gorm:"column:total_income;comment:累计总收入(分)" json:"total_income"`
 	TotalWithdraw int64     `gorm:"column:total_withdraw;comment:累计提现金额(分)" json:"total_withdraw"`
@@ -92,7 +93,7 @@ type DriverWithdrawRecord struct {
 	UpdatedAt         time.Time  `gorm:"column:updated_at;comment:更新时间" json:"updated_at"`
 }
 
-func (DriverWithdrawRecord) TableName() string { return "driver_withdraw_record" }
+func (DriverWithdrawRecord) TableName() string { return "withdraw_record" }
 
 // WithdrawRecord 旧版提现记录表 (withdraw_record)
 // 保留兼容旧版本接口，新功能请使用 DriverWithdrawRecord
