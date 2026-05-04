@@ -3556,7 +3556,7 @@ func (x *GetWithdrawRecordsResp) GetTotal() int32 {
 type GetIncomeDetailReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DriverId      int64                  `protobuf:"varint,1,opt,name=driver_id,json=driverId,proto3" json:"driver_id,omitempty"`
-	Days          int32                  `protobuf:"varint,2,opt,name=days,proto3" json:"days,omitempty"` // 查询天数: 1-今日 7-本周 30-本月
+	Period        string                 `protobuf:"bytes,2,opt,name=period,proto3" json:"period,omitempty"` // 查询周期: today/week/month
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3598,11 +3598,11 @@ func (x *GetIncomeDetailReq) GetDriverId() int64 {
 	return 0
 }
 
-func (x *GetIncomeDetailReq) GetDays() int32 {
+func (x *GetIncomeDetailReq) GetPeriod() string {
 	if x != nil {
-		return x.Days
+		return x.Period
 	}
-	return 0
+	return ""
 }
 
 type IncomeDetailItem struct {
@@ -4017,10 +4017,10 @@ const file_driver_proto_rawDesc = "" +
 	"finishTime\"d\n" +
 	"\x16GetWithdrawRecordsResp\x124\n" +
 	"\arecords\x18\x01 \x03(\v2\x1a.driver.WithdrawRecordItemR\arecords\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x05R\x05total\"E\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\"I\n" +
 	"\x12GetIncomeDetailReq\x12\x1b\n" +
-	"\tdriver_id\x18\x01 \x01(\x03R\bdriverId\x12\x12\n" +
-	"\x04days\x18\x02 \x01(\x05R\x04days\"z\n" +
+	"\tdriver_id\x18\x01 \x01(\x03R\bdriverId\x12\x16\n" +
+	"\x06period\x18\x02 \x01(\tR\x06period\"z\n" +
 	"\x10IncomeDetailItem\x12\x1b\n" +
 	"\ttype_name\x18\x01 \x01(\tR\btypeName\x12\x1b\n" +
 	"\ttype_code\x18\x02 \x01(\x05R\btypeCode\x12\x16\n" +

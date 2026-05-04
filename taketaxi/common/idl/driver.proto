@@ -367,7 +367,7 @@ message GetWithdrawRecordsResp {
 // GetIncomeDetail 收入明细(分类汇总)
 message GetIncomeDetailReq {
   int64 driver_id = 1;
-  int32 days = 2;                // 查询天数: 1-今日 7-本周 30-本月
+  string period = 2;             // 查询周期: today/week/month
 }
 message IncomeDetailItem {
   string type_name = 1;          // 收入类型名称
