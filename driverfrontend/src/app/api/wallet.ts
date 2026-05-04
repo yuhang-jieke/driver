@@ -190,11 +190,11 @@ export interface IncomeDetailItem {
 
 export async function getIncomeDetail(
   driverId: number,
-  days: number // 1-今日 7-本周 30-本月
+  period: 'today' | 'week' | 'month'
 ): Promise<{ items: IncomeDetailItem[]; total_amount: number } | null> {
   try {
     const res = await fetch(
-      `${API_BASE}/api/v1/driver/income/detail?driver_id=${driverId}&days=${days}`
+      `${API_BASE}/api/v1/driver/income/detail?driver_id=${driverId}&period=${period}`
     );
     if (!res.ok) return null;
     return await res.json();
