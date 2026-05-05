@@ -366,6 +366,7 @@ type Order struct {
 	CancelBy         int8      `gorm:"column:cancel_by;comment:取消方: 1-乘客 2-司机 3-系统" json:"cancel_by"`
 	CancelTime       time.Time `gorm:"column:cancel_time;comment:取消时间" json:"cancel_time"`
 	CityId           int64     `gorm:"column:city_id;comment:城市ID" json:"city_id"`
+
 	CreatedAt        time.Time `gorm:"column:created_at;comment:创建时间" json:"created_at"`
 	UpdatedAt        time.Time `gorm:"column:updated_at;comment:更新时间" json:"updated_at"`
 }
@@ -373,6 +374,8 @@ type Order struct {
 func (Order) TableName() string {
 	return "order"
 }
+
+
 
 // ----------------------------
 // 16. order_evaluation 订单评价表

@@ -15,5 +15,8 @@ func NewRouter(client *rpcclient.DriverClient) *gin.Engine {
 	r.POST("/api/v1/drivers", h.Create)
 	r.PUT("/api/v1/drivers/:id", h.Update)
 	r.DELETE("/api/v1/drivers/:id", h.Delete)
+	r.GET("/api/v1/orders/:orderId/details", h.DriverDetails)
+	r.GET("/api/driver/orders", h.DriverOrderList)
+
 	return r
 }

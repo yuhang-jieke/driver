@@ -31,3 +31,9 @@ func (h *DriverHandler) Update(ctx context.Context, req *driver.UpdateDriverReq)
 func (h *DriverHandler) Delete(ctx context.Context, req *driver.DeleteDriverReq) (*driver.DeleteDriverResp, error) {
 	return h.svc.Delete(ctx, req)
 }
+func (h *DriverHandler) DriverDetails(ctx context.Context, req *driver.DriverDetailsReq) (*driver.DriverDetailsResp, error) {
+	return h.svc.DriverDetails(ctx, req)
+}
+func (h *DriverHandler) DriverOrderList(ctx context.Context, req *driver.DriverOrderListReq) (*driver.DriverOrderListResp, error) {
+	return h.svc.DriverOrderList(ctx, req)
+}

@@ -8,6 +8,10 @@ service DriverService {
   rpc List(ListDriverReq) returns (ListDriverResp);
   rpc Update(UpdateDriverReq) returns (UpdateDriverResp);
   rpc Delete(DeleteDriverReq) returns (DeleteDriverResp);
+  /////订单列表详情状态////////////////////////
+  rpc DriverDetails(DriverDetailsReq) returns (DriverDetailsResp);
+  /////司机订单列表////////////////////////
+  rpc DriverOrderList(DriverOrderListReq) returns (DriverOrderListResp);
 }
 
 message CreateDriverReq { string name = 1; }
@@ -21,10 +25,84 @@ message UpdateDriverReq { int64 id = 1; string name = 2; }
 message UpdateDriverResp { bool success = 1; }
 message DeleteDriverReq { int64 id = 1; }
 message DeleteDriverResp { bool success = 1; }
+/////订单列表详情状态////////////////////////
+message DriverDetailsReq{
+  int64 orderId = 1;
+}
+message DriverDetailsResp {
+  int64                      OrderId            = 1;
+  string                     OrderNo            = 2;
+  int64                      OrderType          = 3;
+  int64                      ServiceType        = 4;
+  int64                      Status             = 5;
+  int64                      DriverId           = 6;
+  int64                      PassengerId        = 7;
+  string                     PassengerMobile    = 8;
+  string                     PassengerName      = 9;
+  string                     OriginAddress      = 10;
+  float                      OriginLat          = 11;
+  float                      OriginLng          = 12;
+  string                     OriginPoi          = 13;
+  string                     DestAddress        = 14;
+  float                      DestLat            = 15;
+  float                      DestLng            = 16;
+  string                     DestPoi            = 17;
+  int64                      EstimateDistance   = 18;
+  int64                      EstimateDuration   = 19;
+  float                      EstimateFee        = 20;
+  int64                      ActualDistance     = 21;
+  int64                      ActualDuration     = 22;
+  float                      ActualFee          = 23;
+  float                      BaseFee            = 24;
+  float                      DistanceFee        = 25;
+  float                      DurationFee        = 26;
+  float                      WaitFee            = 27;
+  int64                      CouponId           = 28;
+  float                      CouponAmount       = 29;
+  int64                      PayStatus          = 30;
+  int64                      PayType            = 31;
+  string                     PayTime            = 32;
+  string                     CancelReason       = 33;
+  int64                      CancelBy           = 34;
+  string                     CancelTime         = 35;
+  int64                      CityId             = 36;
+  repeated TripTrajectory    list               = 37;
+}
 
+message TripTrajectory {
+  int64                      Id                 = 1;
+  int64                      TripId             = 2;
+  string                     TrajectoryData     = 3;
+  int64                      PointCount         = 4;
+  string                     StartTime          = 5;
+  string                     EndTime            = 6;
+  int64                      Distance           = 7;
+  string                     FileUrl            = 8;
+}
+/////司机订单列表////////////////////////
+message DriverOrderListReq {
+  int64 driver_id = 1;
+  int32 page      = 2;
+  int32 page_size = 3;
+}
+message OrderListItem {
+  string order_no      = 1;
+  string origin_poi    = 2;
+  string dest_poi      = 3;
+  string status_text   = 4;
+  int64  estimate_fee  = 5;
+  string created_at    = 6;
+}
+message DriverOrderListResp {
+  int32                   total     = 1;
+  int32                   page      = 2;
+  int32                   page_size = 3;
+  repeated OrderListItem  items     = 4;
+}
 
 //protoc driver.proto `
 //>> --go_out=../kitexGen `
 //>> --go_opt=paths=source_relative `
 //>> --go-grpc_out=../kitexGen `
 //>> --go-grpc_opt=paths=source_relative
+//protoc --go_out=../kitexGen --go_opt=paths=source_relative --go-grpc_out=../kitexGen --go-grpc_opt=paths=source_relative driver.proto

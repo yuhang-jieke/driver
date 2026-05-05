@@ -91,3 +91,39 @@ func (h *DriverHandler) Delete(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, resp)
 }
+
+func (h *DriverHandler) DriverDetails(c *gin.Context) {
+	orderId, err := strconv.ParseInt(c.Param("orderId"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "无效的orderId"})
+		return
+	}
+	resp, err := h.client.DriverDetails(c.Request.Context(), &pb.DriverDetailsReq{OrderId: orderId})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, resp)
+}
+
+func (h *DriverHandler) DriverOrderList(c *gin.Context) {
+	driverId, err := strconv.ParseInt(c.Query("driver_id"), 10, 64)
+	if err != nil || driverId <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "无效的driver_id"})
+		return
+	}
+	page, _ := strconv.ParseInt(c.DefaultQuery("page", "1"), 10, 32)
+	pageSize, _ := strconv.ParseInt(c.DefaultQuery("page_size", "10"), 10, 32)
+
+	resp, err := h.client.DriverOrderList(c.Request.Context(), &pb.DriverOrderListReq{
+		DriverId: driverId,
+		Page:     int32(page),
+		PageSize: int32(pageSize),
+	})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, resp)
+}
+
