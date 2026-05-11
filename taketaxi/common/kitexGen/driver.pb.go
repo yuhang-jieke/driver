@@ -2680,6 +2680,8 @@ func (x *UpdateBankCardResp) GetMessage() string {
 type GetWalletReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DriverId      int64                  `protobuf:"varint,1,opt,name=driver_id,json=driverId,proto3" json:"driver_id,omitempty"`
+	StartDate     string                 `protobuf:"bytes,2,opt,name=start_date,json=startDate,proto3" json:"start_date,omitempty"` // 可选，格式 YYYY-MM-DD，查询开始日期
+	EndDate       string                 `protobuf:"bytes,3,opt,name=end_date,json=endDate,proto3" json:"end_date,omitempty"`       // 可选，格式 YYYY-MM-DD，查询结束日期
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2721,18 +2723,34 @@ func (x *GetWalletReq) GetDriverId() int64 {
 	return 0
 }
 
+func (x *GetWalletReq) GetStartDate() string {
+	if x != nil {
+		return x.StartDate
+	}
+	return ""
+}
+
+func (x *GetWalletReq) GetEndDate() string {
+	if x != nil {
+		return x.EndDate
+	}
+	return ""
+}
+
 type GetWalletResp struct {
 	state              protoimpl.MessageState `protogen:"open.v1"`
 	Balance            int64                  `protobuf:"varint,1,opt,name=balance,proto3" json:"balance,omitempty"`                                                   // 可提现余额(单位:分)
 	FrozenAmount       int64                  `protobuf:"varint,2,opt,name=frozen_amount,json=frozenAmount,proto3" json:"frozen_amount,omitempty"`                     // 冻结金额(未结算/在途)(单位:分)
-	TodayIncome        int64                  `protobuf:"varint,3,opt,name=today_income,json=todayIncome,proto3" json:"today_income,omitempty"`                        // 今日收入(单位:分)
-	WeekIncome         int64                  `protobuf:"varint,4,opt,name=week_income,json=weekIncome,proto3" json:"week_income,omitempty"`                           // 本周收入(单位:分)
-	MonthIncome        int64                  `protobuf:"varint,5,opt,name=month_income,json=monthIncome,proto3" json:"month_income,omitempty"`                        // 本月收入(单位:分)
+	TodayIncome        int64                  `protobuf:"varint,3,opt,name=today_income,json=todayIncome,proto3" json:"today_income,omitempty"`                        // 今日收入(单位:分) - 如果传了日期范围，此字段为范围内收入
+	WeekIncome         int64                  `protobuf:"varint,4,opt,name=week_income,json=weekIncome,proto3" json:"week_income,omitempty"`                           // 本周收入(单位:分) - 如果传了日期范围，此字段为 0
+	MonthIncome        int64                  `protobuf:"varint,5,opt,name=month_income,json=monthIncome,proto3" json:"month_income,omitempty"`                        // 本月收入(单位:分) - 如果传了日期范围，此字段为 0
 	TotalIncome        int64                  `protobuf:"varint,6,opt,name=total_income,json=totalIncome,proto3" json:"total_income,omitempty"`                        // 累计总收入(单位:分)
 	TotalWithdraw      int64                  `protobuf:"varint,7,opt,name=total_withdraw,json=totalWithdraw,proto3" json:"total_withdraw,omitempty"`                  // 累计提现金额(单位:分)
 	TodayWithdrawCount int32                  `protobuf:"varint,8,opt,name=today_withdraw_count,json=todayWithdrawCount,proto3" json:"today_withdraw_count,omitempty"` // 今日已提现次数(最多3次)
 	BankCardNo         string                 `protobuf:"bytes,9,opt,name=bank_card_no,json=bankCardNo,proto3" json:"bank_card_no,omitempty"`                          // 已绑定银行卡(脱敏)
 	HasBankCard        bool                   `protobuf:"varint,10,opt,name=has_bank_card,json=hasBankCard,proto3" json:"has_bank_card,omitempty"`                     // 是否已绑定银行卡
+	QueryStartDate     string                 `protobuf:"bytes,11,opt,name=query_start_date,json=queryStartDate,proto3" json:"query_start_date,omitempty"`             // 实际查询的开始日期（回显用）
+	QueryEndDate       string                 `protobuf:"bytes,12,opt,name=query_end_date,json=queryEndDate,proto3" json:"query_end_date,omitempty"`                   // 实际查询的结束日期（回显用）
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
@@ -2835,6 +2853,20 @@ func (x *GetWalletResp) GetHasBankCard() bool {
 		return x.HasBankCard
 	}
 	return false
+}
+
+func (x *GetWalletResp) GetQueryStartDate() string {
+	if x != nil {
+		return x.QueryStartDate
+	}
+	return ""
+}
+
+func (x *GetWalletResp) GetQueryEndDate() string {
+	if x != nil {
+		return x.QueryEndDate
+	}
+	return ""
 }
 
 // GetWithdrawPage 查询提现页信息
@@ -3938,9 +3970,12 @@ const file_driver_proto_rawDesc = "" +
 	"branchName\"H\n" +
 	"\x12UpdateBankCardResp\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"+\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"e\n" +
 	"\fGetWalletReq\x12\x1b\n" +
-	"\tdriver_id\x18\x01 \x01(\x03R\bdriverId\"\xf7\x02\n" +
+	"\tdriver_id\x18\x01 \x01(\x03R\bdriverId\x12\x1d\n" +
+	"\n" +
+	"start_date\x18\x02 \x01(\tR\tstartDate\x12\x19\n" +
+	"\bend_date\x18\x03 \x01(\tR\aendDate\"\xc7\x03\n" +
 	"\rGetWalletResp\x12\x18\n" +
 	"\abalance\x18\x01 \x01(\x03R\abalance\x12#\n" +
 	"\rfrozen_amount\x18\x02 \x01(\x03R\ffrozenAmount\x12!\n" +
@@ -3954,7 +3989,9 @@ const file_driver_proto_rawDesc = "" +
 	"\fbank_card_no\x18\t \x01(\tR\n" +
 	"bankCardNo\x12\"\n" +
 	"\rhas_bank_card\x18\n" +
-	" \x01(\bR\vhasBankCard\"1\n" +
+	" \x01(\bR\vhasBankCard\x12(\n" +
+	"\x10query_start_date\x18\v \x01(\tR\x0equeryStartDate\x12$\n" +
+	"\x0equery_end_date\x18\f \x01(\tR\fqueryEndDate\"1\n" +
 	"\x12GetWithdrawPageReq\x12\x1b\n" +
 	"\tdriver_id\x18\x01 \x01(\x03R\bdriverId\"\xe1\x02\n" +
 	"\x10WithdrawRuleInfo\x12.\n" +

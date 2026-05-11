@@ -276,18 +276,22 @@ message UpdateBankCardResp {
 // GetWallet 查询钱包概览
 message GetWalletReq {
   int64 driver_id = 1;
+  string start_date = 2;         // 可选，格式 YYYY-MM-DD，查询开始日期
+  string end_date = 3;           // 可选，格式 YYYY-MM-DD，查询结束日期
 }
 message GetWalletResp {
   int64 balance = 1;             // 可提现余额(单位:分)
   int64 frozen_amount = 2;       // 冻结金额(未结算/在途)(单位:分)
-  int64 today_income = 3;        // 今日收入(单位:分)
-  int64 week_income = 4;         // 本周收入(单位:分)
-  int64 month_income = 5;        // 本月收入(单位:分)
+  int64 today_income = 3;        // 今日收入(单位:分) - 如果传了日期范围，此字段为范围内收入
+  int64 week_income = 4;         // 本周收入(单位:分) - 如果传了日期范围，此字段为 0
+  int64 month_income = 5;        // 本月收入(单位:分) - 如果传了日期范围，此字段为 0
   int64 total_income = 6;        // 累计总收入(单位:分)
   int64 total_withdraw = 7;      // 累计提现金额(单位:分)
   int32 today_withdraw_count = 8;// 今日已提现次数(最多3次)
   string bank_card_no = 9;       // 已绑定银行卡(脱敏)
   bool has_bank_card = 10;       // 是否已绑定银行卡
+  string query_start_date = 11;  // 实际查询的开始日期（回显用）
+  string query_end_date = 12;    // 实际查询的结束日期（回显用）
 }
 
 // GetWithdrawPage 查询提现页信息

@@ -54,6 +54,41 @@ export interface Driver {
   totalOrders: number;
   todayEarnings: number;
   status: "idle" | "busy" | "offline";
+  avatar?: string;
+  realnameInfo?: {
+    real_name: string;
+    id_card_front_url: string;
+    id_card_back_url: string;
+    status: number;
+  };
+  licenseInfo?: {
+    license_no: string;
+    license_type: string;
+    license_url: string;
+    status: number;
+  };
+  vehicleInfo?: {
+    plate_no: string;
+    vehicle_brand: string;
+    vehicle_model: string;
+    vehicle_color: string;
+    seat_count: number;
+    driving_license_url: string;
+    vehicle_photo_url: string;
+    status: number;
+  };
+  walletInfo?: {
+    balance: number;
+    frozen_amount: number;
+    today_income: number;
+    week_income: number;
+    month_income: number;
+    total_income: number;
+    total_withdraw: number;
+    today_withdraw_count: number;
+    bank_card_no: string;
+    has_bank_card: boolean;
+  };
 }
 
 export interface Complaint {
@@ -75,6 +110,8 @@ interface Store {
   updateOrderStatus: (orderId: string, status: OrderStatus) => void;
   cancelOrder: (orderId: string) => void;
   setDriverOnline: (driverId: string, online: boolean) => void;
+  // 局部更新指定司机字段（如上传头像后立即更新 avatar，无需刷新页面）
+  updateDriver: (driverId: string, updates: Partial<Driver>) => void;
 }
 
 const StoreCtx = createContext<Store | null>(null);
@@ -174,10 +211,15 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setDrivers((p) => p.map((d) => d.id === driverId ? { ...d, online, status: online ? "idle" : "offline" } : d));
   };
 
+  // 局部更新司机信息（用于头像上传、昵称修改等场景，避免整页刷新）
+  const updateDriver: Store["updateDriver"] = (driverId, updates) => {
+    setDrivers((p) => p.map((d) => d.id === driverId ? { ...d, ...updates } : d));
+  };
+
   return (
     <StoreCtx.Provider value={{
       orders, drivers, complaints, currentDriverId,
-      createOrder, acceptOrder, updateOrderStatus, cancelOrder, setDriverOnline,
+      createOrder, acceptOrder, updateOrderStatus, cancelOrder, setDriverOnline, updateDriver,
     }}>
       {children}
     </StoreCtx.Provider>

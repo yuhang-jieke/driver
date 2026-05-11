@@ -2,17 +2,24 @@ import { useState, useEffect, useRef } from "react";
 import { PhoneFrame } from "./PhoneFrame";
 import { AmapView } from "./AmapView";
 import { useStore, Order, statusLabel, statusColor } from "../store";
+import { ImageCropper } from "./ImageCropper";
+import { uploadImage, dataURLtoFile, type BizType } from "../api/upload";
+import { updateDriverProfile } from "../api/profile";
+import { updateRealname } from "../api/realname";
+import { updateLicense } from "../api/license";
+import { updateVehicle } from "../api/vehicle";
+import { getWallet, applyWithdraw, getBankCard, bindBankCard, updateBankCard, getWithdrawRecords, getIncomeDetail } from "../api/wallet";
 import {
   Power, Home, ClipboardList, User, Star, TrendingUp, DollarSign,
   ChevronRight, Phone, Navigation, Shield, Award, Bell, Settings,
   MessageCircle, ChevronLeft, Zap, CheckCircle2, AlertTriangle, Car,
   Gift, Headphones, X, MapPin, Clock, CreditCard, AlertCircle,
   PhoneCall, FileText, Lock, LogOut, Activity, Volume2, WifiOff,
-  Wifi, Copy, ChevronDown
+  Wifi, Copy, ChevronDown, Camera, Upload, IdCard, Truck
 } from "lucide-react";
 
 type Tab = "home" | "orders" | "me";
-type MeStage = "main" | "income" | "service" | "car" | "sos" | "settings";
+type MeStage = "main" | "income" | "service" | "car" | "sos" | "settings" | "realname" | "license" | "vehicle" | "wallet" | "bankcard" | "withdrawRecords";
 
 /* ============================================================
    滑动确认组件
@@ -77,7 +84,7 @@ function SlideToConfirm({
    主 App
    ============================================================ */
 export function DriverApp() {
-  const { orders, drivers, currentDriverId, setDriverOnline, acceptOrder, updateOrderStatus } = useStore();
+  const { orders, drivers, currentDriverId, setDriverOnline, updateDriver, acceptOrder, updateOrderStatus } = useStore();
   const [tab, setTab] = useState<Tab>("home");
   const [meStage, setMeStage] = useState<MeStage>("main");
   const [toast, setToast] = useState<string | null>(null);
@@ -145,7 +152,9 @@ export function DriverApp() {
           )}
           {tab === "me" && meStage === "main" && (
             <DriverMe driver={driver} onNav={s => setMeStage(s as MeStage)}
-              onWithdraw={() => setWithdrawalOpen(true)} onToast={showToast} />
+              onWithdraw={() => setWithdrawalOpen(true)} onToast={showToast}
+              // 传入更新回调：头像上传成功后立即更新本地状态，无需重新加载 profile
+              onUpdateDriver={(updates) => updateDriver(driver.id, updates)} />
           )}
           {tab === "me" && meStage === "income" && (
             <DriverIncomeView driver={driver} onBack={() => setMeStage("main")}
@@ -163,6 +172,26 @@ export function DriverApp() {
           {tab === "me" && meStage === "settings" && (
             <DriverSettingsView driver={driver} onBack={() => setMeStage("main")}
               onToggleOnline={() => setDriverOnline(driver.id, !driver.online)} onToast={showToast} />
+          )}
+          {tab === "me" && meStage === "realname" && (
+            <DriverRealnameView driver={driver} onBack={() => setMeStage("main")} onToast={showToast} />
+          )}
+          {tab === "me" && meStage === "license" && (
+            <DriverLicenseView driver={driver} onBack={() => setMeStage("main")} onToast={showToast} />
+          )}
+          {tab === "me" && meStage === "vehicle" && (
+            <DriverVehicleView driver={driver} onBack={() => setMeStage("main")} onToast={showToast} />
+          )}
+          {tab === "me" && meStage === "wallet" && (
+            <DriverWalletView driver={driver} onBack={() => setMeStage("main")}
+              onNav={(s: string) => setMeStage(s as MeStage)}
+              onWithdraw={() => setWithdrawalOpen(true)} onToast={showToast} />
+          )}
+          {tab === "me" && meStage === "bankcard" && (
+            <DriverBankCardView driver={driver} onBack={() => setMeStage("wallet")} onToast={showToast} />
+          )}
+          {tab === "me" && meStage === "withdrawRecords" && (
+            <DriverWithdrawRecordsView onBack={() => setMeStage("wallet")} onToast={showToast} />
           )}
         </div>
 
@@ -199,7 +228,8 @@ export function DriverApp() {
         {/* 提现弹窗 */}
         {withdrawalOpen && (
           <WithdrawalModal balance={driver.todayEarnings}
-            onClose={() => setWithdrawalOpen(false)} onToast={showToast} />
+            onClose={() => setWithdrawalOpen(false)} onToast={showToast}
+            onGoBankCard={() => { setWithdrawalOpen(false); setMeStage("bankcard"); }} />
         )}
 
         {/* 通知面板 */}
@@ -734,14 +764,82 @@ function DriverTripDetailView({ order, onBack, onToast }: { order: Order; onBack
 /* ============================================================
    司机个人中心
    ============================================================ */
-function DriverMe({ driver, onNav, onWithdraw, onToast }: any) {
+// 司机个人中心页（头像、统计卡片、功能入口列表）
+// onUpdateDriver: 头像/昵称等字段变更后回调，用于即时更新本地状态
+function DriverMe({ driver, onNav, onWithdraw, onToast, onUpdateDriver }: any) {
+  const [cropperOpen, setCropperOpen] = useState(false);
+  const [cropperImage, setCropperImage] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      setCropperImage(reader.result as string);
+      setCropperOpen(true);
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
+
+  // 头像裁剪确认：上传到 MinIO → 调用 UpdateProfile API 写 DB → 更新本地状态
+  const handleCropConfirm = async (croppedDataURL: string) => {
+    setCropperOpen(false);
+    setUploading(true);
+    try {
+      // 1. 将裁剪后的 DataURL 转 File，上传至 MinIO
+      const file = dataURLtoFile(croppedDataURL, "avatar.jpg");
+      const result = await uploadImage(file, "avatar" as BizType);
+      if (result?.url) {
+        // 2. 将图片 URL 写入后端 drivers.avatar 字段
+        const res = await updateDriverProfile({
+          driver_id: 200000001,
+          avatar: result.url,
+        });
+        if (res?.success) {
+          // 3. 写入成功后立即更新本地 React 状态，头像即时显示无需刷新
+          onUpdateDriver?.({ avatar: result.url });
+          onToast("头像更新成功");
+        } else {
+          onToast(res?.message || "头像绑定失败");
+        }
+      } else {
+        onToast("头像上传失败");
+      }
+    } catch {
+      onToast("头像上传异常");
+    }
+    setUploading(false);
+  };
+
   return (
     <div>
       <div className="bg-gradient-to-b from-emerald-500 to-teal-600 px-4 pt-6 pb-8 relative overflow-hidden">
         <div className="absolute -right-4 -top-4 w-32 h-32 rounded-full bg-white/10" />
         <div className="absolute right-8 bottom-0 w-20 h-20 rounded-full bg-white/5" />
         <div className="flex items-center gap-3 mb-5 relative">
-          <div className="w-16 h-16 rounded-full bg-white/30 border-2 border-white/50 flex items-center justify-center text-3xl">👨‍✈️</div>
+          <button onClick={handleAvatarClick} className="relative group">
+            {driver.avatar ? (
+              <img src={driver.avatar} alt="头像" className="w-16 h-16 rounded-full border-2 border-white/50 object-cover" />
+            ) : (
+              <div className="w-16 h-16 rounded-full bg-white/30 border-2 border-white/50 flex items-center justify-center text-3xl">👨‍✈️</div>
+            )}
+            <div className="absolute inset-0 rounded-full bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <Camera className="w-5 h-5 text-white" />
+            </div>
+            {uploading && (
+              <div className="absolute inset-0 rounded-full bg-black/50 flex items-center justify-center">
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              </div>
+            )}
+          </button>
+          <input ref={fileInputRef} type="file" accept="image/jpeg,image/png" className="hidden" onChange={handleFileSelect} />
           <div className="flex-1">
             <div className="text-white font-medium text-lg flex items-center gap-2">
               {driver.name}
@@ -780,9 +878,12 @@ function DriverMe({ driver, onNav, onWithdraw, onToast }: any) {
         <div className="bg-white rounded-2xl overflow-hidden">
           {[
             { icon: DollarSign, label: "收入明细", val: `¥${(driver.todayEarnings * 12).toFixed(0)}`, key: "income", color: "text-emerald-500" },
+            { icon: CreditCard, label: "我的钱包", val: "", key: "wallet", color: "text-teal-500" },
             { icon: TrendingUp, label: "服务分", val: `${Math.floor(driver.rating * 20)}/100`, key: "service", color: "text-blue-500" },
             { icon: Award, label: "司机等级", val: "金牌 Lv.3", key: null, color: "text-amber-500" },
-            { icon: Car, label: "我的车辆", val: driver.car.split("·")[0].trim(), key: "car", color: "text-violet-500" },
+            { icon: IdCard, label: "实名认证", val: "已认证", key: "realname", color: "text-cyan-500" },
+            { icon: FileText, label: "驾驶证认证", val: "已认证", key: "license", color: "text-indigo-500" },
+            { icon: Car, label: "我的车辆", val: driver.car.split("·")[0].trim(), key: "vehicle", color: "text-violet-500" },
             { icon: Shield, label: "安全中心", val: "", key: "sos", color: "text-teal-500" },
             { icon: Gift, label: "司机福利", val: "", key: null, color: "text-rose-500" },
             { icon: Settings, label: "设置", val: "", key: "settings", color: "text-gray-500" },
@@ -800,6 +901,16 @@ function DriverMe({ driver, onNav, onWithdraw, onToast }: any) {
           ))}
         </div>
       </div>
+
+      {/* 头像裁剪弹窗 */}
+      {cropperOpen && cropperImage && (
+        <ImageCropper
+          imageSrc={cropperImage}
+          aspectRatio="square"
+          onConfirm={handleCropConfirm}
+          onCancel={() => setCropperOpen(false)}
+        />
+      )}
     </div>
   );
 }
@@ -841,8 +952,11 @@ function DriverIncomeView({ driver, onBack, onWithdraw, onToast }: any) {
   const bonus = income * 0.1;
   const subsidy = income * 0.05;
 
-  // 计算趋势图最大高度
+  // 计算趋势图最大高度（仅 week/month 需要）
   const maxIncome = Math.max(...trend.map((t) => t.income), 1);
+
+  // 根据周期获取图表标题
+  const chartTitle = period === "week" ? "本周收入趋势" : "本月收入趋势";
 
   return (
     <div className="min-h-full bg-gray-50">
@@ -853,7 +967,9 @@ function DriverIncomeView({ driver, onBack, onWithdraw, onToast }: any) {
       </div>
 
       <div className="bg-gradient-to-r from-emerald-500 to-teal-500 p-5 text-white text-center">
-        <div className="text-xs opacity-90 mb-1">总收入 (元)</div>
+        <div className="text-xs opacity-90 mb-1">
+          {period === "today" ? "今日收入 (元)" : `${period === "week" ? "本周" : "本月"}总收入 (元)`}
+        </div>
         <div className="text-4xl font-light mb-3">¥{income.toFixed(2)}</div>
         <div className="flex justify-center gap-2 mb-4">
           {[["today", "今日"], ["week", "本周"], ["month", "本月"]].map(([k, l]) => (
@@ -872,25 +988,138 @@ function DriverIncomeView({ driver, onBack, onWithdraw, onToast }: any) {
         </div>
       </div>
 
-      {/* 趋势图 */}
-      <div className="mx-3 mt-3 bg-white rounded-2xl p-4 shadow-sm">
-        <div className="text-sm font-medium mb-3">近7日收入趋势</div>
-        <div className="flex items-end gap-1.5 h-24">
-          {trend.length > 0 ? trend.map((t, i) => (
-            <div key={i} className="flex-1 flex flex-col items-center gap-1">
-              <div className="w-full rounded-t bg-gradient-to-t from-emerald-500 to-teal-400 min-h-[4px]"
-                style={{ height: `${Math.max(4, (t.income / maxIncome) * 90)}px` }} />
-              <div className="text-[9px] text-gray-400">{["一", "二", "三", "四", "五", "六", "日"][i]}</div>
+      {/* ========== 今日视图：大数字卡片（无柱形图）========== */}
+      {period === "today" && (
+        <div className="mx-3 mt-3 bg-white rounded-2xl p-6 shadow-sm">
+          <div className="text-sm font-medium text-gray-400 mb-4">今日收入详情</div>
+          <div className="text-center">
+            <div className="text-5xl font-bold text-emerald-600 mb-2">¥{income.toFixed(2)}</div>
+            <div className="text-xs text-gray-400 mt-4">
+              {new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })}
             </div>
-          )) : [42, 65, 58, 73, 89, 95, 78].map((h, i) => (
-            <div key={i} className="flex-1 flex flex-col items-center gap-1">
-              <div className="w-full rounded-t bg-gradient-to-t from-emerald-500 to-teal-400 min-h-[4px]"
-                style={{ height: `${h * 0.9}px` }} />
-              <div className="text-[9px] text-gray-400">{["一", "二", "三", "四", "五", "六", "日"][i]}</div>
+          </div>
+          {/* 今日快捷指标 */}
+          <div className="grid grid-cols-3 gap-3 mt-6 pt-4 border-t border-gray-100">
+            <div className="text-center">
+              <div className="text-lg font-semibold text-gray-800">{trips}</div>
+              <div className="text-[10px] text-gray-400 mt-0.5">完成订单</div>
             </div>
-          ))}
+            <div className="text-center border-x border-gray-100">
+              <div className="text-lg font-semibold text-gray-800">{hours.toFixed(1)}</div>
+              <div className="text-[10px] text-gray-400 mt-0.5">在线时长(h)</div>
+            </div>
+            <div className="text-center">
+              <div className="text-lg font-semibold text-emerald-600">¥{hourlyIncome.toFixed(1)}</div>
+              <div className="text-[10px] text-gray-400 mt-0.5">时均收入</div>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* ========== 本周 / 本月视图：动态柱形图 ========== */}
+      {(period === "week" || period === "month") && (
+        <div className="mx-3 mt-3 bg-white rounded-2xl p-4 shadow-sm">
+          <div className="flex items-center justify-between mb-3">
+            <div className="text-sm font-medium">{chartTitle}</div>
+            {trend.length > 0 && (
+              <div className="text-xs text-gray-400">最高 ¥{maxIncome.toFixed(0)}</div>
+            )}
+          </div>
+          {/* 柱形图区域 - 本月数据多时支持横向滚动 */}
+          <div className={`relative ${period === "month" ? "h-40" : "h-36"} pt-6 pb-1`}>
+            {/* 背景网格线 */}
+            {[0, 25, 50, 75].map(pct => (
+              <div key={pct} className="absolute left-0 right-0 border-b border-dashed border-gray-100"
+                   style={{ top: `${100 - pct}%`, transform: 'translateY(50%)' }} />
+            ))}
+            <div className={`flex items-end ${trend.length > 7 ? "gap-1" : "gap-2"} h-full px-1 overflow-x-auto`}>
+              {trend.length > 0 ? trend.map((t, i) => {
+                const barH = Math.max(6, (t.income / maxIncome) * 100);
+                const dayLabel = (() => {
+                  const d = new Date(t.date);
+                  if (period === "week") {
+                    const weekdays = ["日", "一", "二", "三", "四", "五", "六"];
+                    return `周${weekdays[d.getDay()]}`;
+                  }
+                  return `${d.getDate()}`;
+                })();
+                const isToday = i === trend.length - 1;
+                const hasData = t.income > 0;
+                return (
+                  <div key={i} className={`flex-shrink-0 flex flex-col items-center gap-1 relative group
+                                       ${period === "month" ? "w-7 md:w-9" : "flex-1 max-w-[48px]"}`}>
+                    {/* 金额标签 - 今日加大加粗 */}
+                    {hasData && (
+                      <div className={`absolute left-1/2 -translate-x-1/2 whitespace-nowrap px-1.5 py-0.5 rounded-md transition-all group-hover:scale-110
+                                      ${isToday
+                                        ? 'text-xs font-bold text-white bg-emerald-500 shadow-md shadow-emerald-300/50 -top-1'
+                                        : 'text-[9px] font-medium text-emerald-600 bg-emerald-50 top-0'}`}>
+                        ¥{t.income.toFixed(0)}
+                      </div>
+                    )}
+                    {/* 柱体 - 今日突出 + 往期淡化 */}
+                    <div
+                      className={`w-full rounded-lg transition-all duration-300 relative
+                                ${isToday
+                                  ? 'bg-gradient-to-t from-emerald-600 to-emerald-400 shadow-lg shadow-emerald-400/40 ring-2 ring-emerald-300'
+                                  : hasData
+                                    ? 'bg-gradient-to-t from-emerald-300/60 to-emerald-100/40'
+                                    : 'bg-gray-50'}`}
+                      style={{
+                        height: `${isToday ? Math.max(barH, 12) : barH}%`,
+                        minHeight: hasData ? (isToday ? '20px' : '8px') : '4px',
+                        marginTop: hasData ? (isToday ? '22px' : '18px') : 'auto',
+                      }}
+                    >
+                      {/* 光泽层 */}
+                      {hasData && (
+                        <div className={`absolute inset-x-0 top-0 h-1/3 rounded-t-lg bg-gradient-to-b from-white/40 to-transparent ${isToday ? 'opacity-60' : 'opacity-30'}`} />
+                      )}
+                      {/* 今日底部发光 */}
+                      {isToday && (
+                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-4/5 h-1.5 bg-emerald-300/50 rounded-full blur-sm" />
+                      )}
+                    </div>
+                    {/* 日期标签 - 今日带"今天"标记 */}
+                    <div className="flex flex-col items-center">
+                      <div className={`text-[9px] whitespace-nowrap ${isToday ? 'font-bold text-emerald-600' : 'text-gray-400'}`}>
+                        {dayLabel}
+                      </div>
+                      {isToday && (
+                        <span className="text-[8px] font-medium text-emerald-500 scale-90">今天</span>
+                      )}
+                    </div>
+                  </div>
+                );
+              }) : (
+                /* 无数据时的骨架屏 */
+                Array.from({ length: period === "week" ? 7 : Math.min(30, new Date().getDate()) }).map((_, i) => (
+                  <div key={i} className={`flex-shrink-0 flex flex-col items-center gap-1
+                                        ${period === "month" ? "w-6" : "flex-1"}`}>
+                    <div className="w-full max-w-[24px] rounded-md bg-gray-100 animate-pulse"
+                         style={{ height: `${Math.random() * 60 + 15}%`, marginTop: '16px' }} />
+                    <div className="text-[9px] text-gray-300">{period === "week" ? ["一","二","三","四","五","六","日"][i] : i + 1}</div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+          {/* 图例 + 统计 */}
+          <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-50">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1 text-[10px] text-gray-400">
+                <span className="w-2 h-2 rounded bg-gradient-to-t from-emerald-400/70 to-emerald-200/60 inline-block" /> 有收入
+              </div>
+              <div className="flex items-center gap-1 text-[10px] text-gray-400">
+                <span className="w-2 h-2 rounded bg-gray-100 inline-block" /> 无收入
+              </div>
+            </div>
+            <div className="text-[10px] text-gray-300">
+              共 {trend.length} 天 · 日均 ¥{(income / Math.max(trend.length, 1)).toFixed(0)}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 收入构成 */}
       <div className="mx-3 mt-3 bg-white rounded-2xl p-4 shadow-sm">
@@ -1120,6 +1349,8 @@ function DriverSettingsView({ driver, onBack, onToggleOnline, onToast }: any) {
   const [sound, setSound] = useState(true);
   const [autoNav, setAutoNav] = useState(true);
   const [nightMode, setNightMode] = useState(false);
+  const [changeMobileOpen, setChangeMobileOpen] = useState(false);
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
 
   return (
     <div className="min-h-full bg-gray-50">
@@ -1169,7 +1400,8 @@ function DriverSettingsView({ driver, onBack, onToggleOnline, onToast }: any) {
       <div className="mx-3 mt-3 bg-white rounded-2xl overflow-hidden shadow-sm">
         <div className="px-4 py-3 border-b text-xs text-gray-400 font-medium">账户</div>
         {[
-          { icon: Lock, label: "修改密码", action: () => onToast("修改密码") },
+          { icon: Phone, label: "修改手机号", action: () => setChangeMobileOpen(true) },
+          { icon: Lock, label: "修改密码", action: () => setChangePasswordOpen(true) },
           { icon: Shield, label: "隐私设置", action: () => onToast("隐私设置") },
           { icon: FileText, label: "用户协议", action: () => onToast("用户协议") },
         ].map(({ icon: Icon, label, action }) => (
@@ -1186,6 +1418,22 @@ function DriverSettingsView({ driver, onBack, onToggleOnline, onToast }: any) {
           <LogOut className="w-4 h-4" />退出登录
         </button>
       </div>
+
+      {/* 修改手机号弹窗 */}
+      {changeMobileOpen && (
+        <ChangeMobileModal
+          onClose={() => setChangeMobileOpen(false)}
+          onToast={onToast}
+        />
+      )}
+
+      {/* 修改密码弹窗 */}
+      {changePasswordOpen && (
+        <ChangePasswordModal
+          onClose={() => setChangePasswordOpen(false)}
+          onToast={onToast}
+        />
+      )}
     </div>
   );
 }
@@ -1284,16 +1532,43 @@ function DriverSOSModal({ onClose, onToast }: { onClose: () => void; onToast: (m
 /* ============================================================
    提现弹窗
    ============================================================ */
-function WithdrawalModal({ balance, onClose, onToast }: { balance: number; onClose: () => void; onToast: (m: string) => void }) {
+function WithdrawalModal({ balance, onClose, onToast, onGoBankCard }: { balance: number; onClose: () => void; onToast: (m: string) => void; onGoBankCard?: () => void }) {
   const [amount, setAmount] = useState(String(balance.toFixed(2)));
-  const [card] = useState("工商银行 **** 8821");
+  const [card, setCard] = useState("加载中...");
+  const [hasCard, setHasCard] = useState(false);
+  const [walletData, setWalletData] = useState<any>(null);
+
+  useEffect(() => {
+    async function load() {
+      const w = await getWallet(200000001);
+      if (w) {
+        setWalletData(w);
+        setCard(w.has_bank_card ? `${w.bank_card_no}` : "未绑定银行卡");
+        setHasCard(w.has_bank_card);
+      } else {
+        setCard("未绑定银行卡");
+      }
+    }
+    load();
+  }, []);
+
+  const realBalance = walletData?.balance ?? balance;
 
   function handleConfirm() {
     const v = parseFloat(amount);
     if (!v || v <= 0) { onToast("请输入有效金额"); return; }
-    if (v > balance) { onToast("提现金额不能超过可用余额"); return; }
-    onToast(`¥${v.toFixed(2)} 提现申请已提交，预计2小时到账`);
-    onClose();
+    if (v > realBalance) { onToast("提现金额不能超过可用余额"); return; }
+    if (v > 5000) { onToast("单笔提现上限5000元"); return; }
+    if (!hasCard) { onToast("请先绑定银行卡"); return; }
+    if (walletData && walletData.today_withdraw_count >= 3) { onToast("今日提现次数已达上限(3次)"); return; }
+    applyWithdraw(200000001, v).then(res => {
+      if (res?.success) {
+        onToast(`¥${v.toFixed(2)} 提现申请已提交，预计2小时到账`);
+        onClose();
+      } else {
+        onToast(res?.message || "提现失败");
+      }
+    });
   }
 
   return (
@@ -1306,7 +1581,10 @@ function WithdrawalModal({ balance, onClose, onToast }: { balance: number; onClo
 
         <div className="bg-emerald-50 rounded-2xl p-3 mb-4 text-center">
           <div className="text-xs text-gray-500">可提现余额</div>
-          <div className="text-3xl font-light text-emerald-600 mt-1">¥{balance.toFixed(2)}</div>
+          <div className="text-3xl font-light text-emerald-600 mt-1">¥{realBalance.toFixed(2)}</div>
+          {walletData?.frozen_amount > 0 && (
+            <div className="text-[10px] text-amber-600 mt-1">冻结金额：¥{walletData.frozen_amount.toFixed(2)}（T-3结算中）</div>
+          )}
         </div>
 
         <div className="mb-3">
@@ -1315,17 +1593,20 @@ function WithdrawalModal({ balance, onClose, onToast }: { balance: number; onClo
             <span className="text-gray-400 mr-1.5">¥</span>
             <input type="number" value={amount} onChange={e => setAmount(e.target.value)}
               className="flex-1 outline-none text-lg font-medium text-gray-900" />
-            <button onClick={() => setAmount(String(balance.toFixed(2)))} className="text-xs text-emerald-500">全部</button>
+            <button onClick={() => setAmount(String(realBalance.toFixed(2)))} className="text-xs text-emerald-500">全部</button>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-2.5 mb-4">
+        <button onClick={onGoBankCard} className="flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-2.5 mb-4 w-full">
           <CreditCard className="w-4 h-4 text-gray-400" />
-          <span className="flex-1 text-sm text-gray-700">{card}</span>
+          <span className={`flex-1 text-sm text-left ${hasCard ? "text-gray-700" : "text-gray-400"}`}>{card}</span>
           <ChevronDown className="w-4 h-4 text-gray-300" />
-        </div>
+        </button>
 
-        <div className="text-[10px] text-gray-400 mb-4">工作日2小时内到账，节假日顺延 · 单笔最低提现¥10</div>
+        <div className="text-[10px] text-gray-400 mb-2">提现规则：每天最多3次 · 单笔上限¥5000 · 2小时内到账</div>
+        {walletData && (
+          <div className="text-[10px] text-amber-500 mb-4">今日已提现 {walletData.today_withdraw_count}/3 次</div>
+        )}
 
         <button onClick={handleConfirm}
           className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white py-3.5 rounded-full font-medium">
@@ -1380,6 +1661,792 @@ function NotificationsPanel({ orders, onClose }: { orders: Order[]; onClose: () 
             </div>
           ))}
         </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   修改手机号弹窗
+   ============================================================ */
+function ChangeMobileModal({ onClose, onToast }: { onClose: () => void; onToast: (m: string) => void }) {
+  const [newMobile, setNewMobile] = useState("");
+  const [verifyCode, setVerifyCode] = useState("");
+  const [countdown, setCountdown] = useState(0);
+
+  useEffect(() => {
+    if (countdown > 0) {
+      const t = setTimeout(() => setCountdown(countdown - 1), 1000);
+      return () => clearTimeout(t);
+    }
+  }, [countdown]);
+
+  const sendCode = () => {
+    if (!newMobile || newMobile.length !== 11) {
+      onToast("请输入正确的手机号");
+      return;
+    }
+    onToast("验证码已发送");
+    setCountdown(60);
+  };
+
+  const handleSubmit = async () => {
+    if (!newMobile || !verifyCode) {
+      onToast("请填写完整信息");
+      return;
+    }
+    const res = await fetch("http://localhost:8080/api/v1/driver/mobile", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ driver_id: 200000001, new_mobile: newMobile, verify_code: verifyCode }),
+    }).then(r => r.json());
+    if (res?.success) {
+      onToast("手机号修改成功");
+      onClose();
+    } else {
+      onToast(res?.message || "修改失败");
+    }
+  };
+
+  return (
+    <div className="absolute inset-0 bg-black/50 z-50 flex items-end">
+      <div className="bg-white rounded-t-3xl w-full p-5">
+        <div className="flex items-center justify-between mb-4">
+          <div className="font-medium text-gray-900">修改手机号</div>
+          <button onClick={onClose}><X className="w-5 h-5 text-gray-500" /></button>
+        </div>
+        <div className="text-xs text-amber-600 bg-amber-50 rounded-lg p-2 mb-4">1个月内最多修改1次手机号</div>
+        <div className="mb-3">
+          <div className="text-xs text-gray-500 mb-1.5">新手机号</div>
+          <input type="tel" value={newMobile} onChange={e => setNewMobile(e.target.value)}
+            placeholder="请输入新手机号"
+            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-emerald-500" />
+        </div>
+        <div className="mb-4">
+          <div className="text-xs text-gray-500 mb-1.5">验证码</div>
+          <div className="flex gap-2">
+            <input type="text" value={verifyCode} onChange={e => setVerifyCode(e.target.value)}
+              placeholder="请输入验证码"
+              className="flex-1 border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-emerald-500" />
+            <button onClick={sendCode} disabled={countdown > 0}
+              className={`px-4 py-2.5 rounded-xl text-xs ${countdown > 0 ? "bg-gray-100 text-gray-400" : "bg-emerald-500 text-white"}`}>
+              {countdown > 0 ? `${countdown}s` : "获取验证码"}
+            </button>
+          </div>
+        </div>
+        <button onClick={handleSubmit} className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white py-3 rounded-full font-medium">确认修改</button>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   修改密码弹窗
+   ============================================================ */
+function ChangePasswordModal({ onClose, onToast }: { onClose: () => void; onToast: (m: string) => void }) {
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const handleSubmit = async () => {
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      onToast("请填写完整信息");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      onToast("两次密码输入不一致");
+      return;
+    }
+    if (newPassword === oldPassword) {
+      onToast("新密码不能与原密码相同");
+      return;
+    }
+    const res = await fetch("http://localhost:8080/api/v1/driver/password", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ driver_id: 200000001, old_password: oldPassword, new_password: newPassword }),
+    }).then(r => r.json());
+    if (res?.success) {
+      onToast("密码修改成功");
+      onClose();
+    } else {
+      onToast(res?.message || "修改失败");
+    }
+  };
+
+  return (
+    <div className="absolute inset-0 bg-black/50 z-50 flex items-end">
+      <div className="bg-white rounded-t-3xl w-full p-5">
+        <div className="flex items-center justify-between mb-4">
+          <div className="font-medium text-gray-900">修改密码</div>
+          <button onClick={onClose}><X className="w-5 h-5 text-gray-500" /></button>
+        </div>
+        <div className="text-xs text-amber-600 bg-amber-50 rounded-lg p-2 mb-4">1小时内最多修改5次密码</div>
+        <div className="mb-3">
+          <div className="text-xs text-gray-500 mb-1.5">原密码</div>
+          <input type="password" value={oldPassword} onChange={e => setOldPassword(e.target.value)}
+            placeholder="请输入原密码"
+            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-emerald-500" />
+        </div>
+        <div className="mb-3">
+          <div className="text-xs text-gray-500 mb-1.5">新密码</div>
+          <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)}
+            placeholder="请输入新密码"
+            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-emerald-500" />
+        </div>
+        <div className="mb-4">
+          <div className="text-xs text-gray-500 mb-1.5">确认新密码</div>
+          <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)}
+            placeholder="请再次输入新密码"
+            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-emerald-500" />
+        </div>
+        <button onClick={handleSubmit} className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white py-3 rounded-full font-medium">确认修改</button>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   通用照片上传组件（用于认证照片）
+   ============================================================ */
+function PhotoUploader({ label, bizType, currentUrl, onUploaded, onToast }: {
+  label: string; bizType: BizType; currentUrl?: string;
+  onUploaded: (url: string) => void; onToast: (m: string) => void;
+}) {
+  const [cropperOpen, setCropperOpen] = useState(false);
+  const [cropperImage, setCropperImage] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleClick = () => fileInputRef.current?.click();
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => { setCropperImage(reader.result as string); setCropperOpen(true); };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
+
+  const handleCropConfirm = async (croppedDataURL: string) => {
+    setCropperOpen(false);
+    setUploading(true);
+    try {
+      const file = dataURLtoFile(croppedDataURL, `${bizType}.jpg`);
+      const result = await uploadImage(file, bizType);
+      if (result?.url) {
+        onUploaded(result.url);
+        onToast("上传成功");
+      } else {
+        onToast("上传失败");
+      }
+    } catch { onToast("上传异常"); }
+    setUploading(false);
+  };
+
+  return (
+    <div>
+      <div className="text-xs text-gray-500 mb-1.5">{label}</div>
+      <input ref={fileInputRef} type="file" accept="image/jpeg,image/png" className="hidden" onChange={handleFileSelect} />
+      <button onClick={handleClick} className="w-full aspect-[16/10] rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-2 overflow-hidden relative hover:border-emerald-300 transition-colors">
+        {currentUrl ? (
+          <img src={currentUrl} alt={label} className="w-full h-full object-cover" />
+        ) : (
+          <>
+            {uploading ? (
+              <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <>
+                <Upload className="w-6 h-6 text-gray-300" />
+                <span className="text-xs text-gray-400">点击上传</span>
+              </>
+            )}
+          </>
+        )}
+      </button>
+      {cropperOpen && cropperImage && (
+        <ImageCropper
+          imageSrc={cropperImage}
+          aspectRatio="portrait"
+          onConfirm={handleCropConfirm}
+          onCancel={() => setCropperOpen(false)}
+        />
+      )}
+    </div>
+  );
+}
+
+/* ============================================================
+   实名认证页
+   ============================================================ */
+function DriverRealnameView({ driver, onBack, onToast }: any) {
+  const [realName, setRealName] = useState("");
+  const [idCardNo, setIdCardNo] = useState("");
+  const [idCardFrontUrl, setIdCardFrontUrl] = useState("");
+  const [idCardBackUrl, setIdCardBackUrl] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  // 从后端已提交的数据回填
+  useEffect(() => {
+    if (driver.realnameInfo) {
+      if (driver.realnameInfo.real_name) setRealName(driver.realnameInfo.real_name);
+      if (driver.realnameInfo.id_card_front_url) setIdCardFrontUrl(driver.realnameInfo.id_card_front_url);
+      if (driver.realnameInfo.id_card_back_url) setIdCardBackUrl(driver.realnameInfo.id_card_back_url);
+    }
+  }, []);
+
+  const handleSubmit = async () => {
+    if (!realName || !idCardNo || !idCardFrontUrl || !idCardBackUrl) {
+      onToast("请填写完整信息并上传身份证正反面");
+      return;
+    }
+    setSubmitting(true);
+    const res = await updateRealname({
+      driver_id: 200000001,
+      real_name: realName,
+      id_card_no: idCardNo,
+      id_card_front_url: idCardFrontUrl,
+      id_card_back_url: idCardBackUrl,
+    });
+    setSubmitting(false);
+    if (res?.success) {
+      onToast("实名认证提交成功，等待审核");
+      onBack();
+    } else {
+      onToast(res?.message || "提交失败");
+    }
+  };
+
+  return (
+    <div className="min-h-full bg-gray-50">
+      <div className="bg-white px-4 py-3 flex items-center border-b">
+        <button onClick={onBack}><ChevronLeft className="w-5 h-5" /></button>
+        <div className="flex-1 text-center font-medium">实名认证</div>
+        <div className="w-5" />
+      </div>
+
+      <div className="p-4 space-y-4">
+        <div className="bg-blue-50 border border-blue-100 rounded-xl p-3 text-xs text-blue-600">
+          请确保上传的身份证照片清晰完整，审核通常1-3个工作日完成
+        </div>
+
+        <div>
+          <div className="text-xs text-gray-500 mb-1.5">真实姓名</div>
+          <input type="text" value={realName} onChange={e => setRealName(e.target.value)}
+            placeholder="请输入身份证上的姓名"
+            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-emerald-500" />
+        </div>
+
+        <div>
+          <div className="text-xs text-gray-500 mb-1.5">身份证号</div>
+          <input type="text" value={idCardNo} onChange={e => setIdCardNo(e.target.value)}
+            placeholder="请输入18位身份证号" maxLength={18}
+            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-emerald-500" />
+        </div>
+
+        <PhotoUploader label="身份证正面（人像面）" bizType="idcard" currentUrl={idCardFrontUrl}
+          onUploaded={setIdCardFrontUrl} onToast={onToast} />
+
+        <PhotoUploader label="身份证反面（国徽面）" bizType="idcard" currentUrl={idCardBackUrl}
+          onUploaded={setIdCardBackUrl} onToast={onToast} />
+
+        <button onClick={handleSubmit} disabled={submitting}
+          className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white py-3 rounded-full font-medium disabled:opacity-50">
+          {submitting ? "提交中..." : "提交认证"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   驾驶证认证页
+   ============================================================ */
+function DriverLicenseView({ driver, onBack, onToast }: any) {
+  const [licenseNo, setLicenseNo] = useState("");
+  const [licenseType, setLicenseType] = useState("C1");
+  const [licenseUrl, setLicenseUrl] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  // 从后端已提交的数据回填
+  useEffect(() => {
+    if (driver.licenseInfo) {
+      if (driver.licenseInfo.license_no) setLicenseNo(driver.licenseInfo.license_no);
+      if (driver.licenseInfo.license_type) setLicenseType(driver.licenseInfo.license_type);
+      if (driver.licenseInfo.license_url) setLicenseUrl(driver.licenseInfo.license_url);
+    }
+  }, []);
+
+  const handleSubmit = async () => {
+    if (!licenseNo || !licenseUrl) {
+      onToast("请填写驾驶证号并上传驾驶证照片");
+      return;
+    }
+    setSubmitting(true);
+    const res = await updateLicense({
+      driver_id: 200000001,
+      license_no: licenseNo,
+      license_type: licenseType,
+      license_url: licenseUrl,
+    });
+    setSubmitting(false);
+    if (res?.success) {
+      onToast("驾驶证认证提交成功，等待审核");
+      onBack();
+    } else {
+      onToast(res?.message || "提交失败");
+    }
+  };
+
+  return (
+    <div className="min-h-full bg-gray-50">
+      <div className="bg-white px-4 py-3 flex items-center border-b">
+        <button onClick={onBack}><ChevronLeft className="w-5 h-5" /></button>
+        <div className="flex-1 text-center font-medium">驾驶证认证</div>
+        <div className="w-5" />
+      </div>
+
+      <div className="p-4 space-y-4">
+        <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-3 text-xs text-indigo-600">
+          请上传有效的驾驶证照片，确保信息清晰可辨
+        </div>
+
+        <div>
+          <div className="text-xs text-gray-500 mb-1.5">驾驶证编号</div>
+          <input type="text" value={licenseNo} onChange={e => setLicenseNo(e.target.value)}
+            placeholder="请输入驾驶证编号"
+            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-emerald-500" />
+        </div>
+
+        <div>
+          <div className="text-xs text-gray-500 mb-1.5">准驾车型</div>
+          <div className="flex gap-2 flex-wrap">
+            {["C1", "C2", "B1", "B2", "A1", "A2"].map(t => (
+              <button key={t} onClick={() => setLicenseType(t)}
+                className={`px-4 py-2 rounded-lg text-sm border ${licenseType === t ? "border-emerald-500 bg-emerald-50 text-emerald-600" : "border-gray-200 text-gray-600"}`}>
+                {t}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <PhotoUploader label="驾驶证照片" bizType="license" currentUrl={licenseUrl}
+          onUploaded={setLicenseUrl} onToast={onToast} />
+
+        <button onClick={handleSubmit} disabled={submitting}
+          className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white py-3 rounded-full font-medium disabled:opacity-50">
+          {submitting ? "提交中..." : "提交认证"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   车辆认证页
+   ============================================================ */
+function DriverVehicleView({ driver, onBack, onToast }: any) {
+  const [plateNo, setPlateNo] = useState(driver.plate || "");
+  const [vehicleBrand, setVehicleBrand] = useState("");
+  const [vehicleModel, setVehicleModel] = useState("");
+  const [vehicleColor, setVehicleColor] = useState("");
+  const [seatCount, setSeatCount] = useState(5);
+  const [drivingLicenseUrl, setDrivingLicenseUrl] = useState("");
+  const [vehiclePhotoUrl, setVehiclePhotoUrl] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  // 从后端已提交的数据回填
+  useEffect(() => {
+    if (driver.vehicleInfo) {
+      if (driver.vehicleInfo.plate_no) setPlateNo(driver.vehicleInfo.plate_no);
+      if (driver.vehicleInfo.vehicle_brand) setVehicleBrand(driver.vehicleInfo.vehicle_brand);
+      if (driver.vehicleInfo.vehicle_model) setVehicleModel(driver.vehicleInfo.vehicle_model);
+      if (driver.vehicleInfo.vehicle_color) setVehicleColor(driver.vehicleInfo.vehicle_color);
+      if (driver.vehicleInfo.seat_count) setSeatCount(driver.vehicleInfo.seat_count);
+      if (driver.vehicleInfo.driving_license_url) setDrivingLicenseUrl(driver.vehicleInfo.driving_license_url);
+      if (driver.vehicleInfo.vehicle_photo_url) setVehiclePhotoUrl(driver.vehicleInfo.vehicle_photo_url);
+    }
+  }, []);
+
+  const handleSubmit = async () => {
+    if (!plateNo || !drivingLicenseUrl) {
+      onToast("请填写车牌号并上传行驶证照片");
+      return;
+    }
+    setSubmitting(true);
+    const res = await updateVehicle({
+      driver_id: 200000001,
+      plate_no: plateNo,
+      vehicle_brand: vehicleBrand,
+      vehicle_model: vehicleModel,
+      vehicle_color: vehicleColor,
+      seat_count: seatCount,
+      driving_license_url: drivingLicenseUrl,
+      vehicle_photo_url: vehiclePhotoUrl,
+    });
+    setSubmitting(false);
+    if (res?.success) {
+      onToast("车辆信息提交成功，等待审核");
+      onBack();
+    } else {
+      onToast(res?.message || "提交失败");
+    }
+  };
+
+  return (
+    <div className="min-h-full bg-gray-50">
+      <div className="bg-white px-4 py-3 flex items-center border-b">
+        <button onClick={onBack}><ChevronLeft className="w-5 h-5" /></button>
+        <div className="flex-1 text-center font-medium">车辆认证</div>
+        <div className="w-5" />
+      </div>
+
+      <div className="p-4 space-y-4">
+        <div className="bg-violet-50 border border-violet-100 rounded-xl p-3 text-xs text-violet-600">
+          请确保车辆信息与行驶证一致，审核通过后才能出车接单
+        </div>
+
+        <div>
+          <div className="text-xs text-gray-500 mb-1.5">车牌号</div>
+          <input type="text" value={plateNo} onChange={e => setPlateNo(e.target.value)}
+            placeholder="例: 苏N·8F23K"
+            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-emerald-500" />
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <div className="text-xs text-gray-500 mb-1.5">车辆品牌</div>
+            <input type="text" value={vehicleBrand} onChange={e => setVehicleBrand(e.target.value)}
+              placeholder="例: 日产"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-emerald-500" />
+          </div>
+          <div>
+            <div className="text-xs text-gray-500 mb-1.5">车型</div>
+            <input type="text" value={vehicleModel} onChange={e => setVehicleModel(e.target.value)}
+              placeholder="例: 轩逸"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-emerald-500" />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <div className="text-xs text-gray-500 mb-1.5">车身颜色</div>
+            <input type="text" value={vehicleColor} onChange={e => setVehicleColor(e.target.value)}
+              placeholder="例: 银色"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-emerald-500" />
+          </div>
+          <div>
+            <div className="text-xs text-gray-500 mb-1.5">座位数</div>
+            <div className="flex gap-2">
+              {[4, 5, 7].map(n => (
+                <button key={n} onClick={() => setSeatCount(n)}
+                  className={`flex-1 py-2 rounded-lg text-sm border ${seatCount === n ? "border-emerald-500 bg-emerald-50 text-emerald-600" : "border-gray-200 text-gray-600"}`}>
+                  {n}座
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <PhotoUploader label="行驶证照片" bizType="vehicle" currentUrl={drivingLicenseUrl}
+          onUploaded={setDrivingLicenseUrl} onToast={onToast} />
+
+        <PhotoUploader label="车辆外观照片" bizType="vehicle" currentUrl={vehiclePhotoUrl}
+          onUploaded={setVehiclePhotoUrl} onToast={onToast} />
+
+        <button onClick={handleSubmit} disabled={submitting}
+          className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white py-3 rounded-full font-medium disabled:opacity-50">
+          {submitting ? "提交中..." : "提交认证"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   钱包概览页
+   ============================================================ */
+function DriverWalletView({ driver, onBack, onNav, onWithdraw, onToast }: any) {
+  const [wallet, setWallet] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      setLoading(true);
+      const data = await getWallet(200000001);
+      setWallet(data);
+      setLoading(false);
+    }
+    load();
+  }, []);
+
+  const balance = wallet?.balance ?? 0;
+  const frozen = wallet?.frozen_amount ?? 0;
+
+  return (
+    <div className="min-h-full bg-gray-50">
+      <div className="bg-white px-4 py-3 flex items-center border-b">
+        <button onClick={onBack}><ChevronLeft className="w-5 h-5" /></button>
+        <div className="flex-1 text-center font-medium">我的钱包</div>
+        <button onClick={onWithdraw} className="text-emerald-600 text-sm">提现</button>
+      </div>
+
+      <div className="bg-gradient-to-r from-emerald-500 to-teal-500 p-5 text-white text-center">
+        <div className="text-xs opacity-90 mb-1">可提现余额（元）</div>
+        <div className="text-4xl font-light mb-3">¥{balance.toFixed(2)}</div>
+        <div className="grid grid-cols-2 gap-3 text-[11px]">
+          <div className="bg-white/15 rounded-xl py-2.5">
+            <div className="font-medium">¥{frozen.toFixed(2)}</div>
+            <div className="opacity-80 mt-0.5">冻结金额</div>
+          </div>
+          <div className="bg-white/15 rounded-xl py-2.5">
+            <div className="font-medium">¥{(wallet?.total_income ?? 0).toFixed(2)}</div>
+            <div className="opacity-80 mt-0.5">累计收入</div>
+          </div>
+        </div>
+        {frozen > 0 && (
+          <div className="text-[10px] opacity-80 mt-3 bg-white/10 rounded-lg px-3 py-1.5">
+            冻结金额为T-3结算中的流水，3天后自动解冻可提现
+          </div>
+        )}
+      </div>
+
+      <div className="mx-3 mt-3 bg-white rounded-2xl p-4 shadow-sm">
+        <div className="text-sm font-medium mb-3">收入概览</div>
+        <div className="grid grid-cols-3 gap-3 text-center">
+          {[
+            { v: `¥${(wallet?.today_income ?? 0).toFixed(2)}`, l: "今日" },
+            { v: `¥${(wallet?.week_income ?? 0).toFixed(2)}`, l: "本周" },
+            { v: `¥${(wallet?.month_income ?? 0).toFixed(2)}`, l: "本月" },
+          ].map(x => (
+            <div key={x.l} className="bg-gray-50 rounded-xl py-3">
+              <div className="text-base font-medium text-gray-900">{x.v}</div>
+              <div className="text-[10px] text-gray-500 mt-0.5">{x.l}收入</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="mx-3 mt-3 bg-white rounded-2xl overflow-hidden shadow-sm">
+        {[
+          { icon: CreditCard, label: "银行卡管理", val: wallet?.has_bank_card ? wallet.bank_card_no : "未绑定", key: "bankcard", color: "text-blue-500" },
+          { icon: Clock, label: "提现记录", val: "", key: "withdrawRecords", color: "text-violet-500" },
+          { icon: TrendingUp, label: "收入明细", val: "", key: "income", color: "text-emerald-500" },
+        ].map(({ icon: Icon, label, val, key, color }) => (
+          <button key={label} onClick={() => key === "income" ? onNav("income") : onNav(key)}
+            className="w-full flex items-center gap-3 px-4 py-3.5 border-b border-gray-50 last:border-0 hover:bg-gray-50">
+            <div className={`w-9 h-9 rounded-full bg-gray-50 flex items-center justify-center ${color}`}>
+              <Icon className="w-4 h-4" />
+            </div>
+            <span className="flex-1 text-left text-sm text-gray-900">{label}</span>
+            {val && <span className="text-xs text-gray-400">{val}</span>}
+            <ChevronRight className="w-4 h-4 text-gray-300" />
+          </button>
+        ))}
+      </div>
+
+      <div className="mx-3 mt-3 mb-6 bg-amber-50 border border-amber-200 rounded-2xl p-4">
+        <div className="text-sm font-medium text-amber-700 mb-2">提现规则</div>
+        <div className="space-y-1.5 text-xs text-amber-600">
+          {[
+            "每天最多提现3次，单笔上限¥5000",
+            "T-3结算：冻结3天流水后可提现",
+            "2小时内到账，节假日顺延",
+            "更换银行卡每月限1次",
+          ].map(t => (
+            <div key={t} className="flex items-start gap-2">
+              <CheckCircle2 className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />{t}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   银行卡管理页
+   ============================================================ */
+function DriverBankCardView({ driver, onBack, onToast }: any) {
+  const [cardInfo, setCardInfo] = useState<any>(null);
+  const [editing, setEditing] = useState(false);
+  const [bankName, setBankName] = useState("");
+  const [bankCardNo, setBankCardNo] = useState("");
+  const [accountName, setAccountName] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    async function load() {
+      const data = await getBankCard(200000001);
+      setCardInfo(data);
+      if (data?.has_card) setEditing(false);
+      else setEditing(true);
+    }
+    load();
+  }, []);
+
+  const handleSubmit = async () => {
+    if (!bankName || !bankCardNo || !accountName) {
+      onToast("银行名称、卡号、持卡人姓名不能为空");
+      return;
+    }
+    if (bankCardNo.length > 20) {
+      onToast("银行卡号不能超过20位");
+      return;
+    }
+    setSubmitting(true);
+    const params = {
+      driver_id: 200000001,
+      bank_name: bankName,
+      bank_card_no: bankCardNo,
+      account_name: accountName,
+    };
+    const res = cardInfo?.has_card
+      ? await updateBankCard(params)
+      : await bindBankCard(params);
+    setSubmitting(false);
+    if (res?.success) {
+      onToast(cardInfo?.has_card ? "银行卡更换成功" : "银行卡绑定成功");
+      const data = await getBankCard(200000001);
+      setCardInfo(data);
+      setEditing(false);
+    } else {
+      onToast(res?.message || "操作失败");
+    }
+  };
+
+  const banks = ["工商银行", "建设银行", "农业银行", "中国银行", "交通银行", "招商银行", "邮储银行", "兴业银行", "浦发银行", "民生银行"];
+
+  return (
+    <div className="min-h-full bg-gray-50">
+      <div className="bg-white px-4 py-3 flex items-center border-b">
+        <button onClick={onBack}><ChevronLeft className="w-5 h-5" /></button>
+        <div className="flex-1 text-center font-medium">银行卡管理</div>
+        {cardInfo?.has_card && !editing && (
+          <button onClick={() => setEditing(true)} className="text-emerald-600 text-sm">更换</button>
+        )}
+      </div>
+
+      {cardInfo?.has_card && !editing ? (
+        <div className="p-4">
+          <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-5 text-white relative overflow-hidden">
+            <div className="text-lg font-bold mb-1">{cardInfo.bank_name}</div>
+            <div className="text-2xl tracking-widest font-mono mb-4">{cardInfo.bank_card_no}</div>
+            <div className="flex justify-between text-xs opacity-80">
+              <span>{cardInfo.account_name}</span>
+              <span>{cardInfo.card_type === 1 ? "借记卡" : "信用卡"}</span>
+            </div>
+            {cardInfo.branch_name && <div className="text-xs opacity-60 mt-1">{cardInfo.branch_name}</div>}
+            <div className="absolute -right-4 -bottom-4 text-8xl opacity-10">💳</div>
+          </div>
+          <div className="text-xs text-amber-600 bg-amber-50 rounded-lg p-2.5 mt-3">
+            更换银行卡每月限1次，上次修改时间：{cardInfo.last_modified_at || "无"}
+          </div>
+        </div>
+      ) : (
+        <div className="p-4 space-y-4">
+          <div className="bg-blue-50 border border-blue-100 rounded-xl p-3 text-xs text-blue-600">
+            {cardInfo?.has_card ? "更换银行卡每月限1次" : "绑定银行卡后即可提现"}，请确保信息准确
+          </div>
+
+          <div>
+            <div className="text-xs text-gray-500 mb-1.5">银行名称</div>
+            <div className="flex gap-2 flex-wrap">
+              {banks.map(b => (
+                <button key={b} onClick={() => setBankName(b)}
+                  className={`px-3 py-1.5 rounded-lg text-xs border ${bankName === b ? "border-emerald-500 bg-emerald-50 text-emerald-600" : "border-gray-200 text-gray-600"}`}>
+                  {b}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <div className="text-xs text-gray-500 mb-1.5">银行卡号</div>
+            <input type="text" value={bankCardNo} onChange={e => setBankCardNo(e.target.value)}
+              placeholder="请输入银行卡号" maxLength={20}
+              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-emerald-500" />
+          </div>
+
+          <div>
+            <div className="text-xs text-gray-500 mb-1.5">持卡人姓名</div>
+            <input type="text" value={accountName} onChange={e => setAccountName(e.target.value)}
+              placeholder="请输入持卡人姓名"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-emerald-500" />
+          </div>
+
+          <button onClick={handleSubmit} disabled={submitting}
+            className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white py-3 rounded-full font-medium disabled:opacity-50">
+            {submitting ? "提交中..." : cardInfo?.has_card ? "确认更换" : "确认绑定"}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ============================================================
+   提现记录页
+   ============================================================ */
+function DriverWithdrawRecordsView({ onBack, onToast }: { onBack: () => void; onToast: (m: string) => void }) {
+  const [records, setRecords] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      setLoading(true);
+      const data = await getWithdrawRecords(200000001, 1, 50);
+      if (data?.records) setRecords(data.records);
+      setLoading(false);
+    }
+    load();
+  }, []);
+
+  const statusLabel: Record<number, { text: string; color: string }> = {
+    1: { text: "处理中", color: "bg-amber-100 text-amber-700" },
+    2: { text: "已到账", color: "bg-emerald-100 text-emerald-700" },
+    3: { text: "失败", color: "bg-rose-100 text-rose-700" },
+  };
+
+  return (
+    <div className="min-h-full bg-gray-50">
+      <div className="bg-white px-4 py-3 flex items-center border-b">
+        <button onClick={onBack}><ChevronLeft className="w-5 h-5" /></button>
+        <div className="flex-1 text-center font-medium">提现记录</div>
+        <div className="w-5" />
+      </div>
+
+      <div className="p-3 space-y-2">
+        {records.map(r => {
+          const st = statusLabel[r.status] || statusLabel[1];
+          return (
+            <div key={r.id} className="bg-white rounded-2xl p-4 shadow-sm">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm text-gray-800">{r.bank_name}</span>
+                <span className="text-emerald-600 font-medium">-¥{r.amount.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-xs text-gray-400">{r.bank_card_no}</span>
+                <span className={`text-[10px] px-2 py-0.5 rounded ${st.color}`}>{st.text}</span>
+              </div>
+              <div className="flex justify-between items-center mt-2 pt-2 border-t border-gray-50">
+                <span className="text-[10px] text-gray-400">{r.apply_time}</span>
+                {r.status === 2 && r.finish_time && (
+                  <span className="text-[10px] text-gray-400">到账: {r.finish_time}</span>
+                )}
+                {r.status === 3 && r.fail_reason && (
+                  <span className="text-[10px] text-rose-500">{r.fail_reason}</span>
+                )}
+              </div>
+            </div>
+          );
+        })}
+        {!loading && records.length === 0 && (
+          <div className="text-center py-12 text-gray-400 text-sm">
+            <div className="text-3xl mb-2">💰</div>暂无提现记录
+          </div>
+        )}
       </div>
     </div>
   );

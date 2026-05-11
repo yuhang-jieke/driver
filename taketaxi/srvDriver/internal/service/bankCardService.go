@@ -173,6 +173,6 @@ func (s *DriverService) UpdateBankCard(ctx context.Context, req *driver.UpdateBa
 
 // isValidChineseName 验证姓名是否为2-6个汉字
 func isValidChineseName(name string) bool {
-	matched, _ := regexp.MatchString(`^[\x{4e00}-\x{9fa5}]{2,6}$`, name)
+	matched, _ := regexp.MatchString(`^[一-龥]{2,6}$`, name)
 	return matched
 }

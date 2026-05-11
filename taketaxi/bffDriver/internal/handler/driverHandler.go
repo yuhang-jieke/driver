@@ -602,6 +602,7 @@ func (h *DriverHandler) UpdateBankCard(c *gin.Context) {
 
 // GetWallet 查询钱包概览
 // GET /api/v1/driver/wallet?driver_id=200000001
+// GET /api/v1/driver/wallet?driver_id=200000001&start_date=2026-05-01&end_date=2026-05-31
 // 返回：余额、冻结金额、今日/周/月收入、提现次数、银行卡状态等聚合数据
 func (h *DriverHandler) GetWallet(c *gin.Context) {
 	driverIDStr := c.Query("driver_id")
@@ -615,7 +616,15 @@ func (h *DriverHandler) GetWallet(c *gin.Context) {
 		return
 	}
 
-	resp, err := h.client.GetWallet(c.Request.Context(), &pb.GetWalletReq{DriverId: driverID})
+	// 可选参数：日期范围
+	startDate := c.Query("start_date") // 格式 YYYY-MM-DD
+	endDate := c.Query("end_date")     // 格式 YYYY-MM-DD
+
+	resp, err := h.client.GetWallet(c.Request.Context(), &pb.GetWalletReq{
+		DriverId:  driverID,
+		StartDate: startDate,
+		EndDate:   endDate,
+	})
 	if err != nil {
 		logger.Error("GetWallet 失败", zap.Int64("driver_id", driverID), zap.Error(err))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

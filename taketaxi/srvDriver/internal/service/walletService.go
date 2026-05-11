@@ -334,6 +334,9 @@ func (s *DriverService) ApplyWithdraw(ctx context.Context, req *driver.ApplyWith
 
 // GetWallet 查询钱包概览
 // 金额单位：分(int64)
+// 支持两种查询模式：
+//   1. 固定周期模式（默认）：返回今日/本周/本月收入
+//   2. 自定义范围模式：传入 start_date/end_date，返回指定范围内收入
 func (s *DriverService) GetWallet(ctx context.Context, req *driver.GetWalletReq) (*driver.GetWalletResp, error) {
 	if req.DriverId <= 0 {
 		return nil, errcode.New(errcode.ErrInvalidDriverID)
@@ -343,16 +346,6 @@ func (s *DriverService) GetWallet(ctx context.Context, req *driver.GetWalletReq)
 	if err != nil {
 		return nil, err
 	}
-
-	// 查询今日/本周/本月收入
-	now := time.Now()
-	todayStart := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.Local)
-	weekStart := todayStart.AddDate(0, 0, -int(now.Weekday()))
-	monthStart := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, time.Local)
-
-	todayStats, _ := s.repo.GetOrderStats(ctx, req.DriverId, todayStart, now)
-	weekStats, _ := s.repo.GetOrderStats(ctx, req.DriverId, weekStart, now)
-	monthStats, _ := s.repo.GetOrderStats(ctx, req.DriverId, monthStart, now)
 
 	// 查询今日提现次数（只统计处理中+成功的记录）
 	todayCount, _ := s.repo.GetTodayWithdrawCount(ctx, req.DriverId)
@@ -364,18 +357,88 @@ func (s *DriverService) GetWallet(ctx context.Context, req *driver.GetWalletReq)
 		bankCardNo = card.BankCardNo
 	}
 
-	return &driver.GetWalletResp{
+	resp := &driver.GetWalletResp{
 		Balance:            wallet.Balance,
 		FrozenAmount:       wallet.FrozenAmount,
-		TodayIncome:        int64(todayStats.TotalIncome),
-		WeekIncome:         int64(weekStats.TotalIncome),
-		MonthIncome:        int64(monthStats.TotalIncome),
 		TotalIncome:        wallet.TotalIncome,
 		TotalWithdraw:      wallet.TotalWithdraw,
 		TodayWithdrawCount: int32(todayCount),
 		BankCardNo:         bankCardNo,
 		HasBankCard:        card != nil,
-	}, nil
+	}
+
+	// 判断查询模式
+	if req.StartDate != "" && req.EndDate != "" {
+		// 自定义范围模式
+		return s.getWalletWithDateRange(ctx, req, resp)
+	}
+
+	// 固定周期模式（原有逻辑）
+	return s.getWalletWithFixedPeriod(ctx, req, resp)
+}
+
+// getWalletWithDateRange 自定义日期范围查询模式
+func (s *DriverService) getWalletWithDateRange(ctx context.Context, req *driver.GetWalletReq, resp *driver.GetWalletResp) (*driver.GetWalletResp, error) {
+	// 1. 解析日期参数
+	startDate, err := time.Parse("2006-01-02", req.StartDate)
+	if err != nil {
+		return nil, errcode.NewWithDetail(errcode.ErrInvalidParam, "invalid start_date format, expected YYYY-MM-DD")
+	}
+	endDate, err := time.Parse("2006-01-02", req.EndDate)
+	if err != nil {
+		return nil, errcode.NewWithDetail(errcode.ErrInvalidParam, "invalid end_date format, expected YYYY-MM-DD")
+	}
+
+	// 2. 日期范围校验
+	if endDate.Before(startDate) {
+		return nil, errcode.NewWithDetail(errcode.ErrInvalidParam, "end_date must be after or equal to start_date")
+	}
+
+	// 3. 最多查询 90 天
+	daysDiff := int(endDate.Sub(startDate).Hours()/24) + 1 // +1 包含结束日期当天
+	if daysDiff > 90 {
+		return nil, errcode.NewWithDetail(errcode.ErrInvalidParam, "date range cannot exceed 90 days")
+	}
+
+	// 4. 补充时间边界：startDate 00:00:00, endDate 23:59:59
+	startDateTime := time.Date(startDate.Year(), startDate.Month(), startDate.Day(), 0, 0, 0, 0, time.Local)
+	endDateTime := time.Date(endDate.Year(), endDate.Month(), endDate.Day(), 23, 59, 59, 999999999, time.Local)
+
+	// 5. 查询指定范围内的统计数据
+	stats, _ := s.repo.GetOrderStats(ctx, req.DriverId, startDateTime, endDateTime)
+
+	// 6. 填充响应（复用 today_income 字段为"范围内收入"）
+	resp.TodayIncome = int64(stats.TotalIncome)
+	resp.WeekIncome = 0  // 自定义范围模式下，周/月收入字段无意义
+	resp.MonthIncome = 0
+	resp.QueryStartDate = req.StartDate
+	resp.QueryEndDate = req.EndDate
+
+	return resp, nil
+}
+
+// getWalletWithFixedPeriod 固定周期查询模式（原有逻辑）
+func (s *DriverService) getWalletWithFixedPeriod(ctx context.Context, req *driver.GetWalletReq, resp *driver.GetWalletResp) (*driver.GetWalletResp, error) {
+	now := time.Now()
+	todayStart := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.Local)
+	weekday := int(now.Weekday())
+	if weekday == 0 {
+		weekday = 7
+	}
+	weekStart := todayStart.AddDate(0, 0, -weekday+1) // 本周一（修复周日=0的Bug）
+	monthStart := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, time.Local)
+
+	todayStats, _ := s.repo.GetOrderStats(ctx, req.DriverId, todayStart, now)
+	weekStats, _ := s.repo.GetOrderStats(ctx, req.DriverId, weekStart, now)
+	monthStats, _ := s.repo.GetOrderStats(ctx, req.DriverId, monthStart, now)
+
+	resp.TodayIncome = int64(todayStats.TotalIncome)
+	resp.WeekIncome = int64(weekStats.TotalIncome)
+	resp.MonthIncome = int64(monthStats.TotalIncome)
+	resp.QueryStartDate = todayStart.Format("2006-01-02")
+	resp.QueryEndDate = now.Format("2006-01-02")
+
+	return resp, nil
 }
 
 // GetWithdrawRecords 查询提现记录

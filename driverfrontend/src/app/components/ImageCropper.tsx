@@ -11,6 +11,7 @@ interface ImageCropperProps {
 export function ImageCropper({ imageSrc, aspectRatio, onConfirm, onCancel }: ImageCropperProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLImageElement | null>(null);
 
   // State
   const [scale, setScale] = useState(1);
@@ -20,6 +21,7 @@ export function ImageCropper({ imageSrc, aspectRatio, onConfirm, onCancel }: Ima
   const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Ref for drag handling
   const positionRef = useRef(position);
@@ -31,9 +33,14 @@ export function ImageCropper({ imageSrc, aspectRatio, onConfirm, onCancel }: Ima
   // Load image
   useEffect(() => {
     const img = new Image();
+    let cancelled = false;
+
     img.onload = () => {
+      if (cancelled) return;
+      imageRef.current = img;
       setImageSize({ width: img.width, height: img.height });
       setImageLoaded(true);
+      setError(null);
 
       // Initialize scale to fit container
       if (containerRef.current) {
@@ -49,7 +56,18 @@ export function ImageCropper({ imageSrc, aspectRatio, onConfirm, onCancel }: Ima
         setPosition({ x: 0, y: 0 });
       }
     };
+
+    img.onerror = () => {
+      if (cancelled) return;
+      setError('图片加载失败');
+      setImageLoaded(false);
+    };
+
     img.src = imageSrc;
+
+    return () => {
+      cancelled = true;
+    };
   }, [imageSrc]);
 
   // Update container size

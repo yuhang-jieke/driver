@@ -3,9 +3,9 @@ server:
   port: 8080
   grpc_host: 127.0.0.1
   grpc_port: 8001
-registry:
-  type: "etcd"
-  address: "127.0.0.1:2379"
+#registry:
+#  type: "etcd"
+#  address: "127.0.0.1:2379"
 
 upload:
   storage_type: minio
@@ -17,10 +17,10 @@ upload:
     use_ssl: false
     region: ""
   oss:
-    endpoint: ""
-    access_key_id: ""
-    access_key_secret: ""
-    bucket_name: ""
+    endpoint: "oss-cn-beijing.aliyuncs.com"
+    access_key_id: "LTAI5t6U7cu8vjvfxzL9JKTA"
+    access_key_secret: "3NrK5zQgGLxRTHkWWVS1GhCzunfGYD"
+    bucket_name: "qianhuan123"
   cos:
     bucket_url: ""
     secret_id: ""

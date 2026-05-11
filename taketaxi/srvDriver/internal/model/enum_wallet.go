@@ -43,10 +43,14 @@ const (
 
 // WithdrawPageDisableReason 提现页禁用原因码
 const (
-	WithdrawDisableNoCard = "NO_BANK_CARD"          // 未绑定银行卡
-	WithdrawDisableVerify = "VERIFY_PENDING"         // 认证审核中
-	WithdrawDisableCount  = "WITHDRAW_COUNT_LIMIT"   // 今日提现次数超限
-	WithdrawDisableZero   = "AVAILABLE_AMOUNT_ZERO"  // 可提现余额为零
+	WithdrawDisableNoCard           = "NO_BANK_CARD"            // 未绑定银行卡
+	WithdrawDisableCreditCard       = "CREDIT_CARD_NOT_ALLOWED" // 信用卡不允许提现
+	WithdrawDisableVerify           = "VERIFY_PENDING"           // 认证审核中
+	WithdrawDisableCardNameMismatch = "CARD_NAME_MISMATCH"      // 银行卡姓名与实名不一致
+	WithdrawDisableCount            = "WITHDRAW_COUNT_LIMIT"    // 今日提现次数超限
+	WithdrawDisableZero             = "AVAILABLE_AMOUNT_ZERO"   // 可提现余额为零
+	WithdrawDisableAccountFrozen    = "ACCOUNT_FROZEN"          // 账号已冻结
+	WithdrawDisableAccountClosed    = "ACCOUNT_CLOSED"          // 账号已注销
 )
 
 // WithdrawArrivalText 预计到账文案
@@ -55,7 +59,8 @@ const WithdrawArrivalText = "预计2小时到账"
 // WithdrawNotice 提现须知
 var WithdrawNotice = []string{
 	"提现将转入您的银行卡，预计2小时到账",
-	"每日最多提现3次，单笔上限5000元",
+	"每日最多提现3次，单笔上限5000元，最低1元起提",
+	"仅支持提现至本人借记卡",
 	"提现前请确认银行卡信息正确",
 }
 
