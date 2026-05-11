@@ -3,3 +3,33 @@ server:
   port: 8080
   grpc_host: 127.0.0.1
   grpc_port: 8001
+#registry:
+#  type: "etcd"
+#  address: "127.0.0.1:2379"
+
+upload:
+  storage_type: minio
+  minio:
+    endpoint: "115.190.64.69:9000"
+    access_key: "minioadmin"
+    secret_key: "minioadmin"
+    bucket_name: "driver-images"
+    use_ssl: false
+    region: ""
+  oss:
+    endpoint: "oss-cn-beijing.aliyuncs.com"
+    access_key_id: "LTAI5t6U7cu8vjvfxzL9JKTA"
+    access_key_secret: "3NrK5zQgGLxRTHkWWVS1GhCzunfGYD"
+    bucket_name: "qianhuan123"
+  cos:
+    bucket_url: ""
+    secret_id: ""
+    secret_key: ""
+
+log:
+  level: info
+  filename: logs/bff-driver.log
+  max_size: 100
+  max_backups: 3
+  max_age: 7
+  compress: true

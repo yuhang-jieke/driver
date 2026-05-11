@@ -10,6 +10,7 @@ import (
 )
 
 func NewRedisClient(cfg *config.RedisConfig) *redis.Client {
+	fmt.Println("cfg")
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     fmt.Sprintf("%s:%d", cfg.Host, cfg.Port),
 		Password: cfg.Password,

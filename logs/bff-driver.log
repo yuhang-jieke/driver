@@ -1,0 +1,11 @@
+{"level":"info","time":"2026-05-04T20:13:11.600+0800","caller":"cmd/main.go:37","msg":"bffDriver starting","host":"0.0.0.0","port":8080}
+{"level":"info","time":"2026-05-04T20:13:11.616+0800","caller":"cmd/main.go:49","msg":"gRPC client created","address":"127.0.0.1:8001"}
+{"level":"info","time":"2026-05-04T20:13:11.687+0800","caller":"cmd/main.go:56","msg":"storage initialized","type":"minio"}
+{"level":"info","time":"2026-05-04T20:13:11.687+0800","caller":"cmd/main.go:60","msg":"HTTP server starting","address":"0.0.0.0:8080"}
+{"level":"info","time":"2026-05-04T20:28:31.000+0800","caller":"cmd/main.go:37","msg":"bffDriver starting","host":"0.0.0.0","port":8080}
+{"level":"info","time":"2026-05-04T20:28:31.009+0800","caller":"cmd/main.go:49","msg":"gRPC client created","address":"127.0.0.1:8001"}
+{"level":"info","time":"2026-05-04T20:28:31.098+0800","caller":"cmd/main.go:56","msg":"storage initialized","type":"minio"}
+{"level":"info","time":"2026-05-04T20:28:31.098+0800","caller":"cmd/main.go:60","msg":"HTTP server starting","address":"0.0.0.0:8080"}
+{"level":"error","time":"2026-05-04T20:34:08.466+0800","caller":"handler/driverHandler.go:629","msg":"GetWallet 失败","driver_id":200000001,"error":"rpc error: code = InvalidArgument desc = [40001] 参数非法: invalid start_date format, expected YYYY-MM-DD"}
+{"level":"error","time":"2026-05-04T20:35:28.443+0800","caller":"handler/driverHandler.go:629","msg":"GetWallet 失败","driver_id":200000001,"error":"rpc error: code = InvalidArgument desc = [40001] 参数非法: date range cannot exceed 90 days"}
+{"level":"error","time":"2026-05-04T20:36:44.946+0800","caller":"handler/driverHandler.go:629","msg":"GetWallet 失败","driver_id":200000001,"error":"rpc error: code = InvalidArgument desc = [40001] 参数非法: end_date must be after or equal to start_date"}
